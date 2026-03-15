@@ -8,9 +8,9 @@ This documentation aims to describe the design and the implementation of the Dig
 
 
 ## Outline
-1. [Project Overview](project_overview.md)
-2. [Getting Started](getting_started.md)
-3. [Development Convention](development_convention.md)
-4. [Architecture and System Design](system_design.md)
+1. [Project Overview](docs/project_overview.md)
+2. [Getting Started](docs/getting_started.md)
+3. [Development Convention](docs/development_convention.md)
+4. [Architecture and System Design](docs/system_design.md)
 
 

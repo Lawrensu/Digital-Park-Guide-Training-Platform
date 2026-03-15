@@ -54,6 +54,8 @@ Summary description of commit:
 ...
 ```
 
+
 ## Coding Conventions
+- Make sure to alwasy `git fetch` and `git pull` to make sure your branch is following the latest remote branch (Watch out for merge conflict). 
 - Use tabs with size 4 by default (recommended to configure VSCode project settings to use tabs).
 - Use single quotes `'example'` by default, with double quotes only for docstrings
