@@ -16,7 +16,6 @@ The mobile application allows park guides to access training content anytime and
 ## Tech Stack
 - React Native (Expo)
 - JavaScript / TypeScript
-- REST API (Backend)
 
 ## Running the App
 ```bash
