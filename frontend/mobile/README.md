@@ -17,7 +17,18 @@ The mobile application allows park guides to access training content anytime and
 - React Native (Expo)
 - JavaScript / TypeScript
 
+## Change ip address to run the app
+src/services/apiService.js
+line 8 http://xxx.xxx.xxx.xxx:3000/api
+replace x with ur ip address
+
+## Run the app
+npx expo start --tunnel --clear
+tunnel: different network
+clear: clear cache, fix stale data, restart server
+
 ## Running the App
 ```bash
 npm install
 npx expo start
+
