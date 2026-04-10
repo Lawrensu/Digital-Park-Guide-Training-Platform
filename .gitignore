@@ -1,0 +1,31 @@
+# General
+node_modules/
+dist/
+build/
+.turbo/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Coverage
+coverage/
+
+# Expo / React Native
+.expo/
+ios/
+android/
+
+# Secrets
+*.pem
+*.key
