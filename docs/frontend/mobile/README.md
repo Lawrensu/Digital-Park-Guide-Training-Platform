@@ -5,13 +5,14 @@ src/services/apiService.js
 line 8 http://xxx.xxx.xxx.xxx:3000/api
 replace x with ur ip address
 
-## *bypass the usual checks and proceed with the installation*
+## bypass the usual checks and proceed with the installation
 npm install --legacy-peer-deps
 
-## *Start*
+## Start the app
+``bash
 npx expo start
 
-# additional:
+### Additional:
 --tunnel 
 ==> tunnel in case u using different network
 
