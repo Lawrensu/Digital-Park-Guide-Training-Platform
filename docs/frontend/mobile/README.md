@@ -9,7 +9,7 @@ replace x with ur ip address
 npm install --legacy-peer-deps
 
 ## Start the app
-``bash
+```bash
 npx expo start
 
 ### Additional:
