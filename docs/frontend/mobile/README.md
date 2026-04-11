@@ -6,7 +6,7 @@
 ## *Start*
 npx expo start
 
-additional:
+#additional:
 --tunnel 
 ==> tunnel in case u using different network
 
