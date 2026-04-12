@@ -54,10 +54,16 @@ Open `.env` and fill in the required values. Ask the team lead for credentials y
 ### 4. Start the local development stack
 
 ```bash
-docker compose up
+docker compose up postgres redis -d
 ```
 
 This starts PostgreSQL and Redis as containers. On first run it will pull the images — this takes a minute.
+
+> **Port conflict (Windows):** If you have a local PostgreSQL installation, it will already occupy port 5432 and Docker's container won't be reachable. Fix by stopping the local service first:
+> ```powershell
+> Stop-Service -Name "postgresql*"
+> ```
+> Then restart the containers. Alternatively, change the port mapping in `docker-compose.yml` from `5432:5432` to `5433:5432` and update `DATABASE_URL` in your `.env` to use port `5433`.
 
 ### 5. Run database migrations
 
