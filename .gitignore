@@ -29,3 +29,6 @@ android/
 # Secrets
 *.pem
 *.key
+
+# Claude Code
+.claude/
