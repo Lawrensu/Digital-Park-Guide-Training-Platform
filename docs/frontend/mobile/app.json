@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Park Guide Training",
+    "slug": "parkguide-training",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.parkguide.training"
+    },
+    "plugins": []
+  }
+}
