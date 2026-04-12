@@ -102,6 +102,12 @@ JWT with refresh token rotation. No session-based auth.
 - Primary source of truth for all structured data
 - Prisma manages schema, migrations, and query interface
 - Binary assets (videos, images, PDFs, evidence frames) are never stored in the database — only the S3 **key** is stored as a reference (not the full URL, since URLs are generated on-demand as pre-signed URLs with expiry)
+- RegistrationApplication records are retained permanently as an audit trail,
+  regardless of approval or rejection outcome.
+- IC/Passport number is stored on both RegistrationApplication (original submission)
+  and the User record (verified identity for ongoing use).
+- IoT device-to-guide assignment history is tracked in a DeviceAssignment table,
+  not just current assignment on the IoTDevice record.
 
 ### Redis via Upstash
 - Stores refresh tokens mapped to user IDs
