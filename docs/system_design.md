@@ -4,73 +4,95 @@
 
 | Layer | Technology |
 |-------|------------|
-| Web Frontend | React + Vite, TailwindCSS |
-| Mobile App | React Native + Expo, TailwindCSS via NativeWind |
-| Backend API | Node.js + Express |
-| AI / IoT Service | Python + FastAPI, YOLOv8 + OpenCV |
+| Web Frontend | React + Vite, TailwindCSS, shadcn/ui, TanStack Query, Recharts |
+| Mobile App | React Native + Expo, NativeWind, Expo SQLite |
+| Backend API | Node.js + Express, Zod, Socket.io |
 | Database | PostgreSQL via Prisma ORM |
-| File & Video Storage | AWS S3 (hot), S3 Glacier (cold/long-term archival) |
-| Real-time Alerts | WebSocket via Socket.io |
+| Cache / Session | Redis via Upstash |
+| Auth | JWT (access + refresh token) |
+| File Storage | AWS S3 (active assets), S3 Glacier (evidence archival) |
+| IoT Communication | MQTT over TLS via AWS IoT Core |
+| IoT Hardware | NodeMCU ESP32 + camera module, Arduino Uno R4 Minima |
+| AI Inference | YOLOv8n → ONNX (INT8 quantised) → edge deployment on ESP32 |
+| Real-time Alerts | Socket.io (WebSocket) |
+| Monorepo | pnpm workspaces + Turborepo |
 | CI/CD | GitHub Actions |
 | Deployment | Docker + Docker Compose |
-| Hosting | AWS (EC2, S3, RDS) |
+| Hosting | AWS EC2, RDS, S3, IoT Core (ap-southeast-1) |
+| Notifications | In-app inbox + Expo Push (mobile) |
+
+---
+
+## Repository Structure
+
+Monorepo managed by pnpm workspaces and Turborepo.
+
+```
+/
+├── apps/
+│   ├── api/          ← Node.js + Express backend
+│   ├── web/          ← React + Vite web dashboard
+│   └── mobile/       ← React Native + Expo mobile app
+├── packages/
+│   ├── types/        ← shared Zod schemas and JS type definitions
+│   └── utils/        ← shared utility functions
+├── docs/
+├── iot_ai/           ← ESP32 firmware + AI model pipeline
+├── docker-compose.yml
+├── docker-compose.prod.yml
+├── turbo.json
+├── pnpm-workspace.yaml
+└── .env.example
+```
 
 ---
 
 ## Frontend
 
-### Web App — React + Vite
+### Web App : React + Vite
 - Admin and Trainer-facing dashboard
-- Manages training content, monitors guide progress, certifications, and real-time IoT alerts
-- Styled with TailwindCSS
+- Manages training modules, monitors guide progress, certifications, and real-time IoT alerts
+- Styled with TailwindCSS + shadcn/ui component library
+- Data fetching managed by TanStack Query
+- Charts and progress visualisations via Recharts
 
-### Mobile App — React Native + Expo
+### Mobile App : React Native + Expo
 - Park Guide-facing application
 - Delivers training content, assessments, and certification tracking
-- Must operate fully offline, guides frequently work in areas without connectivity (Assuming that the connectivity within the forest is minimal/non-existent)
-- Styled with TailwindCSS via NativeWind
+- **Offline-first:** guides work in areas with no connectivity (day trips to multi-day expeditions)
+- Local data stored in Expo SQLite; synced to API when connectivity returns
+- Styled with NativeWind (TailwindCSS for React Native)
+- Push notifications via Expo Push Notifications
 
 ---
 
 ## Backend
 
-### REST API — Node.js + Express
+### REST API : Node.js + Express
 - Single source of business logic and data access
 - Both web and mobile clients communicate exclusively through this API
 - The database is never exposed directly to any client
-- Routes follow RESTful conventions, prefixed `/api/v1/`
-- Organised internally by domain module: `auth`, `users`, `training`, `assessments`, `certifications`, `alerts`, `video`, `notifications`
-
-### AI / IoT Service — Python + FastAPI (To be confirmed again)
-- Isolated microservice for all computer vision and real-time video analysis
-- Receives live video streams from IoT body-worn cameras
-- Runs YOLOv8 inference to detect prohibited activities
-- On detection: extracts video clip via FFmpeg, uploads to S3, posts alert event to the Node.js API
-- Isolated from the Node.js API because ML inference is CPU/GPU-intensive and must not block the REST API event loop
-
-> **Hardware is not yet specified.** Camera model, connectivity method (WiFi / 4G), and inference hardware (edge device vs. server GPU) must be confirmed. This affects stream ingestion method (RTSP, WebRTC, or HTTP chunked upload) and whether inference runs on-device or centrally.
-
-**Prohibited activities to detect:**
-- Plucking or damaging protected plants
-- Relocating, disturbing, or handling wildlife
-- Any other actions violating park regulations
+- Routes follow RESTful conventions, prefixed `/api/`
+- Organised internally by domain: `auth`, `registrations`, `users`, `modules`, `enrolments`, `quizzes`, `certifications`, `notifications`, `iot-alerts`, `uploads`, `sync`
+- Request validation via Zod schemas on every POST and PATCH
+- Real-time alert push to connected admin clients via Socket.io
 
 ---
 
 ## Authentication
 
-**Current:** Built-in session-based authentication.
+JWT with refresh token rotation. No session-based auth.
 
-**Planned:** JWT with refresh token rotation.
-
-| Token | Lifetime | Purpose |
-|-------|----------|---------|
-| Access token | 15 minutes | Sent with every API request |
-| Refresh token | 30 days | Silently obtain a new access token on expiry |
+| Token | Storage | Lifetime | Purpose |
+|-------|---------|----------|---------|
+| Access token | Memory (client) | 15 minutes | Sent with every API request via `Authorization: Bearer` header |
+| Refresh token | Redis (server-side) | 7 days | Silently obtain a new access token on expiry |
 
 - Passwords hashed with bcrypt
-- Refresh tokens stored in Expo SecureStore on mobile, HttpOnly cookie on web
-- On refresh token expiry, user is required to re-authenticate
+- Refresh tokens stored in Redis via Upstash; invalidated on logout
+- Mobile stores refresh token in Expo SecureStore
+- Web stores refresh token in HttpOnly cookie
+- On 401, client silently calls `POST /api/auth/refresh`. If refresh token is also expired, redirect to login.
 
 ---
 
@@ -78,45 +100,112 @@
 
 ### PostgreSQL via Prisma ORM
 - Primary source of truth for all structured data
-- Prisma manages the schema, migrations, and provides type-safe queries
-- Video files are not stored in the database — only the S3 URL is stored as a reference
+- Prisma manages schema, migrations, and query interface
+- Binary assets (videos, images, PDFs, evidence frames) are never stored in the database — only the S3 **key** is stored as a reference (not the full URL, since URLs are generated on-demand as pre-signed URLs with expiry)
+- RegistrationApplication records are retained permanently as an audit trail,
+  regardless of approval or rejection outcome.
+- IC/Passport number is stored on both RegistrationApplication (original submission)
+  and the User record (verified identity for ongoing use).
+- IoT device-to-guide assignment history is tracked in a DeviceAssignment table,
+  not just current assignment on the IoTDevice record.
+
+### Redis via Upstash
+- Stores refresh tokens mapped to user IDs
+- Handles token invalidation on logout and refresh token rotation
+- Stateless from the API's perspective, no in-memory session state
 
 ### AWS S3
-- Stores all binary assets: training videos, course media, body-worn camera footage, and evidence clips
-- **Hot storage (S3 Standard):** recently captured footage and active training media requiring frequent access
-- **Cold storage (S3 Glacier):** long-term archival of older evidence footage where infrequent retrieval is acceptable and cost reduction is the priority
+- **S3 Standard (hot):** active training media, uploaded CVs, certificate PDFs, user-facing assets
+- **S3 Glacier (cold):** long-term archival of IoT evidence frames after a defined retention period
+- Files are accessed via pre-signed URLs generated on-demand by the API (short expiry, typically 15 minutes)
 
 ---
 
-## Live Alerts — WebSocket via Socket.io
+## IoT + AI Pipeline
 
-- The AI service posts a detection event to the Node.js API over HTTP
-- The Node.js API pushes the alert in real time to connected admin clients via Socket.io
-- Admins receive alerts on the dashboard without polling or refreshing
+### Hardware
+- **NodeMCU ESP32:** with camera module that is body-worn by park guide during tours
+- **Arduino Uno R4 Minima:** controls peripheral hardware (buzzer, LEDs, tactile buttons) for on-device alerts
+
+### AI Inference — On-Device (Edge)
+- Model: YOLOv8n trained in PyTorch, exported to ONNX (INT8 quantised) for edge deployment
+- Inference runs directly on the ESP32, no server-side GPU required
+- Detects: plant damage, wildlife disturbance, according to project scope.
+- On detection: captures evidence frame, triggers Arduino alert (buzzer + LED)
+
+### Detection Event Flow
+```
+ESP32 detects → captures evidence frame
+→ MQTT over TLS → AWS IoT Core
+→ IoT Core rule: stores frame to S3, HTTP POST to Node.js API
+→ API saves alert to PostgreSQL
+→ API emits Socket.io event to connected admin dashboard
+→ Admin notified via push notification + email (AWS SES)
+```
+
+> **Unresolved:** On-device runtime must be confirmed as **ESP-DL or TFLite Micro** before model training begins. Standard ONNX Runtime is too large for ESP32's SRAM. This determines the export format. Blocks all AI pipeline progress.
 
 ---
 
-## CI/CD — GitHub Actions
+## Live Alerts : Socket.io
 
-- Runs on every pull request: lint, type check, tests
-- Runs on merge to `main`: build Docker image, push to registry, deploy to hosting environment
+- AWS IoT Core posts detection event to the Node.js API via HTTP (internal endpoint, protected by shared secret)
+- API persists the alert, then emits to admin clients via Socket.io event `iot:alert`
+- Admins see the alert on the dashboard in real time without polling
+
+**Event payload:**
+```json
+{
+"alertId": "uuid",
+"deviceId": "esp32-001",
+"guideId": "uuid",
+"detectionType": "PLANT_DAMAGE | WILDLIFE_DISTURBANCE",
+"detectedAt": "ISO timestamp",
+"evidenceS3Key": "evidence/2026-04-09/abc123.jpg",
+"confidence": 0.94
+}
+```
+
+---
+
+## Offline Sync : Mobile
+
+- Guide completes training content and quiz attempts with no internet (Expo SQLite stores everything locally)
+- On reconnect, app sends batched sync payload to `POST /api/sync`
+- Each progress item includes device-side `completedAt` timestamp
+- **Conflict policy: last-write-wins.** Offline submissions are accepted even if the module was archived during the offline period.
+
+---
+
+## CI/CD : GitHub Actions
+
+- On every pull request to `develop`: lint, tests
+- On merge to `main`: build Docker image, push to registry, deploy to EC2
 - Failed health checks trigger automatic rollback
 
 ---
 
-## Deployment — Docker + Docker Compose
+## Deployment : Docker + Docker Compose
 
-- Every service runs in a Docker container: Node.js API, Python AI service, PostgreSQL, Redis
-- Docker Compose orchestrates the full local stack with a single command
-- The same Docker image used locally is what gets deployed to production — no environment-specific surprises
+Two Compose files:
+
+| File | Purpose | Services |
+|------|---------|---------|
+| `docker-compose.yml` | Local development | api, postgres, redis |
+| `docker-compose.prod.yml` | EC2 deployment | api only (RDS + Upstash replace local containers) |
+
+- `apps/web` and `apps/mobile` are not containerised as Vite and Expo run natively during development
+- Volume mounts on the `api` service allow hot reload without container rebuild
 
 ---
 
-## Hosting — AWS
+## Hosting : AWS (ap-southeast-1)
 
 | Service | Usage |
 |---------|-------|
-| EC2 | Hosts the Node.js API and Python AI service containers |
-| RDS | Managed PostgreSQL — handles backups, patching, and connection pooling |
-| S3 | Video and media object storage |
-| S3 Glacier | Long-term video archival |
+| EC2 | Hosts the Node.js API container |
+| RDS | Managed PostgreSQL |
+| S3 | Active file storage |
+| S3 Glacier | Evidence frame archival |
+| IoT Core | MQTT broker for ESP32 device communication |
+| SES | Transactional email (registration, notifications) |

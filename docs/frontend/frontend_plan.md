@@ -78,7 +78,7 @@ The frontend will provide a user-friendly and accessible platform for park guide
 
 ## Frontend Structure
 ```text
-frontend/
+apps/
 ├─ web/              # React + Vite web application
 ├─ mobile/           # React Native + Expo mobile application
 └─ README.md
