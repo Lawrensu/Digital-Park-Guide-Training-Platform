@@ -64,6 +64,7 @@ Created only upon admin approval of a RegistrationApplication. Admins are create
 | password_hash | VARCHAR | Nullable until guide activates account |
 | ic_passport_number | VARCHAR | Nullable — guides only; copied from application on approval |
 | status | UserStatus | Default: INACTIVE |
+| station_id | UUID FK → Station.id | Nullable : guides only; assigned by admin on approval or updated later |
 | start_date | DATE | Nullable : guides only; set by admin on approval |
 | created_at | TIMESTAMPTZ | Default: now() |
 | updated_at | TIMESTAMPTZ | |
@@ -80,6 +81,18 @@ Handles both initial account activation (24hr link) and standard forgot-password
 | user_id | UUID FK → User.id | |
 | token_hash | VARCHAR | `crypto.randomBytes(32)` hashed before storage |
 | expires_at | TIMESTAMPTZ | 24 hours from creation |
+| created_at | TIMESTAMPTZ | Default: now() |
+
+---
+
+### `Station`
+
+A named SFC park location. Managed by admins from the dashboard. Guides are assigned to a station; admins have no station.
+
+| Column | Type | Notes |
+|--------|------|-------|
+| id | UUID PK | |
+| name | VARCHAR UNIQUE | e.g., "Semenggoh Nature Reserve", "Gunung Mulu National Park" |
 | created_at | TIMESTAMPTZ | Default: now() |
 
 ---
@@ -135,7 +148,7 @@ Quiz configuration owned by exactly one module, linked through a ContentItem.
 | title | VARCHAR | |
 | pass_score_pct | INTEGER | Pass threshold as a percentage (0–100) |
 | time_limit_minutes | INTEGER | Nullable : no limit if null |
-| retake_price_myr | DECIMAL | Nullable : price per retake in MYR; Billplz integration pending |
+| retake_price_myr | DECIMAL | Nullable — price per retake in MYR; Billplz integration pending. Null until payment is active. |
 | show_score_to_guide | BOOLEAN | Default: true |
 | created_at | TIMESTAMPTZ | Default: now() |
 | updated_at | TIMESTAMPTZ | |
@@ -246,7 +259,7 @@ Issued after admin approves a GRADED quiz attempt.
 
 ### `Badge`
 
-Badge definition. Threshold and description configured by admin.
+Badge definition for park guides only. Admins are assumed authorised by role and do not earn or display badges. Threshold and description configured by admin.
 
 | Column | Type | Notes |
 |--------|------|-------|
@@ -261,7 +274,7 @@ Badge definition. Threshold and description configured by admin.
 
 ### `UserBadge`
 
-Awarded badge instance. Created server-side automatically when threshold is met.
+Awarded badge instance. Created server-side automatically when threshold is met. Must only be created for users with `role = GUIDE` — enforced at the application layer before insert.
 
 | Column | Type | Notes |
 |--------|------|-------|
@@ -345,6 +358,7 @@ In-app inbox. Push notification is fired as a side effect when this row is creat
 ## Relationship Summary
 
 ```
+Station ──< User (GUIDE)                              (station has many guides assigned to it)
 RegistrationApplication ──< User                      (one application → one user, on approval)
 User ──< PasswordResetToken                            (one user → many tokens over time)
 User (ADMIN) ──< Module                               (admin creates many modules)
@@ -373,6 +387,8 @@ User ──< Notification                                 (user receives many no
 - All primary keys are UUIDs to avoid enumerable IDs on public-facing endpoints (e.g., certificate verify URL).
 - S3 keys are stored as strings; pre-signed URLs are generated on-demand by the API with short expiry (15 minutes).
 - `submitted_at` on `QuizAttempt` uses the device-side timestamp to support last-write-wins conflict resolution during offline sync.
-- `attempt_number` on `QuizAttempt` increments per `(guide_id, quiz_id)` pair and this is enforced at the application layer before insert.
+- `attempt_number` on `QuizAttempt` increments per `(guide_id, quiz_id)` pair and this is enforced at the application layer before insert. There is no upper bound on `attempt_number` — there is no retake limit, no cooldown period, and no admin reset mechanism. Guides may retake as many times as they are willing to pay.
 - `DeviceAssignment.unassigned_at = null` means the assignment is currently active. Only one active assignment per device should exist at any time and this is enforced at the application layer.
 - Billplz payment integration is deferred. When implemented, a `Payment` table will reference a specific `QuizAttempt.id` to record which retake was paid for.
+- `UserBadge` records must only be created for users with `role = GUIDE`. Admin accounts do not earn badges — admin authorisation is assumed by role assignment. This is enforced at the application layer.
+- `station_id` on `User` is guides-only. Admin accounts are never assigned to a station. The application layer must enforce this — do not set `station_id` when creating admin accounts.

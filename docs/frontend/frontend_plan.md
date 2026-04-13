@@ -34,6 +34,7 @@ Build in this exact sequence. Each item depends on the one above it.
 10. `/iot-alerts` + `/iot-alerts/:alertId`
 11. `/notifications`
 12. `/settings/admins`
+13. `/settings/stations`
 
 If time runs short within Sprint 1, items 10–12 are the lowest risk to defer to Sprint 2 since they depend on IoT and notification APIs which may not be ready from the backend anyway.
 
@@ -70,10 +71,10 @@ The clickable prototype must link these screens in a coherent user flow so it ca
 
 | App | Tech | Who uses it | Where |
 |-----|------|-------------|-------|
-| Web Dashboard | React + Vite + TailwindCSS + shadcn/ui | Admin/Trainer only | `apps/web/` |
-| Mobile App | React Native + Expo + NativeWind | Park Guide only | `apps/mobile/` |
+| Web App | React + Vite + TailwindCSS + shadcn/ui | Admin/Trainer and Park Guide | `apps/web/` |
+| Mobile App | React Native + Expo + NativeWind | Admin/Trainer and Park Guide | `apps/mobile/` |
 
-Guides do **not** use the web app. Admins do **not** use the mobile app. Design and build accordingly — do not try to share pages between them.
+Both roles use both platforms. Role-based access control determines which routes and screens are visible after login.
 
 ### Shared packages
 
@@ -81,14 +82,18 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 
 ---
 
-## Web App — Admin/Trainer Dashboard
+## Web App — Admin/Trainer and Park Guide
 
 **Tech:** React + Vite, TailwindCSS, shadcn/ui, TanStack Query, Recharts, Socket.io client
 
 ### Route Structure
 
 ```
+(Public — no auth required)
+/register
 /login
+
+(Admin/Trainer — redirected here after login if role = ADMIN)
 /dashboard
 /registrations
 /registrations/:id
@@ -106,6 +111,20 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 /iot-alerts/:alertId
 /notifications
 /settings/admins
+/settings/stations
+
+(Park Guide — redirected here after login if role = GUIDE)
+/home
+/modules (browse published modules)
+/modules/:id
+/modules/:id/content/:itemId
+/quiz/:quizId
+/quiz/:quizId/result
+/certifications (own certifications)
+/certifications/:id
+/badges
+/notifications (own inbox)
+/profile
 ```
 
 ---
@@ -116,16 +135,29 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 
 #### `/login`
 
-**What it is:** The only public page. Admin enters username + password.
+**What it is:** Shared login page for both Admin/Trainer and Park Guide.
 
 **What it does:**
 - `POST /api/auth/login` with credentials
-- On success: store access token in memory, redirect to `/dashboard`
+- On success: store access token in memory, redirect based on role claim in JWT — Admin → `/dashboard`, Guide → `/home`
 - On failure: show error message inline (do not clear the form)
 
 **Key UI notes:**
-- No registration link — admins are created by seed or by other admins
-- No "forgot password" link needed for MVP (admins are managed internally)
+- Link to `/register` for guides who do not yet have an account
+- "Resend activation link" option for guides whose activation email expired
+
+---
+
+#### `/register`
+
+**What it is:** Public registration form for park guides. No auth required.
+
+**What it does:**
+- Collects: first name, last name, email, IC/passport number, address, reason for applying, CV upload (PDF)
+- CV upload flow: call `POST /api/uploads/presign` to get a pre-signed S3 URL, upload directly to S3, then send the returned S3 key as `cvS3Key` in the registration payload
+- `POST /api/registrations` on submit
+- On success: show confirmation message ("Your application has been submitted. You will receive an email once reviewed.")
+- Admin accounts are never created via this form
 
 ---
 
@@ -256,12 +288,15 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 **What it is:** List of all approved park guides.
 
 **What it shows:**
-- Table: name, username, email, status (ACTIVE / INACTIVE / SUSPENDED), start date, enrolment count, certification count
+- Table: name, username, email, status (ACTIVE / INACTIVE / SUSPENDED), station, start date, enrolment count, certification count
 - Click row → goes to `/guides/:id`
 - Filter by status
+- Filter by station — dropdown populated from `GET /api/stations`
 
 **API calls:**
 - `GET /api/users?role=GUIDE`
+- `GET /api/users?role=GUIDE&stationId=:id` — when station filter applied
+- `GET /api/stations` — to populate filter dropdown
 
 ---
 
@@ -270,7 +305,7 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 **What it is:** Admin view of a specific guide's profile and progress.
 
 **What it shows:**
-- Guide info: name, username, email, IC/passport, start date, status
+- Guide info: name, username, email, IC/passport, station, start date, status
 - Enrolments table: module name, enrolment date, due date, progress
 - Quiz attempt history: quiz name, attempt number, score, status
 - Certifications earned: module, issue date, expiry date, download button
@@ -417,6 +452,24 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 **API calls:**
 - `GET /api/users?role=ADMIN`
 - `POST /api/users/admins`
+
+---
+
+#### `/settings/stations`
+
+**What it is:** Station management — admin creates and manages the list of SFC park locations that guides are assigned to.
+
+**What it shows:**
+- List of all stations: name, number of guides assigned, created date
+- "Add Station" button → modal: station name field → `POST /api/stations`
+- Edit button per row → inline or modal: update name → `PATCH /api/stations/:id`
+- Delete button per row → `DELETE /api/stations/:id`; only allow delete if no guides are currently assigned to that station (show error if guides exist)
+
+**API calls:**
+- `GET /api/stations`
+- `POST /api/stations`
+- `PATCH /api/stations/:id`
+- `DELETE /api/stations/:id`
 
 ---
 
@@ -624,7 +677,7 @@ The mobile app must work **fully offline**. This means:
 #### `ProfileScreen`
 
 **What it shows:**
-- Guide info: name, username, email, start date
+- Guide info: name, username, email, station, start date
 - Badges row (horizontally scrollable) → tap navigates to `BadgesScreen`
 - Certifications section → tap navigates to `CertificationsScreen`
 - Stats: total modules completed, total certifications
@@ -674,8 +727,6 @@ The mobile app must work **fully offline**. This means:
 
 To avoid confusion — these are explicitly out of scope for the frontend:
 
-- Admin account login on mobile — admins only use the web dashboard
-- Guide registration form on web — guides register via the mobile app only (or a separate public-facing page if needed, but check with Law first)
 - PDF certificate generation — this happens server-side, you only display/download the result
 - Push notification delivery — Expo handles this, you only handle receiving and displaying them
 - Payment flow (Billplz) — deferred, do not implement until confirmed
@@ -689,12 +740,13 @@ You will need to coordinate with the backend team (Law, Joey, Cyndia, Faisal) on
 1. Auth (login, refresh, activation)
 2. Registrations (submit, approve, reject)
 3. Users (guide profile, guide list)
-4. Modules + ContentItems
-5. Enrolments
-6. Quizzes + Attempts + Grading
-7. Certifications
-8. Notifications
-9. IoT Alerts
-10. Sync endpoint
+4. Stations (list, create, update, delete)
+5. Modules + ContentItems
+6. Enrolments
+7. Quizzes + Attempts + Grading
+8. Certifications
+9. Notifications
+10. IoT Alerts
+11. Sync endpoint
 
 Build screens in that priority order. Use mock data (hardcoded JS objects) for screens whose API is not yet ready — do not block on the backend.

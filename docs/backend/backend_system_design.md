@@ -5,9 +5,9 @@
 
 ## User Roles
 
-**Admin/Trainer** : manages the platform: approves registrations, creates training content, grades assessments, issues certifications, monitors IoT alerts.
+**Admin/Trainer** : manages the platform: approves registrations, creates training content, grades assessments, issues certifications, monitors IoT alerts, manages stations. Accessible via both web and mobile.
 
-**Park Guide** : consumes the platform: registers, enrols in modules, completes training, earns certifications, receives notifications. Must work fully offline on mobile.
+**Park Guide** : consumes the platform: registers, enrols in modules, completes training, earns certifications, receives notifications. Assigned to a station. Must work fully offline on mobile. Accessible via both web and mobile.
 
 ---
 
@@ -26,6 +26,21 @@
 **On rejection:**
 - No `User` record created
 - Rejection email sent. Admin optionally includes reason.
+
+---
+
+## Station Management
+
+Stations are named SFC park locations (e.g., Semenggoh Nature Reserve, Gunung Mulu National Park). Admins manage the station list from the dashboard — no code deployment or schema migration needed to add new locations.
+
+- `Station` table: `id` (UUID PK), `name` (VARCHAR UNIQUE), `created_at`
+- `User.station_id` is a nullable FK → `Station.id`
+  - Guides only — admin accounts are never assigned a station
+  - Set by admin on approval or updated later via the guide management page
+- Admin can filter the guide list by station: `GET /api/users?role=GUIDE&stationId=:id`
+- Station is displayed on the guide's profile on both web and mobile
+- Delete guard: a station cannot be deleted while guides are assigned to it — enforced at application layer
+- Station name must be unique — prevents duplicate entries for the same location
 
 ---
 
@@ -105,12 +120,13 @@ Triggered after admin approves a graded quiz attempt.
 
 ## Badges
 
-Count-based achievement markers shown on guide profile.
+Count-based achievement markers shown on guide profile. **For Park Guides only — admin accounts do not earn or display badges. Admin authorisation is assumed by role.**
 
 - Badge fields: image, description (e.g. "Finished 3 modules in a row")
 - Awarded server-side automatically when a module is approved/certified
 - Threshold configurable per badge (e.g. complete 3 modules = badge)
 - Not client-triggered
+- `UserBadge` must only be created for users with `role = GUIDE` — enforced at application layer before insert
 
 ---
 
@@ -192,5 +208,5 @@ Every route falls into one of:
 
 | Item | Status |
 |------|--------|
-| Billplz integration | Confirmed |
-| Badge threshold values | Decided by team (count-based confirmed AS OF NOW) |
+| Billplz integration | Confirmed as payment gateway. Implementation deferred — do not build until explicitly instructed. `retake_price_myr` on `Quiz` is nullable until active. |
+| Badge threshold values | Count-based confirmed. Specific threshold values (e.g. 3 modules = badge) are set by admin per badge via the dashboard — not hardcoded. |

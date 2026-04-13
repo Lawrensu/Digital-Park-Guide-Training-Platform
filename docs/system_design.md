@@ -53,7 +53,7 @@ Monorepo managed by pnpm workspaces and Turborepo.
 
 ### Web App : React + Vite
 - Accessible to both Admin/Trainer and Park Guide — role-based access control determines visible routes after login
-- Admin/Trainer features: module management, guide oversight, registration review, quiz grading, certification issuance, IoT alert monitoring, notifications, admin account settings
+- Admin/Trainer features: module management, guide oversight, registration review, quiz grading, certification issuance, IoT alert monitoring, notifications, station management, admin account settings
 - Park Guide features: registration (public, pre-login), browse and enrol in modules, view content, take quizzes, view certifications, view badges, notifications, profile
 - Styled with TailwindCSS + shadcn/ui component library
 - Data fetching managed by TanStack Query

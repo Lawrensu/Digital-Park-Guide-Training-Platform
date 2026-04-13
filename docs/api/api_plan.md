@@ -176,17 +176,19 @@ You need one endpoint: `POST /api/uploads/presign`. It receives `{ fileName, fil
 
 1. **auth** — already scaffolded, start here
 2. **registrations** — submit, list, get, approve, reject
-3. **users** — list, get, update, create-admin, update-status
-4. **modules** — CRUD, publish, archive
-5. **content-items** — add, update, reorder, delete within a module
-6. **enrolments** — enrol, list, set due date
-7. **quizzes** — create, update, manage questions and options
-8. **quiz-attempts** — submit, list, get, grade (admin)
-9. **certifications** — issue, list, download (pre-signed URL), public verify
-10. **badges** — list definitions, get guide's earned badges
-11. **notifications** — get own inbox, mark read, send custom (admin)
-12. **iot-alerts** — list, get, flag; internal ingest (separate router, not under `/api/`)
-13. **uploads** — presign S3 upload URL
+3. **users** — list, get, update, create-admin, update-status. List endpoint accepts `?stationId=` and `?role=` as query filters. Station filter is admin-only.
+4. **stations** — create, list, get, update, delete. Admin-only on all operations. Used to populate station dropdowns on the guide list filter and on the registration approval form. Endpoints: `GET /api/stations`, `POST /api/stations`, `GET /api/stations/:id`, `PATCH /api/stations/:id`, `DELETE /api/stations/:id`.
+5. **modules** — CRUD, publish, archive
+6. **content-items** — add, update, reorder, delete within a module
+7. **enrolments** — enrol, list, set due date
+8. **quizzes** — create, update, manage questions and options
+9. **quiz-attempts** — submit, list, get, grade (admin)
+10. **certifications** — issue, list, download (pre-signed URL), public verify
+11. **badges** — list definitions, get guide's earned badges
+12. **notifications** — get own inbox, mark read, send custom (admin)
+13. **iot-alerts** — list, get, flag; internal ingest (separate router, not under `/api/`)
+14. **uploads** — presign S3 upload URL
+15. **sync** — offline batch sync endpoint
 
 ---
 
@@ -197,11 +199,15 @@ You need one endpoint: `POST /api/uploads/presign`. It receives `{ fileName, fil
 - Any short/long answer → status = `PENDING_REVIEW`, notify admin
 - Admin grades open questions → recalculate total → status = `GRADED` → notify guide
 
+**Retake policy:** there is no retake limit, no cooldown period, and no admin reset mechanism. Guides may retake as many times as they are willing to pay. Do not implement any limit, lockout, or cooldown logic. `attempt_number` simply increments on each new submission with no ceiling.
+
 **IoT alert ingest** is not a client-facing endpoint. It's protected by `x-internal-secret` header, not JWT. Keep it on a separate router outside `/api/`.
 
 **Cert downloads** — never return the raw S3 key to the client. Always generate a pre-signed URL on the fly (15min expiry). Ask Law for the utility.
 
 **Offline sync** — mobile batches offline data into one POST on reconnect. Accept an array, use the device-side `completedAt` timestamp (not server time). Never reject an offline submission even if the module is archived.
+
+**Badge award** — badges are for park guides only. When the certification count for a guide meets a badge threshold, create a `UserBadge` row. Never create a `UserBadge` for a user with `role = ADMIN`. Enforce this check before the insert, not after.
 
 ---
 
