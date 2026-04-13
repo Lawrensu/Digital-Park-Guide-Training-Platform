@@ -12,11 +12,12 @@ Install the following before proceeding:
 |------|---------|---------|
 | [Node.js](https://nodejs.org/) | v20 LTS | JavaScript runtime |
 | [pnpm](https://pnpm.io/) | v9+ | Package manager (`npm install -g pnpm`) |
-| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | Latest | Runs Postgres, Redis, and API containers |
+| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | Latest | Runs Postgres and Redis locally |
 | [Git](https://git-scm.com/) | Latest | Version control |
-| [Android Studio](https://developer.android.com/studio) | Latest | Android SDK for mobile development |
 
-> **iOS development** requires macOS. Use the Expo Go app on a physical iOS device if on Windows/Linux.
+**Mobile development only (Sprint 2):**
+- Android Studio (Android SDK for emulator)
+- iOS requires macOS — use Expo Go on a physical device if on Windows/Linux
 
 **Recommended editor:** VS Code with the following extensions:
 - ESLint
@@ -33,6 +34,19 @@ Install the following before proceeding:
 
 ```bash
 git clone https://github.com/Lawrensu/Digital-Park-Guide-Training-Platform.git
+cd Digital-Park-Guide-Training-Platform
+```
+
+Then check out the integration branch:
+
+```bash
+git checkout develop
+```
+
+Cut your own working branch from there:
+
+```bash
+git checkout -b feature/your-feature develop
 ```
 
 ### 2. Install dependencies
@@ -45,25 +59,60 @@ This installs all dependencies across `apps/` and `packages/` in one command.
 
 ### 3. Configure environment variables
 
+**Windows:**
+```powershell
+copy .env.example .env
+```
+
+**Mac/Linux:**
 ```bash
 cp .env.example .env
 ```
 
-Open `.env` and fill in the required values. Ask the team lead for credentials you don't have (AWS keys, etc.). Do not commit `.env`.
+Open the root `.env` and fill in these values at minimum to get the app running locally:
 
-### 4. Start the local development stack
+```
+JWT_ACCESS_SECRET=    ← generate one: node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+JWT_REFRESH_SECRET=   ← generate a different one using the same command
+```
+
+The `DATABASE_URL` and `REDIS_URL` values are already pre-filled to match the Docker setup — leave them as-is unless you changed the Docker port (see step 4).
+
+AWS and SES keys can be left blank locally — uploads and email will not work but the rest of the API will.
+
+**Also create `apps/api/.env`** — Prisma reads its database URL from here, not the root `.env`:
+
+**Windows:**
+```powershell
+copy .env.example apps\api\.env
+```
+
+**Mac/Linux:**
+```bash
+cp .env.example apps/api/.env
+```
+
+Then edit `apps/api/.env` and keep only this line (delete everything else):
+
+```
+DATABASE_URL=postgresql://user:password@localhost:5432/sfcpark
+```
+
+### 4. Start the local database
+
+Make sure Docker Desktop is running, then:
 
 ```bash
 docker compose up postgres redis -d
 ```
 
-This starts PostgreSQL and Redis as containers. On first run it will pull the images — this takes a minute.
+Wait about 10 seconds for the containers to become healthy.
 
-> **Port conflict (Windows):** If you have a local PostgreSQL installation, it will already occupy port 5432 and Docker's container won't be reachable. Fix by stopping the local service first:
+> **Port conflict (Windows):** If you have a local PostgreSQL installation, it already occupies port 5432. Fix by stopping it first:
 > ```powershell
 > Stop-Service -Name "postgresql*"
 > ```
-> Then restart the containers. Alternatively, change the port mapping in `docker-compose.yml` from `5432:5432` to `5433:5432` and update `DATABASE_URL` in your `.env` to use port `5433`.
+> Then re-run the docker compose command. Alternatively, change the port in `docker-compose.yml` from `5432:5432` to `5433:5432` and update `DATABASE_URL` in both `.env` files to use port `5433`.
 
 ### 5. Run database migrations
 
@@ -72,44 +121,64 @@ cd apps/api
 pnpm prisma migrate dev
 ```
 
-### 6. (Optional) Seed the database
+This creates all 17 tables in your local database. You only need to run this once on first setup, and again whenever someone pushes a new migration.
 
-```bash
-pnpm prisma db seed
-```
+### 6. Start the development servers
 
-This creates the initial admin accounts defined in `.env`.
-
-### 7. Start the development servers
+**Sprint 1 — API + Web only:**
 
 From the repo root:
-
 ```bash
-pnpm dev
+pnpm --filter @sfc/api dev &
+pnpm --filter @sfc/web dev
 ```
 
-Turborepo starts all apps in parallel. Individual apps are available at:
+Or start them individually in separate terminals:
+```bash
+# Terminal 1
+cd apps/api && pnpm dev
+
+# Terminal 2
+cd apps/web && pnpm dev
+```
+
+**Sprint 2 — Mobile:**
+```bash
+cd apps/mobile && npx expo start
+```
+
+Apps are available at:
 
 | App | URL |
 |-----|-----|
 | API | http://localhost:3000 |
 | Web | http://localhost:5173 |
-| Mobile | Expo DevTools in terminal |
+| Mobile | Expo DevTools — scan QR code with Expo Go app |
+
+---
+
+## Who Needs What
+
+| Role | Must run | Can skip |
+|------|----------|----------|
+| API dev (Cyndia) | Steps 1–5, `apps/api` dev server | Web, Mobile |
+| Web dev (Elyn) | Steps 1–5, `apps/web` dev server | Mobile, Android Studio |
+| Mobile dev (Xavier) | Steps 1–6 all, Android Studio | — |
 
 ---
 
 ## Branching Strategy
 
 ```
-main         ← production-ready, protected (no direct pushes)
-develop      ← integration branch, all features merge here first
-feature/*    ← your working branch, cut from develop
+main        ← production-ready, protected — no direct pushes
+develop     ← integration branch — all features merge here first
+feature/*   ← your working branch, cut from develop
 ```
 
 **Workflow:**
-1. Cut a branch from `develop`: `git checkout -b feature/your-feature develop`
+1. Cut from `develop`: `git checkout -b feature/your-feature develop`
 2. Work and commit on your branch
-3. Get at least one review before merging
+3. Open a pull request into `develop`, get at least one review
 4. Never push directly to `main`
 
 ---
@@ -117,24 +186,25 @@ feature/*    ← your working branch, cut from develop
 ## Useful Commands
 
 ```bash
-# Start only the database and redis (no app servers)
-docker compose up postgres redis
+# Start only database and redis
+docker compose up postgres redis -d
 
-# Rebuild API container after adding new packages
-docker compose up --build api
-
-# Run Prisma Studio (visual DB browser)
+# Visual database browser (runs at http://localhost:5555)
 cd apps/api && pnpm prisma studio
+
+# Apply new migrations after pulling changes that include one
+cd apps/api && pnpm prisma migrate dev
 
 # Run linting across all apps
 pnpm lint
 
-# Run a command in a specific app
+# Run a command scoped to one app
 pnpm --filter @sfc/api <command>
+pnpm --filter @sfc/web <command>
 ```
 
 ---
 
 ## Diagrams
 
-Architecture and ERD diagrams are maintained in `docs/diagrams/` using [draw.io](https://app.diagrams.net/). Open `.drawio` files directly in the app or in the draw.io VS Code extension.
+Architecture and ERD diagrams are in `docs/diagrams/` using [draw.io](https://app.diagrams.net/). Open `.drawio` files in the draw.io VS Code extension or directly at app.diagrams.net.

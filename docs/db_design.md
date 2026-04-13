@@ -135,7 +135,7 @@ Quiz configuration owned by exactly one module, linked through a ContentItem.
 | title | VARCHAR | |
 | pass_score_pct | INTEGER | Pass threshold as a percentage (0–100) |
 | time_limit_minutes | INTEGER | Nullable : no limit if null |
-| retake_price_myr | DECIMAL | Price per retake in MYR; Billplz integration pending |
+| retake_price_myr | DECIMAL | Nullable : price per retake in MYR; Billplz integration pending |
 | show_score_to_guide | BOOLEAN | Default: true |
 | created_at | TIMESTAMPTZ | Default: now() |
 | updated_at | TIMESTAMPTZ | |

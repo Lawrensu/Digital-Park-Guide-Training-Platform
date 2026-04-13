@@ -202,7 +202,7 @@ model Quiz {
     title             String        @map("title")
     passScorePct      Int           @map("pass_score_pct")
     timeLimitMinutes  Int?          @map("time_limit_minutes")
-    retakePriceMyr    Decimal       @map("retake_price_myr") @db.Decimal
+    retakePriceMyr    Decimal?      @map("retake_price_myr") @db.Decimal
     showScoreToGuide  Boolean       @default(true) @map("show_score_to_guide")
     createdAt         DateTime      @default(now()) @db.Timestamptz(6) @map("created_at")
     updatedAt         DateTime      @updatedAt @db.Timestamptz(6) @map("updated_at")
