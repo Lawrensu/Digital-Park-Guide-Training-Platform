@@ -17,7 +17,7 @@ Install the following before proceeding:
 
 **Mobile development only (Sprint 2):**
 - Android Studio (Android SDK for emulator)
-- iOS requires macOS — use Expo Go on a physical device if on Windows/Linux
+- iOS requires macOS : use Expo Go on a physical device if on Windows/Linux
 
 **Recommended editor:** VS Code with the following extensions:
 - ESLint
@@ -40,13 +40,13 @@ cd Digital-Park-Guide-Training-Platform
 Then check out the integration branch:
 
 ```bash
-git checkout develop
+git checkout dev
 ```
 
 Cut your own working branch from there:
 
 ```bash
-git checkout -b feature/your-feature develop
+git checkout -b dev-yourname dev
 ```
 
 ### 2. Install dependencies
@@ -76,11 +76,11 @@ JWT_ACCESS_SECRET=    ← generate one: node -e "console.log(require('crypto').r
 JWT_REFRESH_SECRET=   ← generate a different one using the same command
 ```
 
-The `DATABASE_URL` and `REDIS_URL` values are already pre-filled to match the Docker setup — leave them as-is unless you changed the Docker port (see step 4).
+The `DATABASE_URL` and `REDIS_URL` values are already pre-filled to match the Docker setup, leave them as-is unless you changed the Docker port (see step 4).
 
-AWS and SES keys can be left blank locally — uploads and email will not work but the rest of the API will.
+AWS and SES keys can be left blank locally, uploads and email will not work but the rest of the API will.
 
-**Also create `apps/api/.env`** — Prisma reads its database URL from here, not the root `.env`:
+**Also create `apps/api/.env`** : Prisma reads its database URL from here, not the root `.env`:
 
 **Windows:**
 ```powershell
@@ -153,7 +153,7 @@ Apps are available at:
 |-----|-----|
 | API | http://localhost:3000 |
 | Web | http://localhost:5173 |
-| Mobile | Expo DevTools — scan QR code with Expo Go app |
+| Mobile | Expo DevTools : scan QR code with Expo Go app |
 
 ---
 
@@ -170,16 +170,16 @@ Apps are available at:
 ## Branching Strategy
 
 ```
-main        ← production-ready, protected — no direct pushes
-develop     ← integration branch — all features merge here first
-feature/*   ← your working branch, cut from develop
+main        ← production-ready, Law merges into here when ready
+dev         ← integration branch, Law pulls from your branch into here
+dev-name    ← your personal working branch, cut from dev
 ```
 
 **Workflow:**
-1. Cut from `develop`: `git checkout -b feature/your-feature develop`
+1. Cut your branch from `dev`: `git checkout -b dev-yourname dev`
 2. Work and commit on your branch
-3. Open a pull request into `develop`, get at least one review
-4. Never push directly to `main`
+3. Push your branch and let Law know when your part is ready
+4. Law will review and merge it — you don't need to do anything else
 
 ---
 
