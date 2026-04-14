@@ -4,6 +4,7 @@ import helmet from 'helmet';
 
 // Cyndia — import your routers here as you build each domain
 // import authRouter from './routes/auth.js';
+// import stationsRouter from './routes/stations.js';
 
 const app = express();
 
@@ -13,5 +14,6 @@ app.use(express.json());
 
 // Cyndia — mount your routers here as you build each domain
 // app.use('/api/auth', authRouter);
+// app.use('/api/stations', stationsRouter);
 
 export default app;
