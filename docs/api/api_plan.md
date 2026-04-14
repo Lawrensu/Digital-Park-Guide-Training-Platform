@@ -28,7 +28,9 @@ apps/api/src/
 ├── app.js                    ← add your router imports/mounts here
 ├── lib/
 │   ├── prisma.js             ← import this to query the DB
-│   └── redis.js              ← import this for refresh token storage
+│   ├── redis.js              ← import this for refresh token storage
+│   ├── s3.js                 ← getPresignedUploadUrl, getPresignedDownloadUrl, uploadBuffer, deleteObject
+│   └── email.js              ← sendActivationEmail, sendRegistrationRejectedEmail, sendPasswordResetEmail
 ├── middleware/
 │   ├── validate.js           ← use on every POST and PATCH
 │   ├── requireAuth.js        ← use on protected routes
@@ -185,13 +187,14 @@ You need one endpoint: `POST /api/uploads/presign`. It receives `{ fileName, fil
 6. **content-items** — add, update, reorder, delete within a module
 7. **enrolments** — enrol, list, set due date
 8. **quizzes** — create, update, manage questions and options
-9. **quiz-attempts** — submit, list, get, grade (admin)
-10. **certifications** — issue, list, download (pre-signed URL), public verify
-11. **badges** — list definitions, get guide's earned badges
-12. **notifications** — get own inbox, mark read, send custom (admin)
-13. **iot-alerts** — list, get, flag; internal ingest (separate router, not under `/api/`)
-14. **uploads** — presign S3 upload URL
-15. **sync** — offline batch sync endpoint
+9. **quiz-attempts** — submit, list, get, grade (admin). For attempt_number > 1, check for a PAID payment row before creating.
+10. **payments** — initiate retake (BillPlz bill), BillPlz callback webhook (X-Signature verified)
+11. **certifications** — issue, list, download (pre-signed URL), public verify
+12. **badges** — list definitions, get guide's earned badges
+13. **notifications** — get own inbox, mark read, send custom (admin)
+14. **iot-alerts** — list, get, flag; internal ingest (separate router, not under `/api/`)
+15. **uploads** — presign S3 upload URL
+16. **sync** — offline batch sync endpoint
 
 ---
 
@@ -209,6 +212,10 @@ You need one endpoint: `POST /api/uploads/presign`. It receives `{ fileName, fil
 **Cert downloads** — never return the raw S3 key to the client. Always generate a pre-signed URL on the fly (15min expiry). Ask Law for the utility.
 
 **Offline sync** — mobile batches offline data into one POST on reconnect. Accept an array, use the device-side `completedAt` timestamp (not server time). Never reject an offline submission even if the module is archived.
+
+**Retake payment gate** — for `attempt_number > 1`, the quiz-attempts controller must check that a `PAID` Payment row exists for `(guideId, quizId)` with `quizAttemptId = null` before creating the attempt. On success, set `payment.quizAttemptId = newAttempt.id`. Return 402 `PAYMENT_REQUIRED` if not.
+
+**BillPlz callback** — `POST /api/payments/callback` is a webhook from BillPlz, not a client request. No JWT auth. Verify the `X-Signature` header (HMAC-SHA256) before trusting the payload. Always return 200 — BillPlz retries if it receives anything else.
 
 **Badge award** — badges are for park guides only. When the certification count for a guide meets a badge threshold, create a `UserBadge` row. Never create a `UserBadge` for a user with `role = ADMIN`. Enforce this check before the insert, not after.
 

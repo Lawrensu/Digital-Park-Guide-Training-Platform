@@ -1,37 +1,76 @@
 import prisma from '../lib/prisma.js';
 
-// Cyndia — implement each function below
-// all routes here are admin-only, RBAC is already enforced in routes/stations.js
 
 export const list = async (req, res) => {
-    // return all stations, ordered by name
-    // no pagination needed — station list is small and used for dropdowns
+	try {
+		const stations = await prisma.station.findMany({ orderBy: { name: 'asc' } });
+		return res.status(200).json({ success: true, data: stations });
+	} catch (err) {
+		return res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+	}
 };
 
 
 export const create = async (req, res) => {
-    // 1. create station with req.body.name
-    // 2. name must be unique — catch P2002 Prisma error and return 409
-    // 3. return 201 with created station
+	try {
+		const station = await prisma.station.create({ data: { name: req.body.name } });
+		return res.status(201).json({ success: true, data: station });
+	} catch (err) {
+		if (err.code === 'P2002') {
+			return res.status(409).json({ success: false, error: { code: 'CONFLICT', message: 'A station with that name already exists' } });
+		}
+		return res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+	}
 };
 
 
 export const getOne = async (req, res) => {
-    // 1. find station by req.params.id
-    // 2. return 404 if not found
+	try {
+		const station = await prisma.station.findUnique({ where: { id: req.params.id } });
+		if (!station) {
+			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Station not found' } });
+		}
+		return res.status(200).json({ success: true, data: station });
+	} catch (err) {
+		return res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+	}
 };
 
 
 export const update = async (req, res) => {
-    // 1. find station by req.params.id — return 404 if not found
-    // 2. update name
-    // 3. name must be unique — catch P2002 and return 409
+	try {
+		const existing = await prisma.station.findUnique({ where: { id: req.params.id } });
+		if (!existing) {
+			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Station not found' } });
+		}
+
+		const station = await prisma.station.update({
+			where: { id: req.params.id },
+			data: { name: req.body.name }
+		});
+		return res.status(200).json({ success: true, data: station });
+	} catch (err) {
+		if (err.code === 'P2002') {
+			return res.status(409).json({ success: false, error: { code: 'CONFLICT', message: 'A station with that name already exists' } });
+		}
+		return res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+	}
 };
 
 
 export const remove = async (req, res) => {
-    // station cannot be deleted while guides are assigned to it
-    // 1. count users with stationId === req.params.id
-    // 2. if count > 0, return 409 with message explaining guides must be reassigned first
-    // 3. otherwise delete and return 204
+	try {
+		const assignedCount = await prisma.user.count({ where: { stationId: req.params.id } });
+		if (assignedCount > 0) {
+			return res.status(409).json({ success: false, error: { code: 'CONFLICT', message: 'Cannot delete station while guides are assigned to it' } });
+		}
+
+		await prisma.station.delete({ where: { id: req.params.id } });
+		return res.status(204).send();
+	} catch (err) {
+		if (err.code === 'P2025') {
+			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Station not found' } });
+		}
+		return res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+	}
 };

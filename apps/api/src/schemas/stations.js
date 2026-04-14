@@ -1,11 +1,9 @@
 import { z } from 'zod';
 
-// Cyndia — fill in the shapes
-
 export const createStationSchema = z.object({
-    // TODO: name — required string
+	name: z.string().min(1)
 });
 
 export const updateStationSchema = z.object({
-    // TODO: name — optional string (partial update)
+	name: z.string().min(1)
 });

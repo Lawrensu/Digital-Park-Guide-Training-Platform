@@ -91,9 +91,23 @@ Stations are named SFC park locations (e.g., Semenggoh Nature Reserve, Gunung Mu
 ## Retake & Payment
 
 - No retake limit
-- Each retake requires payment via **Billplz** (FPX, sandbox available, flat RM1–1.50/transaction)
-- Retake price configurable per quiz by admin
-- Do not implement until Billplz integration is confirmed
+- Each retake (attempt_number > 1) requires a successful BillPlz payment
+- Retake price configurable per quiz by admin via `retake_price_myr` (nullable — null means price not yet set)
+- Payment gateway: **BillPlz** (FPX, Malaysia)
+  - Sandbox: `https://www.billplz-sandbox.com/api/v3`
+  - Production: `https://www.billplz.com/api/v3`
+
+**Flow:**
+1. Guide initiates retake → `POST /api/payments/initiate { quizId }`
+2. Server checks: quiz has price, guide has at least one prior attempt, no existing PENDING payment
+3. Server creates BillPlz bill, stores `Payment` row (status `PENDING`)
+4. Returns `{ url }` — frontend redirects guide to BillPlz
+5. Guide completes FPX payment on BillPlz
+6. BillPlz calls `POST /api/payments/callback` (webhook)
+7. Server verifies X-Signature: `HMAC-SHA256(key=BILLPLZ_X_SIGNATURE, data="<billId>|<paid>")`
+8. Payment status updated to `PAID` or `FAILED`
+9. Guide returns to frontend — retake is now unlocked
+10. `POST /api/quiz-attempts` checks for a `PAID` payment with `quiz_attempt_id = null` before creating attempt; on success links the payment to the new attempt
 
 ---
 
@@ -208,5 +222,5 @@ Every route falls into one of:
 
 | Item | Status |
 |------|--------|
-| Billplz integration | Confirmed as payment gateway. Implementation deferred — do not build until explicitly instructed. `retake_price_myr` on `Quiz` is nullable until active. |
+| Billplz integration | Confirmed as payment gateway. `retake_price_myr` on `Quiz` is nullable until active. |
 | Badge threshold values | Count-based confirmed. Specific threshold values (e.g. 3 modules = badge) are set by admin per badge via the dashboard — not hardcoded. |

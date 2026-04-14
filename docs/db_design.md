@@ -22,6 +22,7 @@ DetectionType         PLANT_DAMAGE | WILDLIFE_DISTURBANCE
 AlertStatus           PENDING | CONFIRMED | FALSE_DETECTION
 DeviceStatus          ACTIVE | INACTIVE | DECOMMISSIONED
 NotificationType      REGISTRATION | IOT_ALERT | MODULE_PUBLISHED | DEADLINE_REMINDER | QUIZ_RESULT | CERTIFICATE_APPROVED | CUSTOM
+PaymentStatus         PENDING | PAID | FAILED
 ```
 
 ---
@@ -220,6 +221,25 @@ One row per attempt. Retakes append new rows — no overwriting.
 
 ---
 
+### `Payment`
+
+Created when a guide initiates a quiz retake. BillPlz webhook updates the status. The quiz attempt is linked back after it is created.
+
+| Column | Type | Notes |
+|--------|------|-------|
+| id | UUID PK | |
+| quiz_id | UUID FK → Quiz.id | |
+| user_id | UUID FK → User.id | |
+| quiz_attempt_id | UUID FK → QuizAttempt.id | Nullable — set after the retake attempt is created |
+| amount | DECIMAL(10,2) | Amount in MYR |
+| currency | VARCHAR(3) | Default: MYR |
+| billplz_bill_id | VARCHAR UNIQUE | BillPlz bill identifier |
+| status | PaymentStatus | Default: PENDING |
+| created_at | TIMESTAMPTZ | Default: now() |
+| updated_at | TIMESTAMPTZ | Auto-updated |
+
+---
+
 ### `QuestionAttempt`
 
 One row per question per quiz attempt. MCQ/TrueFalse auto-scored; Short/Long scored by admin.
@@ -389,6 +409,6 @@ User ──< Notification                                 (user receives many no
 - `submitted_at` on `QuizAttempt` uses the device-side timestamp to support last-write-wins conflict resolution during offline sync.
 - `attempt_number` on `QuizAttempt` increments per `(guide_id, quiz_id)` pair and this is enforced at the application layer before insert. There is no upper bound on `attempt_number` — there is no retake limit, no cooldown period, and no admin reset mechanism. Guides may retake as many times as they are willing to pay.
 - `DeviceAssignment.unassigned_at = null` means the assignment is currently active. Only one active assignment per device should exist at any time and this is enforced at the application layer.
-- Billplz payment integration is deferred. When implemented, a `Payment` table will reference a specific `QuizAttempt.id` to record which retake was paid for.
+- BillPlz payment integration is active. A `Payment` row is created (status `PENDING`) when a guide initiates a retake. On BillPlz webhook confirmation the status updates to `PAID`. When the guide creates a new `QuizAttempt`, the `PAID` payment row is linked via `quiz_attempt_id`. The application layer must enforce that `attempt_number > 1` requires a `PAID` payment row with `quiz_attempt_id = null`.
 - `UserBadge` records must only be created for users with `role = GUIDE`. Admin accounts do not earn badges — admin authorisation is assumed by role assignment. This is enforced at the application layer.
 - `station_id` on `User` is guides-only. Admin accounts are never assigned to a station. The application layer must enforce this — do not set `station_id` when creating admin accounts.
