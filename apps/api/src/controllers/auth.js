@@ -6,6 +6,7 @@ import crypto from 'crypto'; //used to hash the reset tokens
 
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
 const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
+
 const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex');
 
 // Cyndia — implement each function below
@@ -22,12 +23,12 @@ export const login = async (req, res) => {
 
         // 1. find user by email
         const user = await prisma.user.findUnique({ where: { email }});
-        if (!user || !user.password_hash){
+        if (!user || !user.passwordHash){
             return res.status(401).json({ success: false, error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password'}});
         }
 
         // 2. check password with bcrypt
-        const isMatch = await bcrypt.compare(password, user.password_hash);
+        const isMatch = await bcrypt.compare(password, user.passwordHash);
         if (!isMatch) {
             return res.status(401).json({ success: false, error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password'}});
         }
@@ -123,7 +124,7 @@ export const setPassword = async (req, res) => {
         // we hash the incoming token to match what's stored in the DB securely
         const tokenHash = hashToken(token);
         const resetRecord = await prisma.passwordResetToken.findFirst({
-            where: { token_hash: tokenHash, expires_at: { gt: new Date()}}
+            where: { tokenHash: tokenHash, expiresAt: { gt: new Date()}}
         });
 
         if (!resetRecord) {
@@ -135,8 +136,8 @@ export const setPassword = async (req, res) => {
 
         // 3. update user: set password_hash, set status ACTIVE
         await prisma.user.update({
-            where: { id: resetRecord.user_id },
-            data: { password_hash: hashedPassword, status: 'ACTIVE' }
+            where: { id: resetRecord.userId },
+            data: { passwordHash: hashedPassword, status: 'ACTIVE' }
         });
 
         // 4. delete the PasswordResetToken row
@@ -167,9 +168,9 @@ export const resendActivation = async (req, res) => {
 
         await prisma.passwordResetToken.create({
             data: {
-                user_id: user.id,
-                token_hash: tokenHash,
-                expires_at: new Date(Date.now() + 24* 60* 60* 1000) //24 hours
+                userId: user.id,
+                tokenHash: tokenHash,
+                expiresAt: new Date(Date.now() + 24* 60* 60* 1000) //24 hours
             }
         });
 
@@ -195,9 +196,9 @@ export const forgotPassword = async (req, res) => {
 
             await prisma.passwordResetToken.create({
                 data: {
-                    user_id: user.id,
-                    token_hash: tokenHash,
-                    expires_at: new Date(Date.now() + 24* 60* 60* 1000)
+                    userId: user.id,
+                    tokenHash: tokenHash,
+                    expiresAt: new Date(Date.now() + 24* 60* 60* 1000)
                 }
             });
 
@@ -217,7 +218,7 @@ export const resetPassword = async (req, res) => {
 
         // 1. find PasswordResetToken by token, check not expired
         const tokenHash = hashToken(token);
-        const resetRecord = await prisma.passwordResetToken.findFirst({ where: { token_hash: tokenHash, expires_at: { gt: new Date() }}});
+        const resetRecord = await prisma.passwordResetToken.findFirst({ where: { tokenHash: tokenHash, expiresAt: { gt: new Date() }}});
 
         if (!resetRecord) {
             return res.status(400).json({ success: false, error: { code: 'INVALID_TOKEN', message: 'Token is invalid or has expired'}});
@@ -228,8 +229,8 @@ export const resetPassword = async (req, res) => {
 
         // 3. update password_hash (No status change here since they are already ACTIVE)
         await prisma.user.update({
-            where: { id: resetRecord.user_id },
-            data: { password_hash: hashedPassword }
+            where: { id: resetRecord.userId },
+            data: { passwordHash: hashedPassword }
         });
 
         // 4. delete the PasswordResetToken row
