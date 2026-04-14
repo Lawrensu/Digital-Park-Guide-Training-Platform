@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../services/AuthContext';
 import { FONTS } from '../theme/fonts';
 import { fetchQuiz, submitQuizResult } from '../services/apiService';
+import { sendQuizResultNotification } from '../services/notificationService';
 
 const PASS_THRESHOLD = 70; // %
 
@@ -57,9 +58,12 @@ export default function QuizScreen({ route, navigation }) {
       user.id, course.id, quiz.id, correct, quiz.questions.length, selectedAnswers
     );
 
+    const passed = result.percentage >= 70;
     setScore({ correct, total: quiz.questions.length, percentage: result.percentage });
     setSubmitted(true);
     setSubmitting(false);
+    // Fire local push notification with quiz result
+    sendQuizResultNotification(course.title, correct, quiz.questions.length, passed).catch(() => {});
   };
 
   const resetQuiz = () => {

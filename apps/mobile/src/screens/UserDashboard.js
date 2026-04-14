@@ -115,7 +115,7 @@ export default function UserDashboard({ navigation }) {
             <View style={{ flexDirection: 'row', gap: 8 }}>
               {/* Notification bell */}
               <View style={{ position: 'relative' }}>
-                <TouchableOpacity style={{
+                <TouchableOpacity onPress={() => navigation.navigate("Notifications")} style={{
                   width: 40, height: 40, borderRadius: 20,
                   backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center',
                 }}>
