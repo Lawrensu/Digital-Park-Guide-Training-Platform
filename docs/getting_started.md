@@ -121,9 +121,30 @@ cd apps/api
 pnpm prisma migrate dev
 ```
 
-This creates all 17 tables in your local database. You only need to run this once on first setup, and again whenever someone pushes a new migration.
+This creates all 18 tables in your local database. You only need to run this once on first setup, and again whenever someone pushes a new migration.
 
-### 6. Start the development servers
+### 6. Seed the database
+
+Before seeding, open the root `.env` and fill in the primary admin credentials:
+
+```
+SEED_ADMIN_EMAIL=your@email.com
+SEED_ADMIN_USERNAME=YourAdminUsername
+SEED_ADMIN_PASSWORD=YourSecurePassword
+```
+
+Then run:
+
+```bash
+cd apps/api
+pnpm prisma db seed
+```
+
+This creates 4 stations, your primary admin account, 4 test admins, and 10 test guides. The test password for all seeded test accounts (not your primary admin) is `TestPass123!`.
+
+You only need to run this once. Re-running is safe — it uses upsert so it won't create duplicates.
+
+### 7. Start the development servers
 
 **Sprint 1 — API + Web only:**
 
@@ -161,9 +182,9 @@ Apps are available at:
 
 | Role | Must run | Can skip |
 |------|----------|----------|
-| API dev (Cyndia) | Steps 1–5, `apps/api` dev server | Web, Mobile |
-| Web dev (Elyn) | Steps 1–5, `apps/web` dev server | Mobile, Android Studio |
-| Mobile dev (Xavier) | Steps 1–6 all, Android Studio | — |
+| API dev (Cyndia) | Steps 1–6, `apps/api` dev server | Web, Mobile |
+| Web dev (Elyn) | Steps 1–6, `apps/web` dev server | Mobile, Android Studio |
+| Mobile dev (Xavier) | Steps 1–7 all, Android Studio | — |
 
 ---
 
@@ -194,6 +215,9 @@ cd apps/api && pnpm prisma studio
 
 # Apply new migrations after pulling changes that include one
 cd apps/api && pnpm prisma migrate dev
+
+# Seed the database (first-time setup, or after a full DB wipe)
+cd apps/api && pnpm prisma db seed
 
 # Run linting across all apps
 pnpm lint

@@ -34,11 +34,14 @@ apps/api/src/
 │   ├── requireAuth.js        ← use on protected routes
 │   └── requireRole.js        ← use on role-restricted routes
 ├── routes/
-│   └── auth.js               ← routes wired, you fill in schemas + controllers
+│   ├── auth.js               ← routes wired, you fill in schemas + controllers
+│   └── stations.js           ← routes wired, you fill in schemas + controllers
 ├── controllers/
-│   └── auth.js               ← your first task, steps are commented inside
+│   ├── auth.js               ← your first task, steps are commented inside
+│   └── stations.js           ← steps are commented inside
 └── schemas/
-    └── auth.js               ← your first task, define the Zod shapes
+    ├── auth.js               ← your first task, define the Zod shapes
+    └── stations.js           ← Zod stubs ready for you to fill
 ```
 
 For every new domain you build, add three files: `routes/<domain>.js`, `controllers/<domain>.js`, `schemas/<domain>.js`. Then wire the router into `app.js`.

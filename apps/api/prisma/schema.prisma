@@ -1,6 +1,5 @@
 generator client {
-    provider = "prisma-client"
-    output   = "../generated/prisma"
+    provider = "prisma-client-js"
 }
 
 datasource db {
@@ -90,6 +89,16 @@ enum NotificationType {
 }
 
 
+model Station {
+    id          String   @id @default(uuid()) @map("id")
+    name        String   @unique @map("name")
+    createdAt   DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+    guides      User[]
+
+    @@map("station")
+}
+
 model RegistrationApplication {
     id                String            @id @default(uuid()) @map("id")
     firstName         String            @map("first_name")
@@ -120,12 +129,14 @@ model User {
     passwordHash              String?                   @map("password_hash")
     icPassportNumber          String?                   @map("ic_passport_number")
     status                    UserStatus                @default(INACTIVE) @map("status")
+    stationId                 String?                   @map("station_id")
     startDate                 DateTime?                 @db.Date @map("start_date")
     createdAt                 DateTime                  @default(now()) @db.Timestamptz(6) @map("created_at")
     updatedAt                 DateTime                  @updatedAt @db.Timestamptz(6) @map("updated_at")
 
     application               RegistrationApplication?  @relation("ApplicationUser", fields: [applicationId], references: [id])
     reviewedApplications      RegistrationApplication[] @relation("ApplicationReviewer")
+    station                   Station?                  @relation(fields: [stationId], references: [id])
     passwordResetTokens       PasswordResetToken[]
     createdModules            Module[]                  @relation("ModuleCreator")
     enrolments                Enrolment[]
