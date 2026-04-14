@@ -1,0 +1,234 @@
+/* guidemodule.css */
+:root {
+  --gm-primary-color: #2E7D32; /* Park Guide Green */
+  --gm-primary-hover: #1B5E20;
+  --gm-bg-color: #F4F7F6;
+  --gm-white: #FFFFFF;
+  --gm-text-main: #333333;
+  --gm-text-sub: #666666;
+  --gm-border-color: #E0E0E0;
+  --gm-success-bg: #E8F5E9;
+  --gm-success-text: #2E7D32;
+  --gm-warning-bg: #FFF3E0;
+  --gm-warning-text: #E65100;
+  --gm-info-bg: #E3F2FD;
+  --gm-info-text: #1565C0;
+  --gm-gray-bg: #F5F5F5;
+}
+
+.gm-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--gm-bg-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.gm-main {
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* Header */
+.gm-page-title {
+  font-size: 1.75rem;
+  color: var(--gm-text-main);
+  margin: 0 0 1.5rem 0;
+  font-weight: 700;
+}
+
+/* Stats Row */
+.gm-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.gm-stat-box {
+  background: var(--gm-white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-top: 4px solid var(--gm-primary-color);
+}
+
+.gm-stat-num {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gm-primary-color);
+  margin-bottom: 0.25rem;
+}
+
+.gm-stat-label {
+  font-size: 0.9rem;
+  color: var(--gm-text-sub);
+  font-weight: 500;
+}
+
+/* Module Grid */
+.gm-module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.gm-card {
+  background: var(--gm-white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid var(--gm-border-color);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gm-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+/* Card Header */
+.gm-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.gm-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gm-text-main);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Status Badges */
+.gm-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  margin-left: 0.5rem;
+}
+
+.gm-badge.track { background-color: var(--gm-success-bg); color: var(--gm-success-text); }
+.gm-badge.progress { background-color: var(--gm-info-bg); color: var(--gm-info-text); }
+.gm-badge.completed { background-color: var(--gm-success-bg); color: var(--gm-success-text); }
+.gm-badge.late { background-color: #FFEBEE; color: #D32F2F; }
+.gm-badge.not-started { background-color: var(--gm-gray-bg); color: #666; }
+
+/* Progress Bar */
+.gm-progress-container {
+  margin-bottom: 1rem;
+}
+
+.gm-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--gm-text-sub);
+  margin-bottom: 0.35rem;
+}
+
+.gm-bar-bg {
+  width: 100%;
+  height: 6px;
+  background-color: #E0E0E0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.gm-bar-fill {
+  height: 100%;
+  background-color: var(--gm-primary-color);
+  border-radius: 3px;
+}
+
+/* Card Info */
+.gm-info-row {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--gm-text-sub);
+  margin-bottom: 1.5rem;
+}
+
+.gm-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* Buttons */
+.gm-card-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.gm-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+.gm-btn-continue {
+  background-color: var(--gm-primary-color);
+  color: var(--gm-white);
+}
+
+.gm-btn-continue:hover {
+  background-color: var(--gm-primary-hover);
+}
+
+.gm-btn-view {
+  background-color: transparent;
+  border: 1px solid var(--gm-primary-color);
+  color: var(--gm-primary-color);
+}
+
+.gm-btn-view:hover {
+  background-color: var(--gm-success-bg);
+}
+
+.gm-btn-enrol {
+  background-color: var(--gm-white);
+  border: 1px solid var(--gm-border-color);
+  color: var(--gm-text-main);
+}
+
+.gm-btn-enrol:hover {
+  background-color: #f0f0f0;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .gm-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .gm-main {
+    margin-left: 0;
+    padding: 1rem;
+  }
+  
+  .gm-module-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,215 @@
+/* guidequizlist.css */
+:root {
+  --gql-primary-color: #2E7D32; /* Park Guide Green */
+  --gql-primary-hover: #1B5E20;
+  --gql-bg-color: #F4F7F6;
+  --gql-white: #FFFFFF;
+  --gql-text-main: #333333;
+  --gql-text-sub: #666666;
+  --gql-border-color: #E0E0E0;
+  --gql-blue-bg: #E3F2FD;
+  --gql-blue-text: #1565C0;
+  --gql-orange-bg: #FFF3E0;
+  --gql-orange-text: #E65100;
+  --gql-green-bg: #E8F5E9;
+  --gql-green-text: #2E7D32;
+}
+
+.gql-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--gql-bg-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.gql-main {
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* Header */
+.gql-page-title {
+  font-size: 1.75rem;
+  color: var(--gql-text-main);
+  margin: 0 0 1.5rem 0;
+  font-weight: 700;
+}
+
+/* Stats Grid */
+.gql-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.gql-stat-card {
+  background: var(--gql-white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-top: 4px solid transparent;
+}
+
+/* Specific Stat Colors */
+.gql-stat-card.upcoming { border-top-color: var(--gql-blue-text); }
+.gql-stat-card.pending { border-top-color: var(--gql-orange-text); }
+.gql-stat-card.completed { border-top-color: var(--gql-primary-color); }
+.gql-stat-card.total { border-top-color: #607D8B; }
+
+.gql-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background-color: #f5f5f5;
+}
+
+.gql-stat-info h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gql-text-main);
+}
+
+.gql-stat-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--gql-text-sub);
+}
+
+/* Quiz Table Container */
+.gql-table-container {
+  background: var(--gql-white);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  overflow: hidden; /* For rounded corners */
+}
+
+.gql-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.gql-table th {
+  padding: 1.25rem 1.5rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--gql-text-sub);
+  background-color: #FAFAFA;
+  border-bottom: 1px solid var(--gql-border-color);
+  font-weight: 700;
+}
+
+.gql-table td {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  color: var(--gql-text-main);
+  vertical-align: middle;
+}
+
+.gql-table tr:last-child td {
+  border-bottom: none;
+}
+
+.gql-table tr:hover {
+  background-color: #F9F9F9;
+}
+
+.gql-quiz-title {
+  font-weight: 600;
+  font-size: 1rem;
+  display: block;
+}
+
+.gql-module-name {
+  font-size: 0.85rem;
+  color: var(--gql-text-sub);
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Status Badges */
+.gql-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.gql-badge.upcoming {
+  background-color: var(--gql-blue-bg);
+  color: var(--gql-blue-text);
+}
+
+.gql-badge.pending {
+  background-color: var(--gql-orange-bg);
+  color: var(--gql-orange-text);
+}
+
+.gql-badge.passed {
+  background-color: var(--gql-green-bg);
+  color: var(--gql-green-text);
+}
+
+/* Buttons */
+.gql-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+  transition: all 0.2s;
+  border: none;
+}
+
+.gql-btn-start {
+  background-color: var(--gql-primary-color);
+  color: var(--gql-white);
+}
+
+.gql-btn-start:hover {
+  background-color: var(--gql-primary-hover);
+}
+
+.gql-btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--gql-border-color);
+  color: var(--gql-text-main);
+}
+
+.gql-btn-outline:hover {
+  border-color: var(--gql-text-sub);
+  background-color: #f5f5f5;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .gql-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .gql-main {
+    margin-left: 0;
+    padding: 1rem;
+  }
+  
+  .gql-table-container {
+    overflow-x: auto;
+  }
+}

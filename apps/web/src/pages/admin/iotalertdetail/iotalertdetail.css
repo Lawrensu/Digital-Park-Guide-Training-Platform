@@ -1,0 +1,371 @@
+/* iotalertdetail.css */
+
+/* --- Layout & Page Structure --- */
+.iad-page-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+
+.iad-main-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* --- Topbar --- */
+.iad-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 64px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.iad-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.iad-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 6px 12px;
+  width: 300px;
+}
+
+.iad-search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.iad-user-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.iad-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  color: #6b7280;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.iad-icon-btn:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.iad-notification-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  border: 1px solid #ffffff;
+}
+
+.iad-avatar {
+  width: 36px;
+  height: 36px;
+  background-color: #e5e7eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* --- Main Content Area --- */
+.iad-content-area {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.iad-back-btn {
+  background: none;
+  border: none;
+  color: #4b5563;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  width: fit-content;
+}
+
+.iad-back-btn:hover {
+  color: #111827;
+  text-decoration: underline;
+}
+
+/* --- Details Section --- */
+.iad-details-section {
+  margin-bottom: 2.5rem;
+}
+
+.iad-page-heading {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.5rem;
+  color: #111827;
+  font-weight: 600;
+}
+
+.iad-details-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* Evidence Frame */
+.iad-evidence-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.iad-evidence-frame {
+  width: 100%;
+  height: 400px;
+  background-color: #000;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  /* Green border as per prompt */
+  border: 4px solid #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iad-camera-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(255, 255, 255, 0.5);
+  z-index: 10;
+}
+
+.iad-image-placeholder {
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle, #374151 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-color: #1f2937;
+  opacity: 0.5;
+}
+
+/* Metadata Card */
+.iad-info-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  border-top: 4px solid #10b981; /* Matching the green theme */
+}
+
+.iad-card-title {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  color: #111827;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 0.75rem;
+}
+
+.iad-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.iad-label {
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.iad-value {
+  font-size: 0.95rem;
+  color: #111827;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Confidence Badge */
+.iad-confidence-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.iad-high {
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.iad-actions-divider {
+  height: 1px;
+  background-color: #f3f4f6;
+  margin: 1.5rem 0;
+}
+
+.iad-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.iad-btn-confirm {
+  width: 100%;
+  padding: 12px;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.iad-btn-confirm:hover {
+  background-color: #059669;
+}
+
+.iad-btn-false {
+  width: 100%;
+  padding: 12px;
+  background-color: #ffffff;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.iad-btn-false:hover {
+  background-color: #fef2f2;
+}
+
+/* --- History Section --- */
+.iad-history-section {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
+}
+
+.iad-section-title {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  color: #111827;
+  font-weight: 600;
+}
+
+.iad-table-container {
+  overflow-x: auto;
+}
+
+.iad-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.iad-table thead {
+  background-color: #f9fafb;
+}
+
+.iad-table th {
+  text-align: left;
+  padding: 12px 16px;
+  color: #6b7280;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.iad-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+}
+
+.iad-table tr:last-child td {
+  border-bottom: none;
+}
+
+.iad-table tr:hover {
+  background-color: #f9fafb;
+}
+
+.iad-type-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.iad-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+}
+
+/* Status Badges in Table */
+.iad-status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.iad-confirmed {
+  background-color: #ecfdf5;
+  color: #059669;
+}
+
+.iad-pending {
+  background-color: #fff7ed;
+  color: #c2410c;
+}
+
+.iad-false {
+  background-color: #fef2f2;
+  color: #dc2626;
+}

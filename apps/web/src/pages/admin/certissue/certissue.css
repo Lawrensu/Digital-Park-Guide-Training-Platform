@@ -1,0 +1,423 @@
+/* certissue.css */
+
+/* --- Layout & Page Structure --- */
+.ci-page-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+
+.ci-main-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* --- Topbar --- */
+.ci-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 64px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.ci-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.ci-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 6px 12px;
+  width: 300px;
+}
+
+.ci-search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.ci-user-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ci-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  color: #6b7280;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.ci-icon-btn:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.ci-notification-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  border: 1px solid #ffffff;
+}
+
+.ci-avatar {
+  width: 36px;
+  height: 36px;
+  background-color: #e5e7eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* --- Main Content Area --- */
+.ci-content-area {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.ci-back-btn {
+  background: none;
+  border: none;
+  color: #4b5563;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  width: fit-content;
+}
+
+.ci-back-btn:hover {
+  color: #111827;
+  text-decoration: underline;
+}
+
+.ci-layout-grid {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+/* --- Left Column: Form --- */
+.ci-form-column {
+  flex: 1;
+  max-width: 600px;
+}
+
+.ci-alert-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+}
+
+.ci-alert-icon {
+  background-color: #10b981;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.ci-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  padding: 2rem;
+}
+
+.ci-card-title {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  color: #111827;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+.ci-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.ci-form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.ci-form-group input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #374151;
+  transition: border-color 0.2s;
+}
+
+.ci-form-group input:focus {
+  outline: none;
+  border-color: #2E7D32;
+  box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.1);
+}
+
+.ci-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.ci-half {
+  flex: 1;
+}
+
+.ci-form-actions {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.ci-btn-primary {
+  padding: 0.75rem 1.5rem;
+  background-color: #2E7D32;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.ci-btn-primary:hover {
+  background-color: #1b5e20;
+}
+
+.ci-btn-secondary {
+  padding: 0.75rem 1.5rem;
+  background-color: transparent;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.ci-btn-secondary:hover {
+  background-color: #f3f4f6;
+}
+
+/* --- Right Column: Preview --- */
+.ci-preview-column {
+  width: 450px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 2rem;
+}
+
+.ci-preview-header {
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+/* Certificate Paper Design */
+.ci-certificate-paper {
+  background-color: #fff;
+  width: 100%;
+  /* Aspect ratio for a certificate */
+  aspect-ratio: 210 / 297; 
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ci-cert-border {
+  width: 100%;
+  height: 100%;
+  border: 5px double #2E7D32;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  position: relative;
+}
+
+.ci-cert-header {
+  margin-bottom: 20px;
+}
+
+.ci-cert-logo {
+  margin-bottom: 10px;
+}
+
+.ci-logo-circle {
+  width: 60px;
+  height: 60px;
+  background-color: #2E7D32;
+  color: white;
+  border-radius: 50%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.ci-cert-title {
+  font-family: 'Times New Roman', serif;
+  font-size: 2rem;
+  color: #2E7D32;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 10px;
+  display: inline-block;
+}
+
+.ci-cert-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.ci-cert-intro, .ci-cert-text {
+  font-family: 'Times New Roman', serif;
+  font-size: 1.1rem;
+  color: #555;
+  margin: 0;
+}
+
+.ci-cert-name {
+  font-family: 'Times New Roman', serif;
+  font-size: 1.8rem;
+  color: #111827;
+  margin: 10px 0;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.ci-cert-course {
+  font-family: 'Times New Roman', serif;
+  font-size: 1.4rem;
+  color: #2E7D32;
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+.ci-cert-company {
+  font-family: 'Times New Roman', serif;
+  font-size: 1.1rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+.ci-cert-footer {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.ci-cert-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30%;
+}
+
+.ci-date-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.ci-date-value {
+  font-family: 'Times New Roman', serif;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #111827;
+}
+
+.ci-cert-signature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 40%;
+}
+
+.ci-signature-line {
+  width: 100%;
+  height: 40px;
+  border-bottom: 1px solid #374151;
+  margin-bottom: 8px;
+}
+
+.ci-signer-name {
+  font-family: 'Times New Roman', serif;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #111827;
+  margin: 0;
+}
+
+.ci-signer-title {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0;
+}

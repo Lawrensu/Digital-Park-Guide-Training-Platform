@@ -1,0 +1,230 @@
+/* guideviewcert.css */
+:root {
+  --gvc-primary-color: #2E7D32; /* Park Guide Green */
+  --gvc-bg-color: #F4F7F6;
+  --gvc-white: #FFFFFF;
+  --gvc-text-main: #333333;
+  --gvc-text-sub: #666666;
+  --gvc-border-color: #E0E0E0;
+  --gvc-gold: #C5A059; /* Gold accent for certificate preview */
+  --gvc-success-bg: #E8F5E9;
+  --gvc-success-text: #2E7D32;
+}
+
+.gvc-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--gvc-bg-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.gvc-main {
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* Grid Layout for Split View */
+.gvc-layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr; /* Left (Details) is wider than Right (Preview) */
+  gap: 2rem;
+}
+
+/* Left Column: Details */
+.gvc-details-section h1 {
+  font-size: 1.75rem;
+  color: var(--gvc-text-main);
+  margin: 0 0 1.5rem 0;
+  font-weight: 700;
+}
+
+.gvc-details-card {
+  background: var(--gvc-white);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.gvc-detail-row {
+  display: flex;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 1rem 0;
+}
+
+.gvc-detail-row:last-child {
+  border-bottom: none;
+}
+
+.gvc-label {
+  width: 180px;
+  font-size: 0.9rem;
+  color: var(--gvc-text-sub);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.gvc-value {
+  font-size: 0.95rem;
+  color: var(--gvc-text-main);
+  font-weight: 500;
+}
+
+.gvc-badge-active {
+  display: inline-block;
+  background-color: var(--gvc-success-bg);
+  color: var(--gvc-success-text);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Right Column: Preview & Others */
+.gvc-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Certificate Preview Box */
+.gvc-preview-card {
+  background: var(--gvc-white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Simulating the paper certificate look */
+.gvc-cert-visual {
+  border: 2px solid var(--gvc-gold);
+  padding: 2rem;
+  width: 100%;
+  height: 300px;
+  background-image: radial-gradient(#fff 20%, #fcfcfc 20%);
+  background-size: 10px 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--gvc-text-main);
+}
+
+.gvc-cert-visual::before {
+  content: '';
+  position: absolute;
+  top: 5px; left: 5px; right: 5px; bottom: 5px;
+  border: 1px solid var(--gvc-gold);
+  pointer-events: none;
+}
+
+.gvc-cert-visual h3 {
+  margin: 0 0 1rem 0;
+  color: var(--gvc-primary-color);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 1rem;
+}
+
+.gvc-cert-visual h2 {
+  margin: 0 0 0.5rem 0;
+  font-family: 'Times New Roman', serif;
+  font-size: 1.5rem;
+  color: var(--gvc-text-main);
+}
+
+.gvc-cert-visual .cert-icon {
+  font-size: 3rem;
+  margin: 1rem 0;
+  color: var(--gvc-gold);
+}
+
+.gvc-cert-visual p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--gvc-text-sub);
+}
+
+/* Other Certifications List */
+.gvc-other-section h3 {
+  font-size: 1.1rem;
+  color: var(--gvc-text-main);
+  margin: 0 0 1rem 0;
+  border-bottom: 2px solid var(--gvc-primary-color);
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.gvc-other-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: var(--gvc-white);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.gvc-other-item {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gvc-other-item:last-child {
+  border-bottom: none;
+}
+
+.gvc-other-item:hover {
+  background-color: #f9f9f9;
+}
+
+.gvc-other-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.gvc-other-icon {
+  width: 32px;
+  height: 32px;
+  background: #FFF8E1;
+  color: #FBC02D;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.gvc-other-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--gvc-text-main);
+}
+
+.gvc-arrow {
+  color: #ccc;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .gvc-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .gvc-main {
+    margin-left: 0;
+    padding: 1rem;
+  }
+}

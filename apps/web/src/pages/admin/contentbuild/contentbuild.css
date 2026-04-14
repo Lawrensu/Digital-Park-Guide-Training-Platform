@@ -1,0 +1,359 @@
+/* contentbuild.css */
+
+/* --- Layout & Page Structure --- */
+.cb-page-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+
+.cb-main-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* --- Topbar --- */
+.cb-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 64px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cb-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.cb-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 6px 12px;
+  width: 300px;
+}
+
+.cb-search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.cb-user-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cb-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  color: #6b7280;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.cb-icon-btn:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.cb-notification-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  border: 1px solid #ffffff;
+}
+
+.cb-avatar {
+  width: 36px;
+  height: 36px;
+  background-color: #e5e7eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* --- Main Content Area --- */
+.cb-content-area {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.cb-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.cb-back-btn {
+  background: none;
+  border: none;
+  color: #4b5563;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.cb-back-btn:hover {
+  color: #111827;
+  text-decoration: underline;
+}
+
+.cb-item-count {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* --- Layout Grid --- */
+.cb-layout-grid {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+/* --- Card Styles (Reusing concept from your moduleedit) --- */
+.cb-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+/* --- Left Column: List --- */
+.cb-list-column {
+  flex: 1;
+}
+
+.cb-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  background-color: #f9fafb;
+}
+
+.cb-card-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+.cb-reorder-link {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.cb-list-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.cb-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.15s;
+}
+
+.cb-list-item:last-child {
+  border-bottom: none;
+}
+
+.cb-list-item:hover {
+  background-color: #fafafa;
+}
+
+.cb-item-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.cb-item-number {
+  color: #9ca3af;
+  font-size: 0.9rem;
+  margin-top: 2px;
+  min-width: 20px;
+}
+
+.cb-item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cb-item-title {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #111827;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* --- Badges --- */
+.cb-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  width: fit-content;
+  color: white;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.cb-badge-text { background-color: #2196F3; }
+.cb-badge-image { background-color: #4CAF50; }
+.cb-badge-video { background-color: #F44336; }
+.cb-badge-infographic { background-color: #FF9800; }
+.cb-badge-quiz { background-color: #9C27B0; }
+
+/* --- Actions --- */
+.cb-item-actions {
+  display: flex;
+  gap: 6px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.cb-list-item:hover .cb-item-actions {
+  opacity: 1;
+}
+
+.cb-action-btn {
+  border: none;
+  background: transparent;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.cb-btn-edit:hover {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.cb-btn-delete:hover {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+/* --- Right Column: Sidebar --- */
+.cb-sidebar-column {
+  width: 320px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+}
+
+/* Adding the green left border to match "card-left-green" style */
+.cb-card-sidebar {
+  border-left: 5px solid #2E7D32; 
+  padding: 1.5rem;
+}
+
+.cb-sidebar-title {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: #111827;
+}
+
+.cb-sidebar-subtitle {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.cb-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+.cb-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #374151;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cb-option-btn:hover {
+  border-color: #2E7D32;
+  color: #2E7D32;
+  background-color: #f0fdf4;
+}
+
+.cb-sidebar-footer {
+  padding-top: 1.5rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.cb-btn-secondary-full {
+  width: 100%;
+  padding: 10px;
+  background-color: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #374151;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cb-btn-secondary-full:hover {
+  background-color: #f9fafb;
+}

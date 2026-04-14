@@ -1,0 +1,145 @@
+/* ─────────────────────────────────────────
+   TYPOGRAPHY
+───────────────────────────────────────── */
+.text-display { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 36px; }
+.text-h1      { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 30px; }
+.text-h2      { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 24px; }
+.text-h3      { font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 20px; }
+.text-h4      { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 16px; }
+.text-body-large   { font-family: 'Source Serif 4', serif; font-weight: 400; font-size: 18px; }
+.text-body-default { font-family: 'Source Serif 4', serif; font-weight: 400; font-size: 16px; }
+.text-body-small   { font-family: 'Source Serif 4', serif; font-weight: 400; font-size: 14px; }
+.text-label   { font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 14px; }
+.text-caption { font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 12px; }
+
+/* ─────────────────────────────────────────
+   LAYOUT
+───────────────────────────────────────── */
+.iot-layout { display: flex; min-height: 100vh; background-color: #fdfbf7; }
+.iot-main   { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+/* ─────────────────────────────────────────
+   TOPBAR
+───────────────────────────────────────── */
+.iot-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; height: 64px; background: #fff; border-bottom: 1px solid #e7e5e4; flex-shrink: 0;
+}
+.iot-topbar-title { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 600; color: #1c1917; }
+.iot-topbar-right { display: flex; align-items: center; gap: 12px; }
+.iot-icon-btn {
+  width: 36px; height: 36px; border-radius: 8px; background: #f5f5f4; border: none;
+  display: flex; align-items: center; justify-content: center;
+  color: #78716c; cursor: pointer; transition: background-color 0.15s;
+}
+.iot-icon-btn:hover { background: #e7e5e4; }
+.iot-avatar {
+  width: 36px; height: 36px; border-radius: 50%; background: #2d7d4e;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600; color: #fff;
+}
+
+/* ─────────────────────────────────────────
+   CONTENT
+───────────────────────────────────────── */
+.iot-content { flex: 1; padding: 32px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
+
+/* ─────────────────────────────────────────
+   SECTION TITLE
+───────────────────────────────────────── */
+.iot-section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1c1917;
+  margin: 0;
+}
+
+/* ─────────────────────────────────────────
+   FILTER TABS
+───────────────────────────────────────── */
+.iot-tabs { display: flex; gap: 8px; }
+.iot-tab {
+  padding: 7px 20px; border-radius: 999px;
+  font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500;
+  border: 1px solid #d6d3d1; background: #fff; color: #44403c;
+  cursor: pointer; transition: all 0.15s;
+}
+.iot-tab:hover { border-color: #1a3a2a; color: #1a3a2a; }
+.iot-tab--active { background: #1f4d35; border-color: #1f4d35; color: #fff; }
+
+/* ─────────────────────────────────────────
+   ALERT CARDS
+───────────────────────────────────────── */
+.iot-cards { display: flex; flex-direction: column; gap: 12px; }
+
+.iot-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-left-width: 4px;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: box-shadow 0.2s;
+}
+.iot-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+
+.iot-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.iot-card-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1c1917;
+  line-height: 1.3;
+}
+.iot-card-top-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.iot-badge {
+  display: inline-flex; align-items: center;
+  padding: 4px 12px; border-radius: 999px;
+  font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 500;
+  white-space: nowrap;
+}
+.iot-card-time {
+  font-family: 'Outfit', sans-serif; font-size: 12px; color: #a8a29e; white-space: nowrap;
+}
+
+.iot-card-station {
+  font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500; color: #78716c;
+}
+
+.iot-card-bottom {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
+  margin-top: 2px;
+}
+.iot-card-desc {
+  font-family: 'Source Serif 4', serif; font-size: 13px; color: #44403c; line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────
+   BUTTONS
+───────────────────────────────────────── */
+.iot-btn-view {
+  flex-shrink: 0;
+  font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500;
+  color: #2d7d4e; background: transparent; border: none; cursor: pointer; padding: 0;
+  transition: color 0.15s;
+}
+.iot-btn-view:hover { color: #1a3a2a; text-decoration: underline; }
+
+/* ─────────────────────────────────────────
+   EMPTY STATE
+───────────────────────────────────────── */
+.iot-empty { text-align: center; padding: 48px 24px; font-family: 'Source Serif 4', serif; font-size: 16px; color: #a8a29e; }

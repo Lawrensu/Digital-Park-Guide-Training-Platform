@@ -1,0 +1,208 @@
+/* ─────────────────────────────────────────
+   TYPOGRAPHY
+───────────────────────────────────────── */
+.text-display { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 36px; }
+.text-h1      { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 30px; }
+.text-h2      { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 24px; }
+.text-h3      { font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 20px; }
+.text-h4      { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 16px; }
+.text-body-large   { font-family: 'Source Serif 4', serif; font-weight: 400; font-size: 18px; }
+.text-body-default { font-family: 'Source Serif 4', serif; font-weight: 400; font-size: 16px; }
+.text-body-small   { font-family: 'Source Serif 4', serif; font-weight: 400; font-size: 14px; }
+.text-label   { font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 14px; }
+.text-caption { font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 12px; }
+
+/* ─────────────────────────────────────────
+   LAYOUT
+───────────────────────────────────────── */
+.set-layout { display: flex; min-height: 100vh; background-color: #fdfbf7; }
+.set-main   { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+/* ─────────────────────────────────────────
+   TOPBAR
+───────────────────────────────────────── */
+.set-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; height: 64px; background: #fff; border-bottom: 1px solid #e7e5e4; flex-shrink: 0;
+}
+.set-topbar-title { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 600; color: #1c1917; }
+.set-topbar-right { display: flex; align-items: center; gap: 12px; }
+.set-icon-btn {
+  width: 36px; height: 36px; border-radius: 8px; background: #f5f5f4; border: none;
+  display: flex; align-items: center; justify-content: center;
+  color: #78716c; cursor: pointer; transition: background-color 0.15s;
+}
+.set-icon-btn:hover { background: #e7e5e4; }
+.set-avatar {
+  width: 36px; height: 36px; border-radius: 50%; background: #2d7d4e;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600; color: #fff;
+}
+
+/* ─────────────────────────────────────────
+   CONTENT
+───────────────────────────────────────── */
+.set-content { flex: 1; padding: 32px; display: flex; flex-direction: column; gap: 24px; overflow-y: auto; }
+
+/* ─────────────────────────────────────────
+   TABS
+───────────────────────────────────────── */
+.set-tabs { display: flex; border-bottom: 1px solid #e7e5e4; gap: 0; }
+.set-tab {
+  padding: 12px 24px;
+  font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500;
+  color: #78716c; background: transparent; border: none;
+  cursor: pointer; transition: color 0.15s;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.set-tab:hover { color: #1a3a2a; }
+.set-tab--active { color: #1a3a2a; border-bottom-color: #1a3a2a; }
+
+/* ─────────────────────────────────────────
+   SECTION TITLE
+───────────────────────────────────────── */
+.set-section-title {
+  font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 600; color: #1a3a2a; margin: 0;
+}
+
+/* ─────────────────────────────────────────
+   TABLE SECTION
+───────────────────────────────────────── */
+.set-table-section {
+  background: #fff; border: 1px solid #e7e5e4; border-radius: 12px; overflow: hidden;
+}
+.set-table-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 24px; border-bottom: 1px solid #f5f5f4;
+}
+.set-btn-add {
+  background: #1f4d35; color: #fff;
+  font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500;
+  padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer;
+  transition: background-color 0.2s;
+}
+.set-btn-add:hover { background: #1a3a2a; }
+
+/* ─────────────────────────────────────────
+   TABLE
+───────────────────────────────────────── */
+.set-table-wrap { overflow-x: auto; }
+.set-table { width: 100%; border-collapse: collapse; }
+.set-table th {
+  background: #fafaf9; padding: 13px 24px;
+  font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600;
+  color: #78716c; text-align: left; letter-spacing: 0.3px; text-transform: uppercase; white-space: nowrap;
+  border-bottom: 1px solid #f5f5f4;
+}
+.set-table td { padding: 18px 24px; border-bottom: 1px solid #f5f5f4; vertical-align: middle; }
+.set-table tbody tr:last-child td { border-bottom: none; }
+.set-table tbody tr:hover { background: #fef7f0; }
+
+.set-name { font-family: 'Source Serif 4', serif; font-size: 15px; color: #1a3a2a; }
+.set-muted { font-family: 'Source Serif 4', serif; font-size: 14px; color: #78716c; }
+.set-role  { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500; color: #44403c; }
+
+/* ─────────────────────────────────────────
+   BADGES
+───────────────────────────────────────── */
+.set-badge {
+  display: inline-flex; align-items: center;
+  padding: 4px 12px; border-radius: 999px;
+  font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 500;
+}
+.set-badge--active   { background: #e8f5ee; color: #266841; }
+.set-badge--inactive { background: #f5f5f4; color: #78716c; }
+
+/* ─────────────────────────────────────────
+   EDIT BUTTON
+───────────────────────────────────────── */
+.set-btn-edit {
+  display: inline-flex; align-items: center;
+  padding: 5px 14px; border: 1px solid #e7e5e4; border-radius: 6px;
+  background: #fafaf9; font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 500; color: #44403c;
+  cursor: pointer; transition: all 0.15s;
+}
+.set-btn-edit:hover { background: #f0e9db; border-color: #d6d3d1; }
+
+/* ─────────────────────────────────────────
+   CREATE FORM CARD
+───────────────────────────────────────── */
+.set-form-card {
+  background: #fff; border: 1px solid #e7e5e4; border-radius: 12px;
+  padding: 24px; display: flex; flex-direction: column; gap: 20px;
+}
+.set-form-row { display: flex; gap: 24px; align-items: flex-start; }
+.set-form-field { display: flex; flex-direction: column; gap: 6px; }
+.set-label { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500; color: #44403c; }
+
+.set-input {
+  width: 380px; padding: 10px 14px;
+  border: 1px solid #e7e5e4; border-radius: 8px;
+  background: #fafaf9; font-family: 'Source Serif 4', serif; font-size: 14px; color: #1c1917;
+  transition: border-color 0.15s, background 0.15s;
+}
+.set-input::placeholder { color: #a8a29e; }
+.set-input:focus { outline: none; border-color: #1a3a2a; background: #fff; }
+
+.set-select {
+  width: 200px; padding: 10px 14px;
+  border: 1px solid #e7e5e4; border-radius: 8px;
+  background: #fafaf9; font-family: 'Source Serif 4', serif; font-size: 14px; color: #1c1917;
+  cursor: pointer; transition: border-color 0.15s;
+}
+.set-select:focus { outline: none; border-color: #1a3a2a; }
+
+.set-form-bottom {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
+}
+.set-btn-create {
+  background: #b35c2a; color: #fff;
+  font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500;
+  padding: 10px 28px; border-radius: 8px; border: none; cursor: pointer;
+  transition: background-color 0.2s;
+}
+.set-btn-create:hover { background: #9c4f24; }
+
+/* ─────────────────────────────────────────
+   SYSTEM CONFIG / NOTIFICATIONS
+───────────────────────────────────────── */
+.set-config-section {
+  background: #fff; border: 1px solid #e7e5e4; border-radius: 12px;
+  padding: 24px; display: flex; flex-direction: column; gap: 16px;
+}
+.set-config-list { display: flex; flex-direction: column; }
+.set-config-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 16px 0; border-bottom: 1px solid #f5f5f4;
+}
+.set-config-item:last-child { border-bottom: none; }
+.set-config-info { display: flex; flex-direction: column; gap: 2px; }
+.set-config-label {
+  font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500; color: #1a3a2a;
+}
+.set-config-desc {
+  font-family: 'Source Serif 4', serif; font-size: 13px; color: #78716c;
+}
+.set-config-value {
+  font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500; color: #44403c;
+  white-space: nowrap; flex-shrink: 0;
+}
+
+/* ─────────────────────────────────────────
+   TOGGLE SWITCH
+───────────────────────────────────────── */
+.set-toggle {
+  width: 44px; height: 24px; border-radius: 999px;
+  background: #d6d3d1; border: none; cursor: pointer;
+  position: relative; flex-shrink: 0;
+  transition: background-color 0.2s;
+  padding: 0;
+}
+.set-toggle--on { background: #1f4d35; }
+.set-toggle-thumb {
+  display: block; width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; position: absolute; top: 3px; left: 3px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.set-toggle--on .set-toggle-thumb { transform: translateX(20px); }

@@ -1,0 +1,242 @@
+/* guidecertifications.css */
+:root {
+  --gc-primary-color: #2E7D32; /* Park Guide Green */
+  --gc-primary-hover: #1B5E20;
+  --gc-bg-color: #F4F7F6;
+  --gc-white: #FFFFFF;
+  --gc-text-main: #333333;
+  --gc-text-sub: #666666;
+  --gc-border-color: #E0E0E0;
+  --gc-danger-color: #D32F2F;
+  --gc-warning-bg: #FFF3E0;
+  --gc-warning-text: #E65100;
+  --gc-success-bg: #E8F5E9;
+  --gc-success-text: #2E7D32;
+}
+
+.gc-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--gc-bg-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.gc-main {
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* Header */
+.gc-header h1 {
+  font-size: 1.75rem;
+  color: var(--gc-text-main);
+  margin: 0 0 2rem 0;
+  font-weight: 700;
+}
+
+/* Stats Grid */
+.gc-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.gc-stat-card {
+  background: var(--gc-white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid transparent;
+  transition: transform 0.2s;
+}
+
+.gc-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--gc-border-color);
+}
+
+.gc-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background-color: var(--gc-bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.gc-stat-info h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gc-text-main);
+}
+
+.gc-stat-info p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--gc-text-sub);
+}
+
+/* Certification List */
+.gc-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--gc-text-main);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.gc-card {
+  background: var(--gc-white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid var(--gc-border-color);
+}
+
+.gc-card-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.gc-cert-icon {
+  width: 56px;
+  height: 56px;
+  background-color: #FFF8E1; /* Light yellow/gold for certs */
+  color: #FBC02D;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+}
+
+.gc-details h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+  color: var(--gc-text-main);
+}
+
+.gc-details span {
+  font-size: 0.85rem;
+  color: var(--gc-text-sub);
+}
+
+/* Status Badges */
+.gc-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+}
+
+.gc-badge.active {
+  background-color: var(--gc-success-bg);
+  color: var(--gc-success-text);
+}
+
+.gc-badge.review {
+  background-color: var(--gc-warning-bg);
+  color: var(--gc-warning-text);
+}
+
+.gc-processing-text {
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--gc-text-sub);
+  font-style: italic;
+}
+
+/* Actions */
+.gc-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.gc-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gc-btn-pdf {
+  background-color: #FFEBEE;
+  color: var(--gc-danger-color);
+}
+
+.gc-btn-pdf:hover {
+  background-color: #FFCDD2;
+}
+
+.gc-btn-view {
+  background-color: var(--gc-primary-color);
+  color: var(--gc-white);
+}
+
+.gc-btn-view:hover {
+  background-color: var(--gc-primary-hover);
+}
+
+/* Footer Note */
+.gc-footer-note {
+  margin-top: 2rem;
+  font-size: 0.85rem;
+  color: var(--gc-text-sub);
+  background: #E8F5E9;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--gc-primary-color);
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .gc-main {
+    margin-left: 0;
+    padding: 1rem;
+  }
+
+  .gc-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .gc-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .gc-stat-card {
+    padding: 1rem;
+  }
+}

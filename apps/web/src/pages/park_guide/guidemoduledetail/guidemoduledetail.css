@@ -1,0 +1,236 @@
+/* guidemoduledetail.css */
+:root {
+  --gmd-primary-color: #2E7D32; /* Park Guide Green */
+  --gmd-primary-light: #E8F5E9;
+  --gmd-bg-color: #F4F7F6;
+  --gmd-white: #FFFFFF;
+  --gmd-text-main: #333333;
+  --gmd-text-sub: #666666;
+  --gmd-border-color: #E0E0E0;
+  --gmd-warning-bg: #FFF3E0;
+  --gmd-warning-text: #E65100;
+  --gmd-warning-border: #FFB74D;
+}
+
+.gmd-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--gmd-bg-color);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.gmd-main {
+  flex: 1;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* Header Section */
+.gmd-header {
+  margin-bottom: 2rem;
+}
+
+.gmd-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gmd-text-main);
+  margin: 0 0 1.5rem 0;
+}
+
+/* Progress Section */
+.gmd-progress-section {
+  background: var(--gmd-white);
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+}
+
+.gmd-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.gmd-progress-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--gmd-text-main);
+}
+
+.gmd-progress-stats {
+  font-size: 0.95rem;
+  color: var(--gmd-text-sub);
+}
+
+.gmd-bar-bg {
+  width: 100%;
+  height: 12px;
+  background-color: #E0E0E0;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.gmd-bar-fill {
+  height: 100%;
+  width: 85%; /* Hardcoded 85% from image */
+  background-color: var(--gmd-primary-color);
+  border-radius: 6px;
+}
+
+.gmd-time-estimate {
+  font-size: 0.9rem;
+  color: var(--gmd-text-sub);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Main Layout Grid */
+.gmd-layout-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* 2/3 Content, 1/3 Sidebar */
+  gap: 2rem;
+  align-items: start;
+}
+
+/* Left Column: Content List */
+.gmd-content-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.gmd-item {
+  background: var(--gmd-white);
+  padding: 1.25rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid var(--gmd-border-color);
+  transition: all 0.2s;
+}
+
+.gmd-item:hover {
+  border-color: var(--gmd-primary-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.gmd-item.active {
+  border: 2px solid var(--gmd-primary-color);
+  background-color: #F9FBF9;
+}
+
+.gmd-item.completed {
+  opacity: 0.7;
+}
+
+.gmd-icon-box {
+  width: 40px;
+  height: 40px;
+  background-color: var(--gmd-primary-light);
+  color: var(--gmd-primary-color);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.gmd-item.completed .gmd-icon-box {
+  background-color: #E0E0E0;
+  color: #757575;
+}
+
+.gmd-item-info {
+  flex: 1;
+}
+
+.gmd-item-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gmd-text-main);
+  margin: 0 0 0.25rem 0;
+}
+
+.gmd-item-type {
+  font-size: 0.8rem;
+  color: var(--gmd-text-sub);
+}
+
+.gmd-check-icon {
+  color: var(--gmd-primary-color);
+  font-size: 1.25rem;
+}
+
+/* Right Column: Sidebar */
+.gmd-sidebar-card {
+  background: var(--gmd-white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 1.5rem;
+}
+
+.gmd-sidebar-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gmd-text-main);
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.gmd-info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.gmd-info-label {
+  color: var(--gmd-text-sub);
+}
+
+.gmd-info-value {
+  font-weight: 600;
+  color: var(--gmd-text-main);
+  text-align: right;
+}
+
+/* Warning Box */
+.gmd-warning-box {
+  background-color: var(--gmd-warning-bg);
+  border-left: 4px solid var(--gmd-warning-border);
+  padding: 1.25rem;
+  border-radius: 4px;
+  color: var(--gmd-warning-text);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  display: flex;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.gmd-warning-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .gmd-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .gmd-main {
+    margin-left: 0;
+    padding: 1rem;
+  }
+}

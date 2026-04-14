@@ -1,0 +1,284 @@
+/* badge.css */
+
+/* --- Layout & Page Structure --- */
+.bdg-page-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+
+.bdg-main-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* --- Topbar --- */
+.bdg-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 64px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.bdg-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.bdg-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 6px 12px;
+  width: 300px;
+}
+
+.bdg-search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.bdg-user-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bdg-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  color: #6b7280;
+  padding: 4px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.bdg-icon-btn:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.bdg-notification-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  border: 1px solid #ffffff;
+}
+
+.bdg-avatar {
+  width: 36px;
+  height: 36px;
+  background-color: #2E7D32;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* --- Main Content Area --- */
+.bdg-content-area {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.bdg-header-row {
+  margin-bottom: 1.5rem;
+}
+
+.bdg-heading {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #111827;
+  font-weight: 600;
+}
+
+/* --- Stats Row --- */
+.bdg-stats-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.bdg-stat-card {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.bdg-earned-stat { border-top: 4px solid #10b981; }
+.bdg-remaining-stat { border-top: 4px solid #9ca3af; }
+.bdg-complete-stat { border-top: 4px solid #2E7D32; }
+
+.bdg-stat-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.bdg-stat-label {
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bdg-progress-bg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: #f3f4f6;
+}
+
+.bdg-progress-fill {
+  height: 100%;
+  background-color: #2E7D32;
+}
+
+/* --- Sections --- */
+.bdg-section {
+  margin-bottom: 3rem;
+}
+
+.bdg-section-title {
+  font-size: 1.1rem;
+  color: #374151;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}
+
+/* --- Badge Grid --- */
+.bdg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.bdg-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bdg-card-earned {
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border-top: 4px solid transparent; /* Colored inline style */
+}
+
+.bdg-card-earned:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+.bdg-card-locked {
+  background-color: #f9fafb;
+  border: 1px dashed #d1d5db;
+  box-shadow: none;
+}
+
+.bdg-icon-wrapper {
+  margin-bottom: 1rem;
+  color: #2E7D32; /* Fallback */
+}
+
+.bdg-icon-locked {
+  color: #d1d5db;
+}
+
+.bdg-card-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Earned Card Specifics */
+.bdg-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
+  width: 100%;
+}
+
+.bdg-meta-item {
+  font-size: 0.75rem;
+  color: #6b7280;
+  background-color: #f3f4f6;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Locked Card Specifics */
+.bdg-lock-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(255, 255, 255, 0.9);
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  padding: 10px;
+  backdrop-filter: blur(2px);
+}
+
+.bdg-card-locked .bdg-icon-wrapper {
+  filter: grayscale(100%);
+  opacity: 0.5;
+}
+
+.bdg-lock-reason {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.4;
+  font-style: italic;
+}
