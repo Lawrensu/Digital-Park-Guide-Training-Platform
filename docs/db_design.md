@@ -391,6 +391,8 @@ User (GUIDE) ──< QuizAttempt >── Quiz                 (guide attempts qu
 QuizAttempt ──< QuestionAttempt >── Question          (each attempt has per-question responses)
 QuestionAttempt >── QuestionOption                    (MCQ/TrueFalse links selected option)
 QuizAttempt ──< Certification                         (one certified attempt → one certificate)
+User (GUIDE) ──< Payment >── Quiz                     (guide pays per retake; one payment per bill)
+Payment >── QuizAttempt                               (nullable — linked after the retake attempt is created)
 Certification >── Module                              (denormalised module reference)
 User (GUIDE) ──< UserBadge >── Badge                  (guides earn badges; join table)
 IoTDevice >── User (GUIDE)                            (device currently assigned to one guide)
