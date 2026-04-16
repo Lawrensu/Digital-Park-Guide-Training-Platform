@@ -42,5 +42,11 @@ jobs:
           script: |
             cd ~/sfc-platform
             docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml run --rm api node -e "
+              import('./src/index.js').catch(() => {});
+            " || true
+            docker compose -f docker-compose.prod.yml run --rm \
+              --entrypoint "" \
+              api node_modules/.bin/prisma migrate deploy
             docker compose -f docker-compose.prod.yml up -d
             docker system prune -f

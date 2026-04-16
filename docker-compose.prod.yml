@@ -18,8 +18,9 @@ services:
       AWS_REGION: ${AWS_REGION}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN:-}
       AWS_S3_BUCKET: ${AWS_S3_BUCKET}
-      AWS_IOT_ENDPOINT: ${AWS_IOT_ENDPOINT}
+      AWS_IOT_ENDPOINT: ${AWS_IOT_ENDPOINT:-}
       SES_FROM_EMAIL: ${SES_FROM_EMAIL}
       SES_REGION: ${SES_REGION}
       BILLPLZ_API_KEY: ${BILLPLZ_API_KEY}
@@ -28,6 +29,7 @@ services:
       BILLPLZ_SANDBOX: ${BILLPLZ_SANDBOX:-false}
       INTERNAL_SECRET: ${INTERNAL_SECRET}
       WEB_URL: ${WEB_URL}
+      MOBILE_URL: ${MOBILE_URL:-}
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
       interval: 30s
