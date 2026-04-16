@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../rbac/AuthProvider'
 import GuideNavbar from '../../../components/guidenavbar/guidenavbar'
 import './guideprofile.css';
 
 const GuideProfile = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  
   return (
     <div className="gp-container">
       <GuideNavbar />
@@ -107,8 +111,9 @@ const GuideProfile = () => {
 
         {/* Footer Buttons */}
         <div className="gp-footer-actions">
-          <button className="gp-btn gp-btn-session">Session</button>
-          <button className="gp-btn gp-btn-logout">Log Out</button>
+          <button className="gp-btn gp-btn-logout" onClick={() => logout()}>
+            Log Out
+          </button>
         </div>
 
       </main>

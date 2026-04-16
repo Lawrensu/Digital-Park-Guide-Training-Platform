@@ -1,359 +1,190 @@
-/* contentbuild.css */
+@reference "tailwindcss";
 
 /* --- Layout & Page Structure --- */
-.cb-page-container {
-  display: flex;
-  min-height: 100vh;
-  background-color: #f3f4f6;
+.cb-page-container { 
+    @apply flex min-h-screen bg-[#f3f4f6]; 
 }
 
-.cb-main-wrapper {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
+.cb-main-wrapper   { 
+    @apply flex flex-col flex-1 overflow-hidden; 
 }
 
 /* --- Topbar --- */
 .cb-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
-  height: 64px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  @apply flex items-center justify-between px-8 h-16 bg-white border-b border-[#e5e7eb];
 }
 
-.cb-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #111827;
-  margin: 0;
+.cb-title        { 
+    @apply text-xl font-semibold text-[#111827] m-0; 
 }
 
-.cb-search-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  padding: 6px 12px;
-  width: 300px;
+.cb-search-box   { 
+    @apply flex items-center gap-2 bg-[#f9fafb] border border-[#e5e7eb] rounded-[6px] px-3 py-[6px] w-[300px]; 
 }
 
 .cb-search-box input {
-  border: none;
-  background: transparent;
-  outline: none;
-  width: 100%;
-  font-size: 0.9rem;
-  color: #374151;
+  @apply border-none bg-transparent outline-none w-full text-[0.9rem] text-[#374151];
 }
 
-.cb-user-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.cb-user-actions { 
+    @apply flex items-center gap-3; 
 }
 
 .cb-icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  position: relative;
-  color: #6b7280;
-  padding: 4px;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-}
-
-.cb-icon-btn:hover {
-  background-color: #f3f4f6;
-  color: #111827;
+  @apply bg-transparent border-none cursor-pointer relative text-[#6b7280] p-1 rounded-full transition-colors duration-200 hover:bg-[#f3f4f6] hover:text-[#111827];
 }
 
 .cb-notification-dot {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 8px;
-  height: 8px;
-  background-color: #ef4444;
-  border-radius: 50%;
-  border: 1px solid #ffffff;
+  @apply absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border border-white;
 }
 
 .cb-avatar {
-  width: 36px;
-  height: 36px;
-  background-color: #e5e7eb;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #374151;
+  @apply w-9 h-9 bg-[#e5e7eb] rounded-full flex items-center justify-center text-[0.85rem] font-semibold text-[#374151];
 }
 
 /* --- Main Content Area --- */
-.cb-content-area {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
+.cb-content-area   { 
+    @apply flex-1 p-8 overflow-y-auto; 
 }
 
-.cb-header-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
+.cb-header-actions { 
+    @apply flex justify-between items-center mb-6; 
 }
 
 .cb-back-btn {
-  background: none;
-  border: none;
-  color: #4b5563;
-  font-size: 0.9rem;
-  cursor: pointer;
-  padding: 0;
+  @apply bg-transparent border-none text-[#4b5563] text-[0.9rem] cursor-pointer p-0 hover:text-[#111827] hover:underline;
 }
 
-.cb-back-btn:hover {
-  color: #111827;
-  text-decoration: underline;
-}
-
-.cb-item-count {
-  font-size: 0.85rem;
-  color: #6b7280;
+.cb-item-count { 
+    @apply text-[0.85rem] text-[#6b7280]; 
 }
 
 /* --- Layout Grid --- */
-.cb-layout-grid {
-  display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
+.cb-layout-grid { 
+    @apply flex gap-6 items-start; 
 }
 
-/* --- Card Styles (Reusing concept from your moduleedit) --- */
-.cb-card {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  overflow: hidden;
+/* --- Card --- */
+.cb-card { 
+    @apply bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] overflow-hidden; 
 }
 
 /* --- Left Column: List --- */
-.cb-list-column {
-  flex: 1;
+.cb-list-column { 
+    @apply flex-1; 
 }
 
-.cb-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #f3f4f6;
-  background-color: #f9fafb;
+.cb-card-header { 
+    @apply flex justify-between items-center px-6 py-4 border-b border-[#f3f4f6] bg-[#f9fafb]; 
 }
 
 .cb-card-header h3 {
-  margin: 0;
-  font-size: 0.95rem;
-  color: #374151;
-  font-weight: 600;
+  @apply m-0 text-[0.95rem] text-[#374151] font-semibold;
 }
 
-.cb-reorder-link {
-  background: none;
-  border: none;
-  color: #2563eb;
-  font-size: 0.85rem;
-  cursor: pointer;
-  font-weight: 500;
+.cb-reorder-link { 
+    @apply bg-transparent border-none text-[#2563eb] text-[0.85rem] cursor-pointer font-medium; 
 }
 
-.cb-list-container {
-  display: flex;
-  flex-direction: column;
+.cb-list-container { 
+    @apply flex flex-col; 
 }
 
 .cb-list-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #f3f4f6;
-  transition: background-color 0.15s;
+  @apply flex justify-between items-center px-6 py-4 border-b border-[#f3f4f6] transition-colors duration-150 last:border-b-0 hover:bg-[#fafafa];
 }
 
-.cb-list-item:last-child {
-  border-bottom: none;
+.cb-item-left { 
+    @apply flex items-start gap-3; 
 }
 
-.cb-list-item:hover {
-  background-color: #fafafa;
+.cb-item-number { 
+    @apply text-[#9ca3af] text-[0.9rem] mt-0.5 min-w-5; 
 }
 
-.cb-item-left {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
+.cb-item-details { 
+    @apply flex flex-col gap-[6px]; 
 }
 
-.cb-item-number {
-  color: #9ca3af;
-  font-size: 0.9rem;
-  margin-top: 2px;
-  min-width: 20px;
-}
-
-.cb-item-details {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.cb-item-title {
-  margin: 0;
-  font-size: 0.95rem;
-  color: #111827;
-  font-weight: 500;
-  line-height: 1.4;
+.cb-item-title { 
+    @apply m-0 text-[0.95rem] text-[#111827] font-medium leading-[1.4]; 
 }
 
 /* --- Badges --- */
-.cb-badge {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 4px;
-  width: fit-content;
-  color: white;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
+.cb-badge { 
+    @apply inline-block text-[0.7rem] font-bold py-[3px] px-2 rounded-[4px] w-fit text-white tracking-[0.3px] uppercase; 
 }
 
-.cb-badge-text { background-color: #2196F3; }
-.cb-badge-image { background-color: #4CAF50; }
-.cb-badge-video { background-color: #F44336; }
-.cb-badge-infographic { background-color: #FF9800; }
-.cb-badge-quiz { background-color: #9C27B0; }
+.cb-badge-text { 
+    @apply bg-[#2196F3]; 
+}
+
+.cb-badge-image { 
+    @apply bg-[#4CAF50]; 
+}
+
+.cb-badge-video { 
+    @apply bg-[#F44336]; 
+}
+
+.cb-badge-infographic { 
+    @apply bg-[#FF9800]; 
+}
+
+.cb-badge-quiz { 
+    @apply bg-[#9C27B0]; 
+}
 
 /* --- Actions --- */
-.cb-item-actions {
-  display: flex;
-  gap: 6px;
-  opacity: 0.5;
-  transition: opacity 0.2s;
+.cb-item-actions { 
+    @apply flex gap-[6px] opacity-50 transition-opacity duration-200; 
 }
 
-.cb-list-item:hover .cb-item-actions {
-  opacity: 1;
+.cb-list-item:hover .cb-item-actions { 
+    @apply opacity-100; 
 }
 
 .cb-action-btn {
-  border: none;
-  background: transparent;
-  padding: 6px;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s;
+  @apply border-none bg-transparent p-[6px] rounded-[4px] cursor-pointer flex items-center justify-center transition-colors duration-200;
 }
 
-.cb-btn-edit:hover {
-  background-color: #eff6ff;
-  color: #2563eb;
+.cb-btn-edit   { 
+    @apply hover:bg-[#eff6ff] hover:text-[#2563eb]; 
 }
 
-.cb-btn-delete:hover {
-  background-color: #fef2f2;
-  color: #dc2626;
+.cb-btn-delete { 
+    @apply hover:bg-[#fef2f2] hover:text-[#dc2626]; 
 }
 
 /* --- Right Column: Sidebar --- */
-.cb-sidebar-column {
-  width: 320px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 0;
+.cb-sidebar-column { 
+    @apply w-[320px] shrink-0 sticky top-0; 
 }
 
-/* Adding the green left border to match "card-left-green" style */
-.cb-card-sidebar {
-  border-left: 5px solid #2E7D32; 
-  padding: 1.5rem;
+.cb-card-sidebar { 
+    @apply border-l-[5px] border-l-[#2E7D32] p-6; 
 }
 
-.cb-sidebar-title {
-  margin-top: 0;
-  margin-bottom: 0.5rem;
-  font-size: 1.1rem;
-  color: #111827;
+.cb-sidebar-title { 
+    @apply mt-0 mb-2 text-[1.1rem] text-[#111827]; 
 }
 
-.cb-sidebar-subtitle {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-  color: #6b7280;
-  line-height: 1.5;
+.cb-sidebar-subtitle { 
+    @apply mt-0 mb-6 text-[0.9rem] text-[#6b7280] leading-[1.5]; 
 }
 
-.cb-options-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 2rem;
+.cb-options-list { 
+    @apply flex flex-col gap-3 mb-8; 
 }
 
 .cb-option-btn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 12px 16px;
-  background-color: #ffffff;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  color: #374151;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
+  @apply flex items-center gap-3 w-full py-3 px-4 bg-white border border-[#d1d5db] rounded-[6px] text-[#374151] text-[0.95rem] font-medium cursor-pointer transition-all duration-200 hover:border-[#2E7D32] hover:text-[#2E7D32] hover:bg-[#f0fdf4];
 }
 
-.cb-option-btn:hover {
-  border-color: #2E7D32;
-  color: #2E7D32;
-  background-color: #f0fdf4;
-}
-
-.cb-sidebar-footer {
-  padding-top: 1.5rem;
-  border-top: 1px solid #f3f4f6;
+.cb-sidebar-footer       { 
+    @apply pt-6 border-t border-[#f3f4f6]; 
 }
 
 .cb-btn-secondary-full {
-  width: 100%;
-  padding: 10px;
-  background-color: transparent;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  color: #374151;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.cb-btn-secondary-full:hover {
-  background-color: #f9fafb;
+  @apply w-full p-[10px] bg-transparent border border-[#d1d5db] rounded-[6px] text-[#374151] font-medium cursor-pointer transition-colors duration-200 hover:bg-[#f9fafb];
 }

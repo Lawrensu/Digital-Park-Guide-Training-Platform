@@ -1,210 +1,136 @@
-/* guidenotification.css */
+@reference "tailwindcss";
+
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
 :root {
-  --g-primary-color: #2E7D32; /* Deep green matching the navbar context */
-  --g-bg-color: #F4F7F6;
-  --g-white: #FFFFFF;
-  --g-text-main: #333333;
-  --g-text-sub: #666666;
-  --g-border-color: #E0E0E0;
-  --g-accent-blue: #1976D2;
+  --g-primary-color: #2E7D32;
+  --g-bg-color:      #F4F7F6;
+  --g-white:         #FFFFFF;
+  --g-text-main:     #333333;
+  --g-text-sub:      #666666;
+  --g-border-color:  #E0E0E0;
+  --g-accent-blue:   #1976D2;
   --g-accent-orange: #F57C00;
-  --g-accent-red: #D32F2F;
+  --g-accent-red:    #D32F2F;
 }
 
+/* --- Layout --- */
 .gn-container {
-  display: flex;
-  min-height: 100vh;
-  background-color: var(--g-bg-color);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  @apply flex min-h-screen bg-[var(--g-bg-color)] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif];
 }
 
-/* Main Content Area */
 .gn-main {
-  flex: 1;
-  padding: 2rem;
-  box-sizing: border-box;
+  @apply flex-1 p-8 box-border;
 }
 
-/* Header Section */
+/* --- Header Section --- */
 .gn-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+  @apply flex justify-between items-center mb-8;
 }
 
 .gn-header-title h1 {
-  font-size: 1.75rem;
-  color: var(--g-text-main);
-  margin: 0;
-  font-weight: 700;
+  @apply text-[1.75rem] text-[var(--g-text-main)] m-0 font-bold;
 }
 
 .gn-header-date {
-  font-size: 0.9rem;
-  color: var(--g-text-sub);
-  margin-top: 0.25rem;
+  @apply text-[0.9rem] text-[var(--g-text-sub)] mt-1;
 }
 
 .gn-header-stats {
-  text-align: right;
+  @apply text-right;
 }
 
 .gn-unread-count {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--g-text-sub);
-  background: #E8F5E9;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  border: 1px solid #C8E6C9;
+  @apply text-[0.9rem] font-semibold text-[var(--g-text-sub)] bg-[#E8F5E9] py-1 px-3 rounded-[20px] border border-[#C8E6C9];
 }
 
-/* Filter Tabs */
+/* --- Filter Tabs --- */
 .gn-filters {
-  display: flex;
-  gap: 1.5rem;
-  border-bottom: 1px solid var(--g-border-color);
-  margin-bottom: 1.5rem;
+  @apply flex gap-6 border-b border-[var(--g-border-color)] mb-6;
 }
 
 .gn-filter-tab {
-  padding-bottom: 0.75rem;
-  font-size: 1rem;
-  color: var(--g-text-sub);
-  cursor: pointer;
-  position: relative;
-  transition: color 0.2s;
-  background: none;
-  border: none;
-  font-weight: 500;
-}
-
-.gn-filter-tab:hover {
-  color: var(--g-primary-color);
+  @apply pb-3 text-[1rem] text-[var(--g-text-sub)] cursor-pointer relative transition-colors duration-200 bg-transparent border-0 font-medium hover:text-[var(--g-primary-color)];
 }
 
 .gn-filter-tab.active {
-  color: var(--g-primary-color);
-  font-weight: 700;
+  @apply text-[var(--g-primary-color)] font-bold;
 }
 
 .gn-filter-tab.active::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background-color: var(--g-primary-color);
-  border-radius: 3px 3px 0 0;
+  @apply content-[''] absolute -bottom-px left-0 w-full h-[3px] bg-[var(--g-primary-color)] rounded-t-[3px];
 }
 
-/* Notification List */
+/* --- Notification List --- */
 .gn-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  @apply flex flex-col gap-4;
 }
 
 .gn-item {
-  display: flex;
-  align-items: flex-start;
-  background: var(--g-white);
-  padding: 1.25rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  transition: transform 0.2s, box-shadow 0.2s;
-  position: relative;
-  cursor: pointer;
-  border: 1px solid transparent;
-}
-
-.gn-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+  @apply flex items-start bg-[var(--g-white)] p-5 rounded-[8px] shadow-[0_1px_3px_rgba(0,0,0,0.05)] transition-[transform,box-shadow] duration-200 relative cursor-pointer border border-transparent hover:-translate-y-[2px] hover:shadow-[0_4px_6px_rgba(0,0,0,0.08)];
 }
 
 .gn-item.unread {
-  background: #F1F8E9; /* Light green tint for unread */
-  border-left: 4px solid var(--g-primary-color);
+  @apply bg-[#F1F8E9] border-l-4 border-l-[var(--g-primary-color)];
 }
 
 .gn-icon-box {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  margin-right: 1rem;
-  flex-shrink: 0;
+  @apply w-12 h-12 rounded-full flex items-center justify-center text-[1.5rem] mr-4 shrink-0;
 }
 
-/* Icon Background Colors */
-.gn-icon-certificate { background-color: #E3F2FD; color: #1976D2; }
-.gn-icon-quiz { background-color: #FFF3E0; color: #F57C00; }
-.gn-icon-deadline { background-color: #FFEBEE; color: #D32F2F; }
-.gn-icon-module { background-color: #E8F5E9; color: #2E7D32; }
+.gn-icon-certificate {
+  @apply bg-[#E3F2FD] text-[#1976D2];
+}
+
+.gn-icon-quiz {
+  @apply bg-[#FFF3E0] text-[#F57C00];
+}
+
+.gn-icon-deadline {
+  @apply bg-[#FFEBEE] text-[#D32F2F];
+}
+
+.gn-icon-module {
+  @apply bg-[#E8F5E9] text-[#2E7D32];
+}
 
 .gn-content {
-  flex: 1;
+  @apply flex-1;
 }
 
 .gn-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--g-text-main);
-  margin-bottom: 0.25rem;
-  display: block;
+  @apply text-[1rem] font-bold text-[var(--g-text-main)] mb-1 block;
 }
 
 .gn-desc {
-  font-size: 0.9rem;
-  color: var(--g-text-sub);
-  line-height: 1.4;
+  @apply text-[0.9rem] text-[var(--g-text-sub)] leading-[1.4];
 }
 
 .gn-time {
-  font-size: 0.8rem;
-  color: #888;
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  @apply text-[0.8rem] text-[#888] mt-2 flex items-center gap-2;
 }
 
-/* Unread Dot Indicator (Optional, besides the border) */
+/* --- Unread Dot --- */
 .gn-dot {
-  width: 10px;
-  height: 10px;
-  background-color: var(--g-primary-color);
-  border-radius: 50%;
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: none;
+  @apply w-[10px] h-[10px] bg-[var(--g-primary-color)] rounded-full absolute top-5 right-5 hidden;
 }
 
 .gn-item.unread .gn-dot {
-  display: block;
+  @apply block;
 }
 
-/* Responsive adjustments */
+/* --- Responsive --- */
 @media (max-width: 768px) {
   .gn-main {
-    margin-left: 0; /* Assuming navbar might collapse or be off-canvas */
-    padding: 1rem;
+    @apply ml-0 p-4;
   }
-  
+
   .gn-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    @apply flex-col items-start gap-2;
   }
-  
+
   .gn-header-stats {
-    text-align: left;
+    @apply text-left;
   }
 }

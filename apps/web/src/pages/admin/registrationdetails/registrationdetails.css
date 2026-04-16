@@ -1,229 +1,112 @@
-/* --- Typography (Consistent with previous design) --- */
+@reference "tailwindcss";
+
+/* --- Typography --- */
 .text-display {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 600;
-  font-size: 36px;
+  @apply [font-family:var(--font-outfit)] font-semibold text-[36px];
 }
-
 .text-h3 {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 500;
-  font-size: 20px;
+  @apply [font-family:var(--font-outfit)] font-medium text-[20px];
 }
-
 .text-body-default {
-  font-family: 'Source Serif 4', serif;
-  font-weight: 400;
-  font-size: 16px;
+  @apply [font-family:var(--font-serif)] font-normal text-base;
 }
-
 .text-body-small {
-  font-family: 'Source Serif 4', serif;
-  font-weight: 400;
-  font-size: 14px;
+  @apply [font-family:var(--font-serif)] font-normal text-sm;
 }
-
 .text-label {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 500;
-  font-size: 14px;
+  @apply [font-family:var(--font-outfit)] font-medium text-sm;
 }
-
 .text-caption {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 500;
-  font-size: 12px;
+  @apply [font-family:var(--font-outfit)] font-medium text-xs;
 }
 
 /* --- Layout --- */
 .registration-container {
-  background-color: #fdfbf7;
-  min-height: 100vh;
+  @apply bg-[#fdfbf7] min-h-screen;
 }
-
 .page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
+  @apply flex justify-between items-center mb-8;
 }
 
 /* --- Status Badge --- */
 .status-badge {
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-family: 'Outfit', sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  @apply py-[6px] px-4 rounded-[20px] [font-family:var(--font-outfit)] font-semibold text-sm uppercase tracking-[0.5px];
 }
-
 .status-badge.pending {
-  background-color: #fff3e0; /* Light Orange */
-  color: #b35c2a; /* Accent Orange */
+  @apply bg-[#fff3e0] text-[#b35c2a];
 }
 
 /* --- Cards --- */
 .detail-card {
-  background-color: white;
-  border: 1px solid #f0e9db;
-  border-radius: 12px;
+  @apply bg-white border border-[#f0e9db] rounded-xl;
 }
 
 /* --- Info Grid --- */
 .info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  @apply grid grid-cols-2 gap-6;
 }
-
 .info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  @apply flex flex-col gap-1;
 }
-
 .info-item.full-width {
-  grid-column: span 2;
+  @apply col-span-2;
 }
 
 /* --- File Display --- */
 .file-display {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background-color: #f9f5ed;
-  padding: 16px;
-  border-radius: 8px;
-  border: 1px solid #f0e9db;
+  @apply flex items-center gap-4 bg-[#f9f5ed] p-4 rounded-lg border border-[#f0e9db];
 }
-
 .file-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  background-color: white;
-  border-radius: 8px;
+  @apply flex items-center justify-center w-12 h-12 bg-white rounded-lg;
 }
-
 .file-details {
-  flex: 1;
+  @apply flex-1;
 }
-
 .btn-view-file {
-  background-color: transparent;
-  cursor: pointer;
-  transition: all 0.2s;
+  @apply bg-transparent cursor-pointer transition-all duration-200;
 }
 
 /* --- Vertical Progress Tracker --- */
 .progress-vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  position: relative;
+  @apply flex flex-col relative
+         before:content-[''] before:absolute before:top-[10px] before:bottom-[10px] before:left-[7px] before:w-0.5 before:bg-[#e0e0e0] before:z-0;
 }
-
-/* Vertical Line */
-.progress-vertical::before {
-  content: '';
-  position: absolute;
-  top: 10px;
-  bottom: 10px;
-  left: 7px; /* Half of marker width (14px) - padding adjustment */
-  width: 2px;
-  background-color: #e0e0e0;
-  z-index: 0;
-}
-
 .progress-step {
-  display: flex;
-  gap: 16px;
-  position: relative;
-  z-index: 1;
-  padding-bottom: 32px;
-}
-
-.progress-step:last-child {
-  padding-bottom: 0;
+  @apply flex gap-4 relative z-[1] pb-8 last:pb-0;
 }
 
 /* Markers */
 .step-marker {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background-color: white;
-  border: 2px solid #e0e0e0;
-  margin-top: 2px;
-  flex-shrink: 0;
+  @apply w-4 h-4 rounded-full bg-white border-2 border-[#e0e0e0] mt-0.5 shrink-0;
 }
 
 /* Completed State */
 .progress-step.completed .step-marker {
-  background-color: #266841; /* Success Green */
-  border-color: #266841;
+  @apply bg-[#266841] border-[#266841];
 }
 
 /* Active State */
 .progress-step.active .step-marker {
-  background-color: #b35c2a; /* Accent Orange */
-  border-color: #b35c2a;
-  box-shadow: 0 0 0 4px rgba(179, 92, 42, 0.2);
+  @apply bg-[#b35c2a] border-[#b35c2a] shadow-[0_0_0_4px_rgba(179,92,42,0.2)];
 }
 
 /* --- Decision Section --- */
 .form-textarea {
-  width: 100%;
-  background-color: #f9f5ed;
-  border: 1px solid #f0e9db;
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-family: 'Source Serif 4', serif;
-  resize: vertical;
-  transition: border-color 0.2s;
-  box-sizing: border-box;
+  @apply w-full bg-[#f9f5ed] border border-[#f0e9db] rounded-lg px-4 py-3 [font-family:var(--font-serif)] resize-y transition-[border-color] duration-200 box-border focus:outline-none focus:border-[#1a3a2a] focus:bg-white;
 }
-
-.form-textarea:focus {
-  outline: none;
-  border-color: #1a3a2a;
-  background-color: white;
-}
-
 .btn-approve {
-  background-color: #1a3a2a; /* Dark Green */
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  @apply bg-[#1a3a2a] text-white border-none cursor-pointer transition-colors duration-200 hover:bg-[#132d20];
 }
-
-.btn-approve:hover {
-  background-color: #132d20;
-}
-
 .btn-reject {
-  background-color: transparent;
-  border: 1px solid #d32f2f;
-  color: #d32f2f;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  @apply bg-transparent border border-[#d32f2f] text-[#d32f2f] cursor-pointer transition-colors duration-200 hover:bg-[#ffebee];
 }
 
-.btn-reject:hover {
-  background-color: #ffebee;
-}
-
-/* Mobile Responsive */
+/* --- Mobile Responsive --- */
 @media (max-width: 1024px) {
   .info-grid {
-    grid-template-columns: 1fr;
+    @apply grid-cols-1;
   }
   .info-item.full-width {
-    grid-column: span 1;
+    @apply col-span-1;
   }
 }

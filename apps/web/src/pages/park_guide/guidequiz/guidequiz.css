@@ -1,409 +1,197 @@
-/* guidequiz.css */
+@reference "tailwindcss";
 
 /* --- Layout & Page Structure --- */
 .gq-page-container {
-  display: flex;
-  min-height: 100vh;
-  background-color: #f3f4f6;
+  @apply flex min-h-screen bg-[#f3f4f6];
 }
 
 .gq-main-wrapper {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
+  @apply flex flex-col flex-1 overflow-hidden;
 }
 
-/* --- Topbar --- */
-.gq-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
-  height: 64px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+.gq-page-container {
+  @apply flex min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif];
 }
 
 .gq-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #111827;
-  margin: 0;
+  @apply text-[1.75rem] text-[#333333] font-bold;
 }
 
 .gq-search-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  padding: 6px 12px;
-  width: 300px;
+  @apply flex items-center gap-2 bg-[#f9fafb] border border-[#e5e7eb] rounded-[6px] py-[6px] px-3 w-[300px];
 }
 
 .gq-search-box input {
-  border: none;
-  background: transparent;
-  outline: none;
-  width: 100%;
-  font-size: 0.9rem;
-  color: #374151;
+  @apply border-0 bg-transparent outline-none w-full text-[0.9rem] text-[#374151];
 }
 
 .gq-user-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  @apply flex items-center gap-3;
 }
 
 .gq-icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  position: relative;
-  color: #6b7280;
-  padding: 4px;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-}
-
-.gq-icon-btn:hover {
-  background-color: #f3f4f6;
-  color: #111827;
+  @apply bg-transparent border-0 cursor-pointer relative text-[#6b7280] p-1 rounded-full transition-colors duration-200 hover:bg-[#f3f4f6] hover:text-[#111827];
 }
 
 .gq-notification-dot {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 8px;
-  height: 8px;
-  background-color: #ef4444;
-  border-radius: 50%;
-  border: 1px solid #ffffff;
+  @apply absolute top-[2px] right-[2px] w-2 h-2 bg-[#ef4444] rounded-full border border-white;
 }
 
 .gq-avatar {
-  width: 36px;
-  height: 36px;
-  background-color: #e5e7eb;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #374151;
+  @apply w-9 h-9 bg-[#e5e7eb] rounded-full flex items-center justify-center text-[0.85rem] font-semibold text-[#374151];
 }
 
 /* --- Main Content Area --- */
 .gq-content-area {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  @apply flex-1 p-8 overflow-y-auto flex flex-col gap-6;
 }
 
 /* --- Quiz Header Card --- */
 .gq-quiz-header-card {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  border-left: 5px solid #2E7D32;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  @apply bg-white rounded-[8px] p-8 shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] border-l-[5px] border-l-[#2E7D32] flex justify-between items-start flex-wrap gap-6;
 }
 
 .gq-quiz-info {
-  flex: 1;
+  @apply flex-1;
 }
 
 .gq-breadcrumb {
-  font-size: 0.85rem;
-  color: #6b7280;
-  margin-bottom: 0.5rem;
+  @apply text-[0.85rem] text-[#6b7280] mb-2;
 }
 
 .gq-quiz-title {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.75rem;
-  color: #111827;
-  font-weight: 700;
+  @apply m-0 mb-2 text-[1.75rem] text-[#111827] font-bold;
 }
 
 .gq-module-tag {
-  display: inline-block;
-  background-color: #ecfdf5;
-  color: #059669;
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  @apply inline-block bg-[#ecfdf5] text-[#059669] py-1 px-3 rounded-[4px] text-[0.85rem] font-semibold;
 }
 
 .gq-stats-row {
-  display: flex;
-  gap: 1.5rem;
+  @apply flex gap-6;
 }
 
 .gq-stat-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 1.5rem;
-  background-color: #f9fafb;
-  border-radius: 8px;
-  min-width: 100px;
-  border: 1px solid #e5e7eb;
+  @apply flex flex-col items-center justify-center py-3 px-6 bg-[#f9fafb] rounded-[8px] min-w-[100px] border border-[#e5e7eb];
 }
 
 .gq-stat-label {
-  font-size: 0.75rem;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 4px;
+  @apply text-[0.75rem] text-[#6b7280] uppercase tracking-[0.05em] mb-1;
 }
 
 .gq-stat-value {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #111827;
+  @apply text-[1.25rem] font-bold text-[#111827];
 }
 
 .gq-time-box {
-  border-color: #fee2e2;
-  background-color: #fef2f2;
-  flex-direction: row;
-  gap: 8px;
+  @apply border-[#fee2e2] bg-[#fef2f2] flex-row gap-2;
 }
 
 .gq-time-text {
-  font-family: monospace;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #dc2626;
+  @apply font-mono text-[1.5rem] font-bold text-[#dc2626];
 }
 
 .gq-score-highlight {
-  color: #059669;
+  @apply text-[#059669];
 }
 
 /* --- Question Cards --- */
 .gq-questions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  @apply flex flex-col gap-6;
 }
 
 .gq-question-card {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 2rem;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: border-color 0.2s;
+  @apply bg-white rounded-[8px] p-8 border border-[#e5e7eb] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-[border-color] duration-200;
 }
 
 .gq-question-card.gq-completed {
-  border-left: 5px solid #10b981;
+  @apply border-l-[5px] border-l-[#10b981];
 }
 
 .gq-q-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid #f3f4f6;
+  @apply flex justify-between items-center mb-4 pb-3 border-b border-[#f3f4f6];
 }
 
 .gq-q-number {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #6b7280;
+  @apply text-[0.9rem] font-bold text-[#6b7280];
 }
 
 .gq-q-type {
-  font-size: 0.75rem;
-  background-color: #e5e7eb;
-  color: #374151;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-weight: 600;
+  @apply text-[0.75rem] bg-[#e5e7eb] text-[#374151] py-[2px] px-2 rounded-[4px] font-semibold;
 }
 
 .gq-check-icon {
-  color: #10b981;
+  @apply text-[#10b981];
 }
 
 .gq-q-text {
-  margin: 0 0 1.5rem 0;
-  font-size: 1.1rem;
-  color: #1f2937;
-  line-height: 1.6;
+  @apply m-0 mb-6 text-[1.1rem] text-[#1f2937] leading-[1.6];
 }
 
 .gq-input-area {
-  margin-top: 1rem;
+  @apply mt-4;
 }
 
-/* MCQ Options */
+/* --- MCQ Options --- */
 .gq-options-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
+  @apply grid grid-cols-1 gap-[10px];
 }
 
 .gq-option-label {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.gq-option-label:hover {
-  background-color: #f9fafb;
-  border-color: #9ca3af;
+  @apply flex items-center gap-3 py-3 px-4 border border-[#d1d5db] rounded-[6px] cursor-pointer transition-all duration-200 hover:bg-[#f9fafb] hover:border-[#9ca3af];
 }
 
 .gq-option-label input {
-  accent-color: #2E7D32;
-  width: 18px;
-  height: 18px;
+  @apply accent-[#2E7D32] w-[18px] h-[18px];
 }
 
 .gq-option-label.gq-selected {
-  background-color: #ecfdf5;
-  border-color: #10b981;
-  color: #064e3b;
-  font-weight: 500;
+  @apply bg-[#ecfdf5] border-[#10b981] text-[#064e3b] font-medium;
 }
 
-/* True/False */
+/* --- True/False --- */
 .gq-tf-grid {
-  display: flex;
-  gap: 1rem;
+  @apply flex gap-4;
 }
 
 .gq-tf-label {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-weight: 600;
-  color: #4b5563;
-}
-
-.gq-tf-label:hover {
-  background-color: #f9fafb;
+  @apply flex-1 flex items-center justify-center gap-2 p-4 border border-[#d1d5db] rounded-[6px] cursor-pointer transition-all duration-200 font-semibold text-[#4b5563] hover:bg-[#f9fafb];
 }
 
 .gq-tf-label input {
-  accent-color: #2E7D32;
-  width: 18px;
-  height: 18px;
+  @apply accent-[#2E7D32] w-[18px] h-[18px];
 }
 
 .gq-tf-label.gq-selected {
-  background-color: #2E7D32;
-  border-color: #2E7D32;
-  color: white;
+  @apply bg-[#2E7D32] border-[#2E7D32] text-white;
 }
 
-/* Text Area */
+/* --- Text Area --- */
 .gq-text-input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-family: inherit;
-  resize: vertical;
-}
-
-.gq-text-input:focus {
-  outline: none;
-  border-color: #2E7D32;
-  box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.1);
+  @apply w-full p-3 border border-[#d1d5db] rounded-[6px] text-[1rem] [font-family:inherit] resize-y focus:outline-none focus:border-[#2E7D32] focus:shadow-[0_0_0_2px_rgba(46,125,50,0.1)];
 }
 
 /* --- Footer Actions --- */
 .gq-footer-actions {
-  background-color: #ffffff;
-  padding: 1.5rem 2rem;
-  border-radius: 8px;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-  border: 1px solid #e5e7eb;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: auto; /* Push to bottom */
+  @apply bg-white py-6 px-8 rounded-[8px] shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border border-[#e5e7eb] flex justify-between items-center mt-auto;
 }
 
 .gq-footer-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: #6b7280;
-  font-size: 0.9rem;
+  @apply flex items-center gap-4 text-[#6b7280] text-[0.9rem];
 }
 
 .gq-separator {
-  color: #d1d5db;
+  @apply text-[#d1d5db];
 }
 
 .gq-buttons {
-  display: flex;
-  gap: 1rem;
+  @apply flex gap-4;
 }
 
 .gq-btn-secondary {
-  padding: 0.75rem 1.5rem;
-  background-color: transparent;
-  border: 1px solid #d1d5db;
-  color: #374151;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.gq-btn-secondary:hover {
-  background-color: #f3f4f6;
+  @apply py-3 px-6 bg-transparent border border-[#d1d5db] text-[#374151] rounded-[6px] font-medium cursor-pointer transition-colors duration-200 hover:bg-[#f3f4f6];
 }
 
 .gq-btn-primary {
-  padding: 0.75rem 2rem;
-  background-color: #2E7D32;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.gq-btn-primary:hover {
-  background-color: #1b5e20;
+  @apply py-3 px-8 bg-[#2E7D32] text-white border-0 rounded-[6px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#1b5e20];
 }

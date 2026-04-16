@@ -1,313 +1,175 @@
-/* guideprofile.css */
+@reference "tailwindcss";
+
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
 :root {
-  --gp-primary-color: #2E7D32; /* Park Guide Green */
+  --gp-primary-color: #2E7D32;
   --gp-primary-hover: #1B5E20;
-  --gp-bg-color: #F4F7F6;
-  --gp-white: #FFFFFF;
-  --gp-text-main: #333333;
-  --gp-text-sub: #666666;
-  --gp-border-color: #E0E0E0;
-  --gp-danger-color: #D32F2F;
-  --gp-danger-hover: #B71C1C;
+  --gp-bg-color:      #F4F7F6;
+  --gp-white:         #FFFFFF;
+  --gp-text-main:     #333333;
+  --gp-text-sub:      #666666;
+  --gp-border-color:  #E0E0E0;
+  --gp-danger-color:  #D32F2F;
+  --gp-danger-hover:  #B71C1C;
 }
 
+/* --- Layout --- */
 .gp-container {
-  display: flex;
-  min-height: 100vh;
-  background-color: var(--gp-bg-color);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  @apply flex min-h-screen bg-[var(--gp-bg-color)] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif];
 }
 
 .gp-main {
-  flex: 1;
-  padding: 2rem;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+  @apply flex-1 p-8 box-border flex flex-col;
 }
 
-/* Header Section */
+/* --- Header Card --- */
 .gp-header-card {
-  background: var(--gp-white);
-  border-radius: 12px;
-  padding: 2.5rem;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  margin-bottom: 2rem;
-  position: relative;
-  overflow: hidden;
+  @apply bg-[var(--gp-white)] rounded-[12px] p-10 text-center shadow-[0_2px_8px_rgba(0,0,0,0.05)] mb-8 relative overflow-hidden;
 }
 
-/* Decorative green background strip at top of header */
 .gp-header-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 80px;
-  background-color: var(--gp-primary-color);
-  z-index: 0;
+  @apply content-[''] absolute top-0 left-0 w-full h-[80px] bg-[var(--gp-primary-color)] z-0;
 }
 
 .gp-avatar {
-  width: 100px;
-  height: 100px;
-  background-color: var(--gp-white);
-  color: var(--gp-primary-color);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin: 0 auto 1rem auto;
-  position: relative;
-  z-index: 1;
-  border: 4px solid var(--gp-white);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  @apply w-[100px] h-[100px] bg-[var(--gp-white)] text-[var(--gp-primary-color)] rounded-full flex items-center justify-center text-[2.5rem] font-bold mx-auto mb-4 relative z-[1] border-4 border-[var(--gp-white)] shadow-[0_4px_6px_rgba(0,0,0,0.1)];
 }
 
 .gp-name {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--gp-text-main);
-  margin: 0 0 0.5rem 0;
-  position: relative;
-  z-index: 1;
+  @apply text-[1.5rem] font-bold text-[var(--gp-text-main)] m-0 mb-2 relative z-[1];
 }
 
 .gp-role-badge {
-  display: inline-block;
-  background-color: #E8F5E9;
-  color: var(--gp-primary-color);
-  padding: 0.25rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  position: relative;
-  z-index: 1;
+  @apply inline-block bg-[#E8F5E9] text-[var(--gp-primary-color)] py-1 px-4 rounded-[20px] text-[0.9rem] font-semibold relative z-[1];
 }
 
-/* Stats Grid */
+/* --- Stats Grid --- */
 .gp-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  @apply grid grid-cols-4 gap-6 mb-8;
 }
 
 .gp-stat-box {
-  background: var(--gp-white);
-  padding: 1.5rem;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  border-top: 4px solid var(--gp-primary-color);
+  @apply bg-[var(--gp-white)] p-6 rounded-[12px] text-center shadow-[0_1px_3px_rgba(0,0,0,0.05)] border-t-4 border-t-[var(--gp-primary-color)];
 }
 
 .gp-stat-number {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--gp-primary-color);
-  margin: 0;
+  @apply text-[2rem] font-bold text-[var(--gp-primary-color)] m-0;
 }
 
 .gp-stat-label {
-  font-size: 0.9rem;
-  color: var(--gp-text-sub);
-  margin: 0.5rem 0 0 0;
+  @apply text-[0.9rem] text-[var(--gp-text-sub)] m-0 mt-2;
 }
 
-/* Content Layout (Info + Badges | Certs) */
+/* --- Content Grid --- */
 .gp-content-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
+  @apply grid grid-cols-2 gap-8 mb-8;
 }
 
 .gp-card {
-  background: var(--gp-white);
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  @apply bg-[var(--gp-white)] p-6 rounded-[12px] shadow-[0_1px_3px_rgba(0,0,0,0.05)];
 }
 
 .gp-card-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--gp-text-main);
-  margin: 0 0 1.5rem 0;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid #f0f0f0;
+  @apply text-[1.1rem] font-bold text-[var(--gp-text-main)] m-0 mb-6 pb-3 border-b border-[#f0f0f0];
 }
 
-/* Personal Info */
+/* --- Personal Info --- */
 .gp-info-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
+  @apply flex justify-between mb-4 text-[0.95rem];
 }
 
 .gp-info-label {
-  color: var(--gp-text-sub);
-  font-weight: 500;
+  @apply text-[var(--gp-text-sub)] font-medium;
 }
 
 .gp-info-value {
-  color: var(--gp-text-main);
-  font-weight: 600;
-  text-align: right;
+  @apply text-[var(--gp-text-main)] font-semibold text-right;
 }
 
-/* Badges */
+/* --- Badges --- */
 .gp-badge-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
+  @apply flex justify-between items-center mb-3;
 }
 
 .gp-badge-count {
-  font-size: 0.9rem;
-  color: var(--gp-text-sub);
+  @apply text-[0.9rem] text-[var(--gp-text-sub)];
 }
 
 .gp-progress-bg {
-  width: 100%;
-  height: 10px;
-  background-color: #E0E0E0;
-  border-radius: 5px;
-  overflow: hidden;
+  @apply w-full h-[10px] bg-[#E0E0E0] rounded-[5px] overflow-hidden;
 }
 
 .gp-progress-fill {
-  height: 100%;
-  width: 50%; /* 6/12 = 50% */
-  background-color: var(--gp-primary-color);
-  border-radius: 5px;
+  @apply h-full w-[50%] bg-[var(--gp-primary-color)] rounded-[5px];
 }
 
 .gp-badge-text {
-  margin-top: 0.5rem;
-  font-size: 0.85rem;
-  color: var(--gp-text-sub);
-  text-align: right;
+  @apply mt-2 text-[0.85rem] text-[var(--gp-text-sub)] text-right;
 }
 
-/* Certifications List */
+/* --- Certifications List --- */
 .gp-cert-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 0;
-  border-bottom: 1px solid #f9f9f9;
-}
-
-.gp-cert-item:last-child {
-  border-bottom: none;
+  @apply flex items-center justify-between py-4 border-b border-[#f9f9f9] last:border-b-0;
 }
 
 .gp-cert-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  @apply flex items-center gap-3;
 }
 
 .gp-cert-icon {
-  width: 40px;
-  height: 40px;
-  background: #FFF8E1;
-  color: #FBC02D;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
+  @apply w-10 h-10 bg-[#FFF8E1] text-[#FBC02D] rounded-[8px] flex items-center justify-center text-[1.25rem];
 }
 
 .gp-cert-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--gp-text-main);
+  @apply text-[0.95rem] font-semibold text-[var(--gp-text-main)];
 }
 
 .gp-cert-actions {
-  display: flex;
-  gap: 0.5rem;
+  @apply flex gap-2;
 }
 
 .gp-btn-small {
-  padding: 0.35rem 0.75rem;
-  font-size: 0.8rem;
-  border-radius: 4px;
-  cursor: pointer;
-  border: 1px solid transparent;
-  font-weight: 600;
+  @apply py-[0.35rem] px-3 text-[0.8rem] rounded-[4px] cursor-pointer border border-transparent font-semibold;
 }
 
 .gp-btn-pdf {
-  background-color: #FFEBEE;
-  color: var(--gp-danger-color);
-  border-color: #FFCDD2;
+  @apply bg-[#FFEBEE] text-[var(--gp-danger-color)] border-[#FFCDD2];
 }
 
 .gp-btn-print {
-  background-color: #F5F5F5;
-  color: var(--gp-text-sub);
+  @apply bg-[#F5F5F5] text-[var(--gp-text-sub)];
 }
 
-/* Footer Buttons */
+/* --- Footer Buttons --- */
 .gp-footer-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: auto;
+  @apply flex justify-end gap-4 mt-auto;
 }
 
 .gp-btn {
-  padding: 0.75rem 2rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s;
+  @apply py-3 px-8 rounded-[8px] text-[1rem] font-semibold cursor-pointer border-0 transition-all duration-200;
 }
 
 .gp-btn-session {
-  background-color: transparent;
-  border: 1px solid var(--gp-border-color);
-  color: var(--gp-text-sub);
-}
-
-.gp-btn-session:hover {
-  background-color: #f0f0f0;
+  @apply bg-transparent border border-[var(--gp-border-color)] text-[var(--gp-text-sub)] hover:bg-[#f0f0f0];
 }
 
 .gp-btn-logout {
-  background-color: var(--gp-danger-color);
-  color: var(--gp-white);
+  @apply bg-[var(--gp-danger-color)] text-[var(--gp-white)] hover:bg-[var(--gp-danger-hover)];
 }
 
-.gp-btn-logout:hover {
-  background-color: var(--gp-danger-hover);
-}
-
-/* Responsive */
+/* --- Responsive --- */
 @media (max-width: 900px) {
   .gp-content-grid {
-    grid-template-columns: 1fr;
+    @apply grid-cols-1;
   }
-  
+
   .gp-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+    @apply grid-cols-2;
   }
-  
+
   .gp-main {
-    margin-left: 0;
-    padding: 1rem;
+    @apply ml-0 p-4;
   }
 }

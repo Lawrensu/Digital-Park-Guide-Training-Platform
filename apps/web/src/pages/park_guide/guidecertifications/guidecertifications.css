@@ -1,242 +1,141 @@
-/* guidecertifications.css */
+@reference "tailwindcss";
+
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
 :root {
-  --gc-primary-color: #2E7D32; /* Park Guide Green */
+  --gc-primary-color: #2E7D32;
   --gc-primary-hover: #1B5E20;
-  --gc-bg-color: #F4F7F6;
-  --gc-white: #FFFFFF;
-  --gc-text-main: #333333;
-  --gc-text-sub: #666666;
-  --gc-border-color: #E0E0E0;
-  --gc-danger-color: #D32F2F;
-  --gc-warning-bg: #FFF3E0;
-  --gc-warning-text: #E65100;
-  --gc-success-bg: #E8F5E9;
-  --gc-success-text: #2E7D32;
+  --gc-bg-color:      #F4F7F6;
+  --gc-white:         #FFFFFF;
+  --gc-text-main:     #333333;
+  --gc-text-sub:      #666666;
+  --gc-border-color:  #E0E0E0;
+  --gc-danger-color:  #D32F2F;
+  --gc-warning-bg:    #FFF3E0;
+  --gc-warning-text:  #E65100;
+  --gc-success-bg:    #E8F5E9;
+  --gc-success-text:  #2E7D32;
 }
 
+/* --- Layout --- */
 .gc-container {
-  display: flex;
-  min-height: 100vh;
-  background-color: var(--gc-bg-color);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  @apply flex min-h-screen bg-[var(--gc-bg-color)] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif];
 }
 
 .gc-main {
-  flex: 1;
-  padding: 2rem;
-  box-sizing: border-box;
+  @apply flex-1 p-8 box-border;
 }
 
-/* Header */
+/* --- Header --- */
 .gc-header h1 {
-  font-size: 1.75rem;
-  color: var(--gc-text-main);
-  margin: 0 0 2rem 0;
-  font-weight: 700;
+  @apply text-[1.75rem] text-[var(--gc-text-main)] m-0 mb-8 font-bold;
 }
 
-/* Stats Grid */
+/* --- Stats Grid --- */
 .gc-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  @apply grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-6 mb-10;
 }
 
 .gc-stat-card {
-  background: var(--gc-white);
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  border: 1px solid transparent;
-  transition: transform 0.2s;
-}
-
-.gc-stat-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--gc-border-color);
+  @apply bg-[var(--gc-white)] p-6 rounded-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.05)] flex items-center gap-4 border border-transparent transition-transform duration-200 hover:-translate-y-[2px] hover:border-[var(--gc-border-color)];
 }
 
 .gc-stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
-  background-color: var(--gc-bg-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
+  @apply w-12 h-12 rounded-[10px] bg-[var(--gc-bg-color)] flex items-center justify-center text-[1.5rem];
 }
 
 .gc-stat-info h3 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--gc-text-main);
+  @apply m-0 text-[1.5rem] font-bold text-[var(--gc-text-main)];
 }
 
 .gc-stat-info p {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--gc-text-sub);
+  @apply m-0 text-[0.875rem] text-[var(--gc-text-sub)];
 }
 
-/* Certification List */
+/* --- Certification List --- */
 .gc-section-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--gc-text-main);
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  @apply text-[1.1rem] font-semibold text-[var(--gc-text-main)] mb-4 flex items-center gap-2;
 }
 
 .gc-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  @apply flex flex-col gap-4;
 }
 
 .gc-card {
-  background: var(--gc-white);
-  padding: 1.5rem;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  border: 1px solid var(--gc-border-color);
+  @apply bg-[var(--gc-white)] p-6 rounded-[12px] flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[var(--gc-border-color)];
 }
 
 .gc-card-left {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
+  @apply flex items-center gap-6;
 }
 
 .gc-cert-icon {
-  width: 56px;
-  height: 56px;
-  background-color: #FFF8E1; /* Light yellow/gold for certs */
-  color: #FBC02D;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.75rem;
+  @apply w-14 h-14 bg-[#FFF8E1] text-[#FBC02D] rounded-full flex items-center justify-center text-[1.75rem];
 }
 
 .gc-details h4 {
-  margin: 0 0 0.25rem 0;
-  font-size: 1.1rem;
-  color: var(--gc-text-main);
+  @apply m-0 mb-1 text-[1.1rem] text-[var(--gc-text-main)];
 }
 
 .gc-details span {
-  font-size: 0.85rem;
-  color: var(--gc-text-sub);
+  @apply text-[0.85rem] text-[var(--gc-text-sub)];
 }
 
-/* Status Badges */
+/* --- Status Badges --- */
 .gc-badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  margin-top: 0.5rem;
+  @apply inline-block py-1 px-3 rounded-[20px] text-[0.75rem] font-semibold uppercase mt-2;
 }
 
 .gc-badge.active {
-  background-color: var(--gc-success-bg);
-  color: var(--gc-success-text);
+  @apply bg-[var(--gc-success-bg)] text-[var(--gc-success-text)];
 }
 
 .gc-badge.review {
-  background-color: var(--gc-warning-bg);
-  color: var(--gc-warning-text);
+  @apply bg-[var(--gc-warning-bg)] text-[var(--gc-warning-text)];
 }
 
 .gc-processing-text {
-  margin-left: 0.5rem;
-  font-size: 0.8rem;
-  color: var(--gc-text-sub);
-  font-style: italic;
+  @apply ml-2 text-[0.8rem] text-[var(--gc-text-sub)] italic;
 }
 
-/* Actions */
+/* --- Actions --- */
 .gc-actions {
-  display: flex;
-  gap: 0.75rem;
+  @apply flex gap-3;
 }
 
 .gc-btn {
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  @apply py-2 px-4 rounded-[6px] text-[0.875rem] font-semibold cursor-pointer transition-all duration-200 border-0 flex items-center gap-2;
 }
 
 .gc-btn-pdf {
-  background-color: #FFEBEE;
-  color: var(--gc-danger-color);
-}
-
-.gc-btn-pdf:hover {
-  background-color: #FFCDD2;
+  @apply bg-[#FFEBEE] text-[var(--gc-danger-color)] hover:bg-[#FFCDD2];
 }
 
 .gc-btn-view {
-  background-color: var(--gc-primary-color);
-  color: var(--gc-white);
+  @apply bg-[var(--gc-primary-color)] text-[var(--gc-white)] hover:bg-[var(--gc-primary-hover)];
 }
 
-.gc-btn-view:hover {
-  background-color: var(--gc-primary-hover);
-}
-
-/* Footer Note */
+/* --- Footer Note --- */
 .gc-footer-note {
-  margin-top: 2rem;
-  font-size: 0.85rem;
-  color: var(--gc-text-sub);
-  background: #E8F5E9;
-  padding: 1rem;
-  border-radius: 8px;
-  border-left: 4px solid var(--gc-primary-color);
-  line-height: 1.5;
+  @apply mt-8 text-[0.85rem] text-[var(--gc-text-sub)] bg-[#E8F5E9] p-4 rounded-[8px] border-l-4 border-l-[var(--gc-primary-color)] leading-[1.5];
 }
 
-/* Responsive */
+/* --- Responsive --- */
 @media (max-width: 768px) {
   .gc-main {
-    margin-left: 0;
-    padding: 1rem;
+    @apply ml-0 p-4;
   }
 
   .gc-card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+    @apply flex-col items-start gap-4;
   }
 
   .gc-actions {
-    width: 100%;
-    justify-content: flex-start;
+    @apply w-full justify-start;
   }
-  
+
   .gc-stat-card {
-    padding: 1rem;
+    @apply p-4;
   }
 }

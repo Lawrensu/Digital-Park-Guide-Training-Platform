@@ -70,7 +70,7 @@ const GuideQuizList = () => {
       );
     } else if (quiz.actionType === 'certificate') {
       return (
-        <button className="gql-btn gql-btn-outline">
+        <button className="gql-btn gql-btn-outline" onClick={() => navigate(`/guidecertifications`)}>
           View Certificate
         </button>
       );

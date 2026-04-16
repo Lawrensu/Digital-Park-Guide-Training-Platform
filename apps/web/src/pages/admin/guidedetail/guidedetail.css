@@ -1,407 +1,201 @@
-/* guidedetail.css */
+@reference "tailwindcss";
 
 /* --- Layout & Page Structure --- */
 .gd-page-container {
-  display: flex;
-  min-height: 100vh;
-  background-color: #f3f4f6;
+  @apply flex min-h-screen bg-[#f3f4f6];
 }
 
 .gd-main-wrapper {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
+  @apply flex flex-col flex-1 overflow-hidden;
 }
 
 /* --- Topbar --- */
 .gd-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
-  height: 64px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  @apply flex items-center justify-between px-8 h-16 bg-white border-b border-[#e5e7eb];
 }
 
 .gd-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #111827;
-  margin: 0;
+  @apply text-xl font-semibold text-[#111827] m-0;
 }
 
 .gd-search-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  padding: 6px 12px;
-  width: 300px;
+  @apply flex items-center gap-2 bg-[#f9fafb] border border-[#e5e7eb] rounded-[6px] px-3 py-[6px] w-[300px];
 }
 
 .gd-search-box input {
-  border: none;
-  background: transparent;
-  outline: none;
-  width: 100%;
-  font-size: 0.9rem;
-  color: #374151;
+  @apply border-none bg-transparent outline-none w-full text-[0.9rem] text-[#374151];
 }
 
 .gd-user-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  @apply flex items-center gap-3;
 }
 
 .gd-icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  position: relative;
-  color: #6b7280;
-  padding: 4px;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-}
-
-.gd-icon-btn:hover {
-  background-color: #f3f4f6;
-  color: #111827;
+  @apply bg-transparent border-none cursor-pointer relative text-[#6b7280] p-1 rounded-full transition-colors duration-200 hover:bg-[#f3f4f6] hover:text-[#111827];
 }
 
 .gd-notification-dot {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 8px;
-  height: 8px;
-  background-color: #ef4444;
-  border-radius: 50%;
-  border: 1px solid #ffffff;
+  @apply absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border border-white;
 }
 
 .gd-avatar {
-  width: 36px;
-  height: 36px;
-  background-color: #e5e7eb;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #374151;
+  @apply w-9 h-9 bg-[#e5e7eb] rounded-full flex items-center justify-center text-[0.85rem] font-semibold text-[#374151];
 }
 
 /* --- Main Content Area --- */
 .gd-content-area {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
+  @apply flex-1 p-8 overflow-y-auto;
 }
 
 /* --- Profile Header --- */
 .gd-profile-header {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  border-left: 5px solid #2E7D32;
+  @apply bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.1)] p-8 flex items-center gap-6 mb-8 border-l-[5px] border-l-[#2E7D32];
 }
 
 .gd-avatar-large {
-  width: 80px;
-  height: 80px;
-  background-color: #2E7D32;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.8rem;
-  font-weight: bold;
-  flex-shrink: 0;
+  @apply w-20 h-20 bg-[#2E7D32] text-white rounded-full flex items-center justify-center text-[1.8rem] font-bold shrink-0;
 }
 
 .gd-profile-info {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  @apply flex flex-col gap-2;
 }
 
 .gd-profile-name {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #111827;
+  @apply m-0 text-2xl text-[#111827];
 }
 
 .gd-status-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  width: fit-content;
+  @apply inline-block py-1 px-3 rounded-[20px] text-[0.85rem] font-semibold w-fit;
 }
 
 .gd-status-active {
-  background-color: #ecfdf5;
-  color: #059669;
+  @apply bg-[#ecfdf5] text-[#059669];
 }
 
 /* --- Stats Grid --- */
 .gd-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  @apply grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-6 mb-8;
 }
 
 .gd-stat-card {
-  background-color: #ffffff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e5e7eb;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  @apply bg-white p-6 rounded-lg shadow-[0_1px_2px_rgba(0,0,0,0.05)] border border-[#e5e7eb] flex items-center gap-4;
 }
 
 .gd-stat-icon {
-  width: 40px;
-  height: 40px;
-  background-color: #f0fdf4;
-  color: #2E7D32;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  @apply w-10 h-10 bg-[#f0fdf4] text-[#2E7D32] rounded-lg flex items-center justify-center shrink-0;
 }
 
 .gd-stat-info {
-  display: flex;
-  flex-direction: column;
+  @apply flex flex-col;
 }
 
 .gd-stat-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #111827;
-  line-height: 1;
+  @apply text-2xl font-bold text-[#111827] leading-none;
 }
 
 .gd-stat-label {
-  font-size: 0.85rem;
-  color: #6b7280;
-  margin-top: 4px;
+  @apply text-[0.85rem] text-[#6b7280] mt-1;
 }
 
 /* --- Dashboard Layout --- */
 .gd-dashboard-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 2rem;
+  @apply grid grid-cols-[2fr_1fr] gap-8;
 }
 
 .gd-section {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  @apply bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] overflow-hidden flex flex-col;
 }
 
 .gd-section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #f3f4f6;
+  @apply flex justify-between items-center px-6 py-4 border-b border-[#f3f4f6];
 }
 
 .gd-section-header h3 {
-  margin: 0;
-  font-size: 1rem;
-  color: #111827;
-  font-weight: 600;
+  @apply m-0 text-base text-[#111827] font-semibold;
 }
 
 .gd-link-btn {
-  background: none;
-  border: none;
-  color: #2E7D32;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.gd-link-btn:hover {
-  text-decoration: underline;
+  @apply bg-transparent border-none text-[#2E7D32] text-[0.85rem] font-medium cursor-pointer hover:underline;
 }
 
 /* --- Enrolments List --- */
 .gd-card-list {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  @apply p-4 flex flex-col gap-4;
 }
 
 .gd-course-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  border: 1px solid #f3f4f6;
-  border-radius: 6px;
-  transition: all 0.2s;
-}
-
-.gd-course-card:hover {
-  border-color: #d1d5db;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  @apply flex justify-between items-center p-4 border border-[#f3f4f6] rounded-[6px] transition-all duration-200 hover:border-[#d1d5db] hover:shadow-[0_2px_4px_rgba(0,0,0,0.05)];
 }
 
 .gd-course-info {
-  flex: 1;
+  @apply flex-1;
 }
 
 .gd-course-title {
-  margin: 0 0 8px 0;
-  font-size: 0.95rem;
-  color: #374151;
-  font-weight: 500;
+  @apply m-0 mb-2 text-[0.95rem] text-[#374151] font-medium;
 }
 
 .gd-progress-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  @apply flex items-center gap-[10px];
 }
 
 .gd-progress-bar-bg {
-  flex: 1;
-  height: 6px;
-  background-color: #e5e7eb;
-  border-radius: 3px;
-  overflow: hidden;
-  max-width: 200px;
+  @apply flex-1 h-[6px] bg-[#e5e7eb] rounded-[3px] overflow-hidden max-w-[200px];
 }
 
 .gd-progress-bar-fill {
-  height: 100%;
-  background-color: #2E7D32;
-  border-radius: 3px;
+  @apply h-full bg-[#2E7D32] rounded-[3px];
 }
 
 .gd-progress-text {
-  font-size: 0.8rem;
-  color: #6b7280;
-  font-weight: 500;
-  min-width: 35px;
-  text-align: right;
+  @apply text-[0.8rem] text-[#6b7280] font-medium min-w-[35px] text-right;
 }
 
 .gd-btn-continue {
-  background-color: #2E7D32;
-  color: white;
-  border: none;
-  padding: 6px 16px;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  margin-left: 1rem;
-}
-
-.gd-btn-continue:hover {
-  background-color: #1b5e20;
+  @apply bg-[#2E7D32] text-white border-none py-[6px] px-4 rounded-[4px] text-[0.85rem] font-medium cursor-pointer ml-4 hover:bg-[#1b5e20];
 }
 
 /* --- Right Column Lists --- */
 .gd-right-column {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  @apply flex flex-col gap-8;
 }
 
 .gd-card-simple {
-  padding: 0.5rem;
+  @apply p-2;
 }
 
 .gd-list-item-simple {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px;
-  border-bottom: 1px solid #f3f4f6;
-  transition: background-color 0.15s;
-}
-
-.gd-list-item-simple:last-child {
-  border-bottom: none;
-}
-
-.gd-list-item-simple:hover {
-  background-color: #fafafa;
+  @apply flex items-start gap-3 p-3 border-b border-[#f3f4f6] transition-colors duration-150 last:border-b-0 hover:bg-[#fafafa];
 }
 
 .gd-list-icon {
-  color: #2E7D32;
-  flex-shrink: 0;
-  margin-top: 2px;
+  @apply text-[#2E7D32] shrink-0 mt-0.5;
 }
 
 .gd-list-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  width: 100%;
+  @apply flex flex-col gap-1 w-full;
 }
 
 .gd-list-title {
-  font-size: 0.9rem;
-  color: #374151;
-  font-weight: 500;
+  @apply text-[0.9rem] text-[#374151] font-medium;
 }
 
 .gd-list-date {
-  font-size: 0.75rem;
-  color: #9ca3af;
+  @apply text-xs text-[#9ca3af];
 }
 
 .gd-list-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @apply flex justify-between items-center;
 }
 
 .gd-score-badge {
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
+  @apply text-xs font-bold py-[2px] px-[6px] rounded-[4px];
 }
 
 .gd-score-badge.high {
-  background-color: #ecfdf5;
-  color: #059669;
+  @apply bg-[#ecfdf5] text-[#059669];
 }
 
 .gd-score-badge.medium {
-  background-color: #fff7ed;
-  color: #ea580c;
+  @apply bg-[#fff7ed] text-[#ea580c];
 }

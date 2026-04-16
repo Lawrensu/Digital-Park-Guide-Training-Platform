@@ -127,28 +127,13 @@ export default function GuideQuizPage() {
     <div className="gq-page-container">
       <GuideNavbar />
 
-      <div className="gq-main-wrapper">
-        
-        {/* Topbar */}
-        <header className="gq-topbar">
-          <h1 className="gq-title">Quizzes</h1>
-
-          <div className="gq-search-box">
-            <SearchIcon />
-            <input type="text" placeholder="Search quizzes..." />
-          </div>
-
-          <div className="gq-user-actions">
-            <button className="gq-icon-btn">
-              <BellIcon />
-              <span className="gq-notification-dot"></span>
-            </button>
-            <div className="gq-avatar">AM</div>
-          </div>
-        </header>
+      <div className="gq-main-wrapper">      
 
         {/* Main Content */}
         <main className="gq-content-area">
+          <header className="gq-topbar">
+            <h1 className="gq-title">Quizzes</h1>
+          </header>
           
           {/* Quiz Info Header */}
           <div className="gq-quiz-header-card">

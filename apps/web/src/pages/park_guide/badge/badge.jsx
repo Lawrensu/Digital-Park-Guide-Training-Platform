@@ -162,31 +162,12 @@ export default function BadgePage() {
       <GuideNavbar />
 
       <div className="bdg-main-wrapper">
-        
-        {/* Topbar */}
-        <header className="bdg-topbar">
-          <h1 className="bdg-title">Profile</h1>
-
-          <div className="bdg-search-box">
-            <SearchIcon />
-            <input type="text" placeholder="Search..." />
-          </div>
-
-          <div className="bdg-user-actions">
-            <button className="bdg-icon-btn">
-              <BellIcon />
-              <span className="bdg-notification-dot"></span>
-            </button>
-            <div className="bdg-avatar">NF</div>
-          </div>
-        </header>
 
         {/* Main Content */}
-        <main className="bdg-content-area">
-          
-          <div className="bdg-header-row">
-            <h2 className="bdg-heading">My Badges</h2>
-          </div>
+        <main className="bdg-content-area">          
+          <header className="bdg-heading">
+            <h1 className="bdg-title-text">My Badges</h1>
+          </header>
 
           {/* Stats Row */}
           <div className="bdg-stats-container">

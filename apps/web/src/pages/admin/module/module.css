@@ -1,295 +1,191 @@
+@reference "tailwindcss";
+
 /* ─────────────────────────────────────────
    TYPOGRAPHY
 ───────────────────────────────────────── */
-.text-display { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 36px; }
-.text-h1      { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 30px; }
-.text-h2      { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 24px; }
-.text-h3      { font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 20px; }
-.text-h4      { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 16px; }
-.text-body-large   { font-family: 'Source Serif 4', serif; font-weight: 400; font-size: 18px; }
-.text-body-default { font-family: 'Source Serif 4', serif; font-weight: 400; font-size: 16px; }
-.text-body-small   { font-family: 'Source Serif 4', serif; font-weight: 400; font-size: 14px; }
-.text-label   { font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 14px; }
-.text-caption { font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 12px; }
+.text-display {
+  @apply [font-family:var(--font-outfit)] font-semibold text-[36px];
+}
+.text-h1 {
+  @apply [font-family:var(--font-outfit)] font-semibold text-[30px];
+}
+.text-h2 {
+  @apply [font-family:var(--font-outfit)] font-semibold text-[24px];
+}
+.text-h3 {
+  @apply [font-family:var(--font-outfit)] font-medium text-[20px];
+}
+.text-h4 {
+  @apply [font-family:var(--font-outfit)] font-semibold text-[16px];
+}
+.text-body-large {
+  @apply [font-family:var(--font-serif)] font-normal text-[18px];
+}
+.text-body-default {
+  @apply [font-family:var(--font-serif)] font-normal text-base;
+}
+.text-body-small {
+  @apply [font-family:var(--font-serif)] font-normal text-sm;
+}
+.text-label {
+  @apply [font-family:var(--font-outfit)] font-medium text-sm;
+}
+.text-caption {
+  @apply [font-family:var(--font-outfit)] font-medium text-xs;
+}
 
 /* ─────────────────────────────────────────
    LAYOUT
 ───────────────────────────────────────── */
 .mod-layout {
-  display: flex;
-  min-height: 100vh;
-  background-color: #fdfbf7;
+  @apply flex min-h-screen bg-[#fdfbf7];
 }
 .mod-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
+  @apply flex-1 flex flex-col min-w-0;
 }
 
 /* ─────────────────────────────────────────
    TOPBAR
 ───────────────────────────────────────── */
 .mod-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  height: 64px;
-  background: #fff;
-  border-bottom: 1px solid #e7e5e4;
-  flex-shrink: 0;
+  @apply flex items-center justify-between px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0;
 }
 .mod-topbar-title {
-  font-family: 'Outfit', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  color: #1c1917;
+  @apply [font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917];
 }
-.mod-topbar-right { display: flex; align-items: center; gap: 12px; }
+.mod-topbar-right {
+  @apply flex items-center gap-3;
+}
 .mod-icon-btn {
-  width: 36px; height: 36px;
-  border-radius: 8px;
-  background: #f5f5f4;
-  border: none;
-  display: flex; align-items: center; justify-content: center;
-  color: #78716c;
-  cursor: pointer;
-  transition: background-color 0.15s;
+  @apply w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4];
 }
-.mod-icon-btn:hover { background: #e7e5e4; }
 .mod-avatar {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: #2d7d4e;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Outfit', sans-serif;
-  font-size: 12px; font-weight: 600;
-  color: #fff;
+  @apply w-9 h-9 rounded-full bg-[#2d7d4e] flex items-center justify-center [font-family:var(--font-outfit)] text-xs font-semibold text-white;
 }
 
 /* ─────────────────────────────────────────
    CONTENT
 ───────────────────────────────────────── */
 .mod-content {
-  flex: 1;
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  overflow-y: auto;
+  @apply flex-1 p-8 flex flex-col gap-6 overflow-y-auto;
 }
 
 /* ─────────────────────────────────────────
    STAT CARDS
 ───────────────────────────────────────── */
 .mod-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  @apply grid grid-cols-4 gap-4;
 }
 .mod-stat {
-  background: #fff;
-  border: 1px solid #f0e9db;
-  border-radius: 12px;
-  padding: 20px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  cursor: pointer;
-  text-align: left;
-  transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
-  position: relative;
-  overflow: hidden;
-}
-.mod-stat::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 4px;
-  border-radius: 12px 0 0 12px;
-}
-.mod-stat:hover {
-  box-shadow: 0 4px 16px rgba(26,58,42,0.1);
-  transform: translateY(-1px);
+  @apply bg-white border border-[#f0e9db] rounded-xl px-6 py-5 flex flex-col gap-2 cursor-pointer text-left transition-[box-shadow,border-color,transform] duration-200 relative overflow-hidden
+         before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:rounded-[12px_0_0_12px]
+         hover:shadow-[0_4px_16px_rgba(26,58,42,0.1)] hover:-translate-y-px;
 }
 .mod-stat--active {
-  background: #f3faf6;
-  border-color: #2d7d4e;
-  box-shadow: 0 4px 16px rgba(26,58,42,0.12);
+  @apply bg-[#f3faf6] border-[#2d7d4e] shadow-[0_4px_16px_rgba(26,58,42,0.12)];
 }
-.mod-stat--total::before     { background: #1a3a2a; }
-.mod-stat--published::before { background: #2d7d4e; }
-.mod-stat--draft::before     { background: #b35c2a; }
-.mod-stat--archived::before  { background: #a8a29e; }
-
+.mod-stat--total::before {
+  @apply before:bg-[#1a3a2a];
+}
+.mod-stat--published::before {
+  @apply before:bg-[#2d7d4e];
+}
+.mod-stat--draft::before {
+  @apply before:bg-[#b35c2a];
+}
+.mod-stat--archived::before {
+  @apply before:bg-[#a8a29e];
+}
 .mod-stat-label {
-  font-family: 'Outfit', sans-serif;
-  font-size: 12px; font-weight: 500;
-  color: #78716c;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  @apply [font-family:var(--font-outfit)] text-xs font-medium text-[#78716c] uppercase tracking-[0.5px];
 }
 .mod-stat-value {
-  font-family: 'Outfit', sans-serif;
-  font-size: 28px; font-weight: 600;
-  line-height: 1;
-  color: #1a3a2a;
+  @apply [font-family:var(--font-outfit)] text-[28px] font-semibold leading-none text-[#1a3a2a];
 }
-.mod-stat--published .mod-stat-value { color: #2d7d4e; }
-.mod-stat--draft     .mod-stat-value { color: #b35c2a; }
-.mod-stat--archived  .mod-stat-value { color: #78716c; }
+.mod-stat--published .mod-stat-value {
+  @apply text-[#2d7d4e];
+}
+.mod-stat--draft .mod-stat-value {
+  @apply text-[#b35c2a];
+}
+.mod-stat--archived .mod-stat-value {
+  @apply text-[#78716c];
+}
 
 /* ─────────────────────────────────────────
    HEADER ROW
 ───────────────────────────────────────── */
 .mod-header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  @apply flex items-center justify-between;
 }
 .mod-section-title {
-  font-family: 'Outfit', sans-serif;
-  font-size: 24px;
-  font-weight: 600;
-  color: #1a3a2a;
+  @apply [font-family:var(--font-outfit)] text-2xl font-semibold text-[#1a3a2a];
 }
 .mod-btn-new {
-  background: #1f4d35;
-  color: #fff;
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  @apply bg-[#1f4d35] text-white [font-family:var(--font-outfit)] text-sm font-medium py-[10px] px-5 rounded-lg border-none cursor-pointer transition-colors duration-200 hover:bg-[#1a3a2a];
 }
-.mod-btn-new:hover { background: #1a3a2a; }
 
 /* ─────────────────────────────────────────
    TABS
 ───────────────────────────────────────── */
 .mod-tabs {
-  display: flex;
-  gap: 8px;
+  @apply flex gap-2;
 }
 .mod-tab {
-  padding: 7px 18px;
-  border-radius: 999px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  border: 1px solid #d6d3d1;
-  background: #fff;
-  color: #44403c;
-  cursor: pointer;
-  transition: all 0.15s;
+  @apply py-[7px] px-[18px] rounded-full [font-family:var(--font-outfit)] text-[13px] font-medium border border-[#d6d3d1] bg-white text-[#44403c] cursor-pointer transition-all duration-150 hover:border-[#1a3a2a] hover:text-[#1a3a2a];
 }
-.mod-tab:hover { border-color: #1a3a2a; color: #1a3a2a; }
 .mod-tab--active {
-  background: #1f4d35;
-  border-color: #1f4d35;
-  color: #fff;
+  @apply bg-[#1f4d35] border-[#1f4d35] text-white;
 }
 
 /* ─────────────────────────────────────────
    CARD GRID
 ───────────────────────────────────────── */
 .mod-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  @apply grid grid-cols-3 gap-4;
 }
-
 .mod-card {
-  background: #fff;
-  border: 1px solid #e7e5e4;
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: box-shadow 0.2s, transform 0.15s;
+  @apply bg-white border border-[#e7e5e4] rounded-xl p-5 flex flex-col gap-3 transition-[box-shadow,transform] duration-200 hover:shadow-[0_4px_16px_rgba(26,58,42,0.1)] hover:-translate-y-0.5;
 }
-.mod-card:hover {
-  box-shadow: 0 4px 16px rgba(26,58,42,0.1);
-  transform: translateY(-2px);
+.mod-card-header {
+  @apply flex items-center justify-end;
 }
-.mod-card-header { display: flex; align-items: center; justify-content: flex-end; }
 .mod-card-title {
-  font-family: 'Source Serif 4', serif;
-  font-size: 16px;
-  font-weight: 400;
-  color: #1a3a2a;
-  line-height: 1.5;
-  flex: 1;
+  @apply [font-family:var(--font-serif)] text-base font-normal text-[#1a3a2a] leading-[1.5] flex-1;
 }
 .mod-card-footer {
-  display: flex;
-  gap: 8px;
-  margin-top: auto;
-  padding-top: 12px;
-  border-top: 1px solid #f5f5f4;
+  @apply flex gap-2 mt-auto pt-3 border-t border-[#f5f5f4];
 }
 
 /* ─────────────────────────────────────────
    BADGES
 ───────────────────────────────────────── */
 .mod-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 11px;
-  font-weight: 500;
+  @apply inline-flex items-center py-[3px] px-[10px] rounded-full [font-family:var(--font-outfit)] text-[11px] font-medium;
 }
-.mod-badge--published { background: #e8f5ee; color: #266841; }
-.mod-badge--draft     { background: #fdf0e6; color: #b35c2a; }
-.mod-badge--archived  { background: #f5f5f4; color: #78716c; }
+.mod-badge--published {
+  @apply bg-[#e8f5ee] text-[#266841];
+}
+.mod-badge--draft {
+  @apply bg-[#fdf0e6] text-[#b35c2a];
+}
+.mod-badge--archived {
+  @apply bg-[#f5f5f4] text-[#78716c];
+}
 
 /* ─────────────────────────────────────────
    CARD BUTTONS
 ───────────────────────────────────────── */
 .mod-btn-edit {
-  flex: 1;
-  padding: 7px 0;
-  border: 1px solid #1a3a2a;
-  border-radius: 6px;
-  background: transparent;
-  font-family: 'Outfit', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  color: #1a3a2a;
-  cursor: pointer;
-  transition: all 0.15s;
+  @apply flex-1 py-[7px] px-0 border border-[#1a3a2a] rounded-[6px] bg-transparent [font-family:var(--font-outfit)] text-xs font-medium text-[#1a3a2a] cursor-pointer transition-all duration-150 hover:bg-[#1a3a2a] hover:text-white;
 }
-.mod-btn-edit:hover { background: #1a3a2a; color: #fff; }
-
 .mod-btn-content {
-  flex: 1;
-  padding: 7px 0;
-  border: 1px solid #e7e5e4;
-  border-radius: 6px;
-  background: #f3faf6;
-  font-family: 'Outfit', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  color: #1a3a2a;
-  cursor: pointer;
-  transition: background-color 0.15s;
+  @apply flex-1 py-[7px] px-0 border border-[#e7e5e4] rounded-[6px] bg-[#f3faf6] [font-family:var(--font-outfit)] text-xs font-medium text-[#1a3a2a] cursor-pointer transition-colors duration-150 hover:bg-[#e8f5ee];
 }
-.mod-btn-content:hover { background: #e8f5ee; }
 
 /* ─────────────────────────────────────────
    EMPTY STATE
 ───────────────────────────────────────── */
 .mod-empty {
-  text-align: center;
-  padding: 64px 24px;
-  font-family: 'Source Serif 4', serif;
-  font-size: 16px;
-  color: #a8a29e;
+  @apply text-center px-6 py-16 [font-family:var(--font-serif)] text-base text-[#a8a29e];
 }

@@ -1,877 +1,236 @@
-/* ─────────────────────────────────────────
+@reference "tailwindcss";
 
+/* ─────────────────────────────────────────
    TOKENS
-
 ───────────────────────────────────────── */
-
 :root {
-
   --green-dark:   #1b3a2d;
-
   --green-mid:    #2d6a4f;
-
   --green-accent: #3a7d5a;
-
   --cream:        #f0efe9;
-
   --white:        #ffffff;
-
   --text-dark:    #1a1a1a;
-
   --text-muted:   #6b7280;
-
   --text-light:   #9ca3af;
-
   --border:       #e2e2dc;
-
   --input-bg:     #f9f9f7;
-
   --shadow-card:  0 4px 24px rgba(0, 0, 0, 0.08);
-
 }
-
-
 
 /* ─────────────────────────────────────────
-
    RESET / LAYOUT
-
 ───────────────────────────────────────── */
-
 *,
-
 *::before,
-
 *::after {
-
   box-sizing: border-box;
-
   margin: 0;
-
   padding: 0;
-
 }
-
-
 
 .login-layout {
-
-  display: flex;
-
-  min-height: 100vh;
-
-  font-family: 'Segoe UI', system-ui, sans-serif;
-
+  @apply flex min-h-screen [font-family:'Segoe_UI',system-ui,sans-serif];
 }
-
-
 
 /* ─────────────────────────────────────────
-
    LEFT PANEL
-
 ───────────────────────────────────────── */
-
 .left-panel {
-
-  position: relative;
-
-  flex: 0 0 48%;
-
-  background-color: var(--green-dark);
-
-  display: flex;
-
-  flex-direction: column;
-
-  justify-content: space-between;
-
-  padding: 40px 48px;
-
-  overflow: hidden;
-
-  color: #fff;
-
+  @apply relative [flex:0_0_48%] bg-[var(--green-dark)] flex flex-col justify-between py-[40px] px-[48px] overflow-hidden text-white;
 }
-
-
-
-/* Decorative circles — frosted glass spheres */
 
 .deco-circle {
-
-  position: absolute;
-
-  border-radius: 50%;
-
-  pointer-events: none;
-
+  @apply absolute rounded-full pointer-events-none;
 }
-
- 
-
-/* Circle 1 — large, top-right, bleeds out of panel */
 
 .deco-circle--1 {
-
-  width: 380px;
-
-  height: 380px;
-
-  top: -120px;
-
-  right: -60px;
-
-  background: radial-gradient(
-
-    circle at 42% 40%,
-
-    rgba(120, 180, 140, 0.35) 0%,
-
-    rgba(80, 140, 100, 0.18) 40%,
-
-    rgba(50, 100, 70, 0.08) 65%,
-
-    transparent 85%
-
-  );
-
+  @apply w-[380px] h-[380px] -top-[120px] -right-[60px] bg-[radial-gradient(circle_at_42%_40%,rgba(120,180,140,0.35)_0%,rgba(80,140,100,0.18)_40%,rgba(50,100,70,0.08)_65%,transparent_85%)];
 }
-
- 
-
-/* Circle 2 — large, bottom-left, bleeds out of panel */
 
 .deco-circle--2 {
-
-  width: 380px;
-
-  height: 380px;
-
-  bottom: -120px;
-
-  left: -80px;
-
-  background: radial-gradient(
-
-    circle at 55% 42%,
-
-    rgba(120, 180, 140, 0.30) 0%,
-
-    rgba(80, 140, 100, 0.14) 40%,
-
-    rgba(50, 100, 70, 0.06) 65%,
-
-    transparent 85%
-
-  );
-
+  @apply w-[380px] h-[380px] -bottom-[120px] -left-[80px] bg-[radial-gradient(circle_at_55%_42%,rgba(120,180,140,0.30)_0%,rgba(80,140,100,0.14)_40%,rgba(50,100,70,0.06)_65%,transparent_85%)];
 }
-
- 
-
-/* Circle 3 — medium, bottom-right area */
 
 .deco-circle--3 {
-
-  width: 260px;
-
-  height: 260px;
-
-  bottom: 60px;
-
-  right: -30px;
-
-  background: radial-gradient(
-
-    circle at 40% 38%,
-
-    rgba(120, 180, 140, 0.28) 0%,
-
-    rgba(80, 140, 100, 0.12) 45%,
-
-    rgba(50, 100, 70, 0.05) 65%,
-
-    transparent 85%
-
-  );
-
+  @apply w-[260px] h-[260px] bottom-[60px] -right-[30px] bg-[radial-gradient(circle_at_40%_38%,rgba(120,180,140,0.28)_0%,rgba(80,140,100,0.12)_45%,rgba(50,100,70,0.05)_65%,transparent_85%)];
 }
-
-
 
 .brand-logo {
-
-  width: 40px;
-
-  height: 40px;
-
-  background-color: var(--green-mid);
-
-  border-radius: 8px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  font-weight: 700;
-
-  font-size: 13px;
-
-  letter-spacing: 0.5px;
-
-  color: #fff;
-
+  @apply w-10 h-10 bg-[var(--green-mid)] rounded-[8px] flex items-center justify-center font-bold text-[13px] tracking-[0.5px] text-white;
 }
-
-
 
 .brand-text {
-
-  display: flex;
-
-  flex-direction: column;
-
+  @apply flex flex-col;
 }
-
-
 
 .brand-name {
-
-  font-size: 15px;
-
-  font-weight: 600;
-
-  color: #fff;
-
-  line-height: 1.2;
-
+  @apply text-[15px] font-semibold text-white leading-[1.2];
 }
-
-
 
 .brand-sub {
-
-  font-size: 12px;
-
-  color: rgba(255, 255, 255, 0.6);
-
+  @apply text-[12px] text-white/60;
 }
-
-
-
-/* Hero text */
 
 .left-content {
-
-  position: relative;
-
-  z-index: 1;
-
-  flex: 1;
-
-  display: flex;
-
-  flex-direction: column;
-
-  justify-content: center;
-
-  gap: 28px;
-
+  @apply relative z-[1] flex-1 flex flex-col justify-center gap-7;
 }
-
-
 
 .hero-text h1 {
-
-  font-size: 36px;
-
-  font-weight: 700;
-
-  line-height: 1.2;
-
-  color: #fff;
-
-  letter-spacing: -0.5px;
-
+  @apply text-[36px] font-bold leading-[1.2] text-white tracking-[-0.5px];
 }
-
-
 
 .hero-accent {
-
-  color: #6fcf97;
-
+  @apply text-[#6fcf97];
 }
-
-
 
 .hero-desc {
-
-  font-size: 14px;
-
-  line-height: 1.65;
-
-  color: rgba(255, 255, 255, 0.65);
-
-  max-width: 380px;
-
+  @apply text-[14px] leading-[1.65] text-white/65 max-w-[380px];
 }
-
-
-
-/* Stats */
 
 .stats-divider {
-
-  height: 1px;
-
-  background: rgba(255, 255, 255, 0.15);
-
+  @apply h-px bg-white/15;
 }
-
-
 
 .stats {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 32px;
-
+  @apply flex items-center gap-8;
 }
-
-
 
 .stat {
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 2px;
-
+  @apply flex flex-col gap-0.5;
 }
-
-
 
 .stat-value {
-
-  font-size: 28px;
-
-  font-weight: 700;
-
-  color: #fff;
-
-  line-height: 1;
-
+  @apply text-[28px] font-bold text-white leading-none;
 }
-
-
 
 .stat-label {
-
-  font-size: 12px;
-
-  color: rgba(255, 255, 255, 0.55);
-
+  @apply text-[12px] text-white/55;
 }
-
-
 
 .stat-sep {
-
-  width: 1px;
-
-  height: 36px;
-
-  background: rgba(255, 255, 255, 0.2);
-
+  @apply w-px h-9 bg-white/20;
 }
-
-
-
-/* Left footer */
 
 .left-footer {
-
-  position: relative;
-
-  z-index: 1;
-
-  font-size: 12px;
-
-  color: rgba(255, 255, 255, 0.4);
-
+  @apply relative z-[1] text-[12px] text-white/40;
 }
-
-
 
 /* ─────────────────────────────────────────
-
    RIGHT PANEL
-
 ───────────────────────────────────────── */
-
 .right-panel {
-
-  flex: 1;
-
-  background-color: var(--cream);
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-
-  justify-content: center;
-
-  padding: 48px 32px;
-
-  gap: 20px;
-
+  @apply flex-1 bg-[var(--cream)] flex flex-col items-center justify-center py-[48px] px-8 gap-5;
 }
-
-
-
-/* Form card */
 
 .form-card {
-
-  background: var(--white);
-
-  border-radius: 16px;
-
-  box-shadow: var(--shadow-card);
-
-  padding: 40px 40px 28px;
-
-  width: 100%;
-
-  max-width: 420px;
-
+  @apply bg-[var(--white)] rounded-[16px] shadow-[var(--shadow-card)] pt-[40px] px-[40px] pb-7 w-full max-w-[420px];
 }
-
-
 
 .form-header {
-
-  margin-bottom: 28px;
-
+  @apply mb-7;
 }
-
-
 
 .form-header h2 {
-
-  font-size: 24px;
-
-  font-weight: 700;
-
-  color: var(--text-dark);
-
-  margin-bottom: 4px;
-
+  @apply text-[24px] font-bold text-[var(--text-dark)] mb-1;
 }
-
-
 
 .form-header p {
-
-  font-size: 14px;
-
-  color: var(--text-muted);
-
+  @apply text-[14px] text-[var(--text-muted)];
 }
-
-
-
-/* Form fields */
 
 .login-form {
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 18px;
-
+  @apply flex flex-col gap-[18px];
 }
-
-
 
 .field {
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 6px;
-
+  @apply flex flex-col gap-[6px];
 }
-
-
 
 .field label {
-
-  font-size: 13px;
-
-  font-weight: 500;
-
-  color: var(--text-dark);
-
+  @apply text-[13px] font-medium text-[var(--text-dark)];
 }
-
-
 
 .input-wrap {
-
-  position: relative;
-
-  display: flex;
-
-  align-items: center;
-
+  @apply relative flex items-center;
 }
-
-
 
 .input-icon {
-
-  position: absolute;
-
-  left: 12px;
-
-  color: var(--text-light);
-
-  display: flex;
-
-  align-items: center;
-
-  pointer-events: none;
-
+  @apply absolute left-3 text-[var(--text-light)] flex items-center pointer-events-none;
 }
-
-
 
 .input-wrap input {
-
-  width: 100%;
-
-  padding: 10px 40px 10px 36px;
-
-  border: 1px solid var(--border);
-
-  border-radius: 8px;
-
-  background: var(--input-bg);
-
-  font-size: 14px;
-
-  color: var(--text-dark);
-
-  outline: none;
-
-  transition: border-color 0.2s;
-
+  @apply w-full py-[10px] pr-[40px] pl-[36px] border border-[var(--border)] rounded-[8px] bg-[var(--input-bg)] text-[14px] text-[var(--text-dark)] outline-none transition-[border-color] duration-200;
 }
-
-
 
 .input-wrap input:focus {
-
-  border-color: var(--green-mid);
-
+  @apply border-[var(--green-mid)];
 }
-
-
 
 .toggle-pw {
-
-  position: absolute;
-
-  right: 10px;
-
-  background: none;
-
-  border: none;
-
-  cursor: pointer;
-
-  color: var(--text-light);
-
-  display: flex;
-
-  align-items: center;
-
-  padding: 4px;
-
+  @apply absolute right-[10px] bg-transparent border-0 cursor-pointer text-[var(--text-light)] flex items-center p-1 hover:text-[var(--text-muted)];
 }
-
-
-
-.toggle-pw:hover {
-
-  color: var(--text-muted);
-
-}
-
-
-
-/* Remember me */
 
 .remember-label {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-  font-size: 13px;
-
-  color: var(--text-muted);
-
-  cursor: pointer;
-
+  @apply flex items-center gap-2 text-[13px] text-[var(--text-muted)] cursor-pointer;
 }
-
-
 
 .remember-label input[type='checkbox'] {
-
-  width: 15px;
-
-  height: 15px;
-
-  accent-color: var(--green-dark);
-
-  cursor: pointer;
-
+  @apply w-[15px] h-[15px] accent-[var(--green-dark)] cursor-pointer;
 }
-
-
-
-/* Sign In button */
 
 .btn-signin {
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  gap: 8px;
-
-  width: 100%;
-
-  padding: 13px;
-
-  background-color: var(--green-dark);
-
-  color: #fff;
-
-  border: none;
-
-  border-radius: 8px;
-
-  font-size: 15px;
-
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition: background-color 0.2s;
-
+  @apply flex items-center justify-center gap-2 w-full py-[13px] bg-[var(--green-dark)] text-white border-0 rounded-[8px] text-[15px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[var(--green-mid)];
 }
-
-
-
-.btn-signin:hover {
-
-  background-color: var(--green-mid);
-
-}
-
-
 
 .btn-chevron {
-
-  display: flex;
-
-  align-items: center;
-
+  @apply flex items-center;
 }
-
-
-
-/* Restriction note */
 
 .restriction-note {
-
-  font-size: 12px;
-
-  color: var(--text-light);
-
-  line-height: 1.6;
-
-  text-align: center;
-
+  @apply text-[12px] text-[var(--text-light)] leading-[1.6] text-center;
 }
-
-
-
-/* SSO divider */
 
 .sso-divider {
-
-  height: 1px;
-
-  background: var(--border);
-
+  @apply h-px bg-[var(--border)];
 }
-
-
-
-/* SSO button */
 
 .btn-sso {
-
-  width: 100%;
-
-  padding: 11px;
-
-  background: transparent;
-
-  border: 1px solid var(--border);
-
-  border-radius: 8px;
-
-  font-size: 14px;
-
-  color: var(--text-dark);
-
-  cursor: pointer;
-
-  transition: border-color 0.2s, background 0.2s;
-
+  @apply w-full py-[11px] bg-transparent border border-[var(--border)] rounded-[8px] text-[14px] text-[var(--text-dark)] cursor-pointer transition-[border-color,background] duration-200 hover:border-[var(--green-mid)] hover:bg-[rgba(45,106,79,0.04)];
 }
-
-
-
-.btn-sso:hover {
-
-  border-color: var(--green-mid);
-
-  background: rgba(45, 106, 79, 0.04);
-
-}
-
-
-
-/* Card footer */
 
 .card-footer {
-
-  margin-top: 24px;
-
-  font-size: 11.5px;
-
-  color: var(--text-light);
-
-  text-align: center;
-
+  @apply mt-6 text-[11.5px] text-[var(--text-light)] text-center;
 }
-
-
-
-/* Help text below card */
 
 .help-text {
-
-  font-size: 12.5px;
-
-  color: var(--text-muted);
-
-  text-align: center;
-
-  line-height: 1.7;
-
+  @apply text-[12.5px] text-[var(--text-muted)] text-center leading-[1.7];
 }
-
-
 
 .help-text a {
-
-  color: var(--green-mid);
-
-  text-decoration: none;
-
+  @apply text-[var(--green-mid)] no-underline hover:underline;
 }
-
-
-
-.help-text a:hover {
-
-  text-decoration: underline;
-
-}
-
-
 
 /* ─────────────────────────────────────────
-
    RESPONSIVE
-
 ───────────────────────────────────────── */
-
 @media (max-width: 768px) {
-
   .login-layout {
-
-    flex-direction: column;
-
+    @apply flex-col;
   }
-
-
 
   .left-panel {
-
-    flex: 0 0 auto;
-
-    padding: 32px 24px;
-
-    min-height: 280px;
-
+    @apply [flex:0_0_auto] py-8 px-6 min-h-[280px];
   }
-
-
 
   .hero-text h1 {
-
-    font-size: 26px;
-
+    @apply text-[26px];
   }
-
-
 
   .right-panel {
-
-    padding: 32px 20px;
-
+    @apply py-8 px-5;
   }
-
-
 
   .form-card {
-
-    padding: 28px 24px 20px;
-
+    @apply pt-7 px-6 pb-5;
   }
-
 }

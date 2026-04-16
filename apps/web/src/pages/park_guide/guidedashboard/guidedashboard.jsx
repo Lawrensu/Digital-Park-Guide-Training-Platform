@@ -55,33 +55,12 @@ export default function GuideDashboardPage() {
 
       <div className="pgd-main">
 
-        {/* ── Topbar ── */}
-        <header className="pgd-topbar">
-          <h1 className="pgd-topbar-title">Dashboard</h1>
-
-          <div className="pgd-search-box">
-            <SearchIcon />
-            <input
-              type="text"
-              placeholder="Search modules..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <button className="pgd-search-filter">
-              <ChevronDownIcon />
-            </button>
-          </div>
-
-          <div className="pgd-topbar-actions">
-            <button className="pgd-bell-btn">
-              <BellIcon />
-            </button>
-            <div className="pgd-topbar-avatar">NF</div>
-          </div>
-        </header>
-
         {/* ── Content ── */}
         <main className="pgd-content">
+
+          <header className="pgd-topbar">
+            <h1 className="pgd-topbar-title">Dashboard</h1>
+          </header>
 
           {/* Welcome Banner */}
           <div className="pgd-welcome-banner">

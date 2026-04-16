@@ -1,371 +1,190 @@
-/* iotalertdetail.css */
+@reference "tailwindcss";
 
 /* --- Layout & Page Structure --- */
 .iad-page-container {
-  display: flex;
-  min-height: 100vh;
-  background-color: #f3f4f6;
+  @apply flex min-h-screen bg-[#f3f4f6];
 }
 
 .iad-main-wrapper {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
+  @apply flex flex-col flex-1 overflow-hidden;
 }
 
 /* --- Topbar --- */
 .iad-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
-  height: 64px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  @apply flex items-center justify-between px-8 h-16 bg-white border-b border-[#e5e7eb];
 }
 
 .iad-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #111827;
-  margin: 0;
+  @apply text-xl font-semibold text-[#111827] m-0;
 }
 
 .iad-search-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  padding: 6px 12px;
-  width: 300px;
+  @apply flex items-center gap-2 bg-[#f9fafb] border border-[#e5e7eb] rounded-[6px] px-3 py-[6px] w-[300px];
 }
 
 .iad-search-box input {
-  border: none;
-  background: transparent;
-  outline: none;
-  width: 100%;
-  font-size: 0.9rem;
-  color: #374151;
+  @apply border-none bg-transparent outline-none w-full text-[0.9rem] text-[#374151];
 }
 
 .iad-user-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  @apply flex items-center gap-3;
 }
 
 .iad-icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  position: relative;
-  color: #6b7280;
-  padding: 4px;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-}
-
-.iad-icon-btn:hover {
-  background-color: #f3f4f6;
-  color: #111827;
+  @apply bg-transparent border-none cursor-pointer relative text-[#6b7280] p-1 rounded-full transition-colors duration-200 hover:bg-[#f3f4f6] hover:text-[#111827];
 }
 
 .iad-notification-dot {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 8px;
-  height: 8px;
-  background-color: #ef4444;
-  border-radius: 50%;
-  border: 1px solid #ffffff;
+  @apply absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border border-white;
 }
 
 .iad-avatar {
-  width: 36px;
-  height: 36px;
-  background-color: #e5e7eb;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #374151;
+  @apply w-9 h-9 bg-[#e5e7eb] rounded-full flex items-center justify-center text-[0.85rem] font-semibold text-[#374151];
 }
 
 /* --- Main Content Area --- */
 .iad-content-area {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
+  @apply flex-1 p-8 overflow-y-auto;
 }
 
 .iad-back-btn {
-  background: none;
-  border: none;
-  color: #4b5563;
-  font-size: 0.9rem;
-  cursor: pointer;
-  padding: 0;
-  margin-bottom: 1.5rem;
-  width: fit-content;
-}
-
-.iad-back-btn:hover {
-  color: #111827;
-  text-decoration: underline;
+  @apply bg-transparent border-none text-[#4b5563] text-[0.9rem] cursor-pointer p-0 mb-6 w-fit hover:text-[#111827] hover:underline;
 }
 
 /* --- Details Section --- */
 .iad-details-section {
-  margin-bottom: 2.5rem;
+  @apply mb-10;
 }
 
 .iad-page-heading {
-  margin: 0 0 1.5rem 0;
-  font-size: 1.5rem;
-  color: #111827;
-  font-weight: 600;
+  @apply m-0 mb-6 text-2xl text-[#111827] font-semibold;
 }
 
 .iad-details-grid {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 2rem;
-  align-items: start;
+  @apply grid grid-cols-[1.5fr_1fr] gap-8 items-start;
 }
 
 /* Evidence Frame */
 .iad-evidence-container {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  @apply bg-white rounded-lg p-[10px] shadow-[0_1px_3px_rgba(0,0,0,0.1)];
 }
 
 .iad-evidence-frame {
-  width: 100%;
-  height: 400px;
-  background-color: #000;
-  position: relative;
-  overflow: hidden;
-  border-radius: 4px;
-  /* Green border as per prompt */
-  border: 4px solid #10b981;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @apply w-full h-[400px] bg-black relative overflow-hidden rounded-[4px] border-4 border-[#10b981] flex items-center justify-center;
 }
 
 .iad-camera-overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: rgba(255, 255, 255, 0.5);
-  z-index: 10;
+  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/50 z-10;
 }
 
 .iad-image-placeholder {
-  width: 100%;
-  height: 100%;
-  background-image: radial-gradient(circle, #374151 1px, transparent 1px);
-  background-size: 20px 20px;
-  background-color: #1f2937;
-  opacity: 0.5;
+  @apply w-full h-full bg-[radial-gradient(circle,#374151_1px,transparent_1px)] [background-size:20px_20px] bg-[#1f2937] opacity-50;
 }
 
 /* Metadata Card */
 .iad-info-card {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  border-top: 4px solid #10b981; /* Matching the green theme */
+  @apply bg-white rounded-lg p-8 shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] border-t-4 border-t-[#10b981];
 }
 
 .iad-card-title {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  font-size: 1.1rem;
-  color: #111827;
-  border-bottom: 1px solid #f3f4f6;
-  padding-bottom: 0.75rem;
+  @apply mt-0 mb-6 text-[1.1rem] text-[#111827] border-b border-[#f3f4f6] pb-3;
 }
 
 .iad-info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.25rem;
+  @apply flex justify-between items-center mb-5;
 }
 
 .iad-label {
-  font-size: 0.9rem;
-  color: #6b7280;
-  font-weight: 500;
+  @apply text-[0.9rem] text-[#6b7280] font-medium;
 }
 
 .iad-value {
-  font-size: 0.95rem;
-  color: #111827;
-  font-weight: 600;
-  text-align: right;
+  @apply text-[0.95rem] text-[#111827] font-semibold text-right;
 }
 
 /* Confidence Badge */
 .iad-confidence-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 700;
+  @apply inline-block py-1 px-[10px] rounded-[20px] text-[0.8rem] font-bold;
 }
 
 .iad-high {
-  background-color: #ecfdf5;
-  color: #059669;
-  border: 1px solid #a7f3d0;
+  @apply bg-[#ecfdf5] text-[#059669] border border-[#a7f3d0];
 }
 
 .iad-actions-divider {
-  height: 1px;
-  background-color: #f3f4f6;
-  margin: 1.5rem 0;
+  @apply h-px bg-[#f3f4f6] my-6;
 }
 
 .iad-action-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  @apply flex flex-col gap-3;
 }
 
 .iad-btn-confirm {
-  width: 100%;
-  padding: 12px;
-  background-color: #10b981;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.iad-btn-confirm:hover {
-  background-color: #059669;
+  @apply w-full p-3 bg-[#10b981] text-white border-none rounded-[6px] font-semibold text-[0.95rem] cursor-pointer transition-colors duration-200 hover:bg-[#059669];
 }
 
 .iad-btn-false {
-  width: 100%;
-  padding: 12px;
-  background-color: #ffffff;
-  color: #ef4444;
-  border: 1px solid #ef4444;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.iad-btn-false:hover {
-  background-color: #fef2f2;
+  @apply w-full p-3 bg-white text-[#ef4444] border border-[#ef4444] rounded-[6px] font-semibold text-[0.95rem] cursor-pointer transition-all duration-200 hover:bg-[#fef2f2];
 }
 
 /* --- History Section --- */
 .iad-history-section {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  padding: 1.5rem;
+  @apply bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] p-6;
 }
 
 .iad-section-title {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  font-size: 1.1rem;
-  color: #111827;
-  font-weight: 600;
+  @apply mt-0 mb-6 text-[1.1rem] text-[#111827] font-semibold;
 }
 
 .iad-table-container {
-  overflow-x: auto;
+  @apply overflow-x-auto;
 }
 
 .iad-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.95rem;
+  @apply w-full border-collapse text-[0.95rem];
 }
 
 .iad-table thead {
-  background-color: #f9fafb;
+  @apply bg-[#f9fafb];
 }
 
 .iad-table th {
-  text-align: left;
-  padding: 12px 16px;
-  color: #6b7280;
-  font-weight: 600;
-  border-bottom: 1px solid #e5e7eb;
+  @apply text-left px-4 py-3 text-[#6b7280] font-semibold border-b border-[#e5e7eb];
 }
 
 .iad-table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid #f3f4f6;
-  color: #374151;
+  @apply px-4 py-[14px] border-b border-[#f3f4f6] text-[#374151];
 }
 
 .iad-table tr:last-child td {
-  border-bottom: none;
+  @apply border-b-0;
 }
 
 .iad-table tr:hover {
-  background-color: #f9fafb;
+  @apply bg-[#f9fafb];
 }
 
+/* Status Badges */
 .iad-type-cell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 500;
+  @apply flex items-center gap-2 font-medium;
 }
 
 .iad-dot {
-  width: 8px;
-  height: 8px;
-  background-color: #10b981;
-  border-radius: 50%;
+  @apply w-2 h-2 bg-[#10b981] rounded-full;
 }
 
-/* Status Badges in Table */
 .iad-status-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  @apply py-1 px-[10px] rounded-xl text-xs font-semibold;
 }
 
 .iad-confirmed {
-  background-color: #ecfdf5;
-  color: #059669;
+  @apply bg-[#ecfdf5] text-[#059669];
 }
 
 .iad-pending {
-  background-color: #fff7ed;
-  color: #c2410c;
+  @apply bg-[#fff7ed] text-[#c2410c];
 }
 
 .iad-false {
-  background-color: #fef2f2;
-  color: #dc2626;
+  @apply bg-[#fef2f2] text-[#dc2626];
 }
