@@ -38,15 +38,7 @@ jobs:
           echo "Syntax OK"
 
       - name: Smoke test app import
-        run: node --input-type=module <<'EOF'
-          import('./apps/api/src/app.js').then(() => {
-            console.log('APP_IMPORT_OK');
-            process.exit(0);
-          }).catch((err) => {
-            console.error('APP_IMPORT_FAILED:', err.message);
-            process.exit(1);
-          });
-          EOF
+        run: echo "import('./apps/api/src/app.js').then(()=>{console.log('APP_IMPORT_OK');process.exit(0)}).catch(e=>{console.error('APP_IMPORT_FAILED:',e.message);process.exit(1)})" | node --input-type=module
         env:
           DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
           REDIS_URL: redis://localhost:6379

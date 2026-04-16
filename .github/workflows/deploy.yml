@@ -8,6 +8,7 @@ jobs:
   build-and-push:
     name: Build and push Docker image
     runs-on: ubuntu-latest
+    if: ${{ vars.DEPLOY_ENABLED == 'true' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -42,9 +43,6 @@ jobs:
           script: |
             cd ~/sfc-platform
             docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml run --rm api node -e "
-              import('./src/index.js').catch(() => {});
-            " || true
             docker compose -f docker-compose.prod.yml run --rm \
               --entrypoint "" \
               api node_modules/.bin/prisma migrate deploy
