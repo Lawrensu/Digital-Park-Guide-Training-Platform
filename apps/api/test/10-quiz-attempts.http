@@ -1,0 +1,50 @@
+### Submit a quiz attempt (guide only, first attempt is free)
+POST {{baseUrl}}/api/quiz-attempts
+Content-Type: application/json
+Authorization: Bearer {{guideToken}}
+
+{
+  "quizId": "{{quizId}}",
+  "responses": [
+    {
+      "questionId": "REPLACE_WITH_MCQ_QUESTION_ID",
+      "selectedOptionId": "REPLACE_WITH_CORRECT_OPTION_ID"
+    },
+    {
+      "questionId": "REPLACE_WITH_TF_QUESTION_ID",
+      "selectedOptionId": "REPLACE_WITH_TRUE_OPTION_ID"
+    },
+    {
+      "questionId": "REPLACE_WITH_SA_QUESTION_ID",
+      "textResponse": "Orangutan and Pygmy Elephant"
+    }
+  ]
+}
+
+###
+
+### List quiz attempts (guide sees own, admin sees all)
+GET {{baseUrl}}/api/quiz-attempts
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Get a specific attempt
+GET {{baseUrl}}/api/quiz-attempts/{{attemptId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Grade open questions on an attempt (admin only)
+PATCH {{baseUrl}}/api/quiz-attempts/{{attemptId}}/grade
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "grades": [
+    {
+      "questionAttemptId": "REPLACE_WITH_QUESTION_ATTEMPT_ID",
+      "scoreAwarded": 8
+    }
+  ]
+}

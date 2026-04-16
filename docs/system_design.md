@@ -122,7 +122,7 @@ JWT with refresh token rotation. No session-based auth.
 
 ### AWS S3
 - **S3 Standard (hot):** active training media, uploaded CVs, certificate PDFs, user-facing assets
-- **S3 Glacier (cold):** long-term archival of IoT evidence frames after a defined retention period
+- **S3 Glacier (cold):** long-term archival of IoT evidence frames. AWS S3 Lifecycle Policy automatically transitions evidence frames from S3 Standard → S3 Glacier after **30 days**. No application code required as it is configured once on the S3 bucket. 30 days provides sufficient window for admins to review and flag alerts before frames become cold-storage only.
 - Files are accessed via pre-signed URLs generated on-demand by the API (short expiry, typically 15 minutes)
 
 ---

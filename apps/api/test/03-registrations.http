@@ -1,0 +1,47 @@
+### Submit a registration application (public)
+POST {{baseUrl}}/api/registrations
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "johndoe@example.com",
+  "icPassportNumber": "A1234567",
+  "address": "123 Rainforest Lane, Kuching, Sarawak",
+  "reason": "I want to become a certified park guide",
+  "cvS3Key": "cv/test-placeholder.pdf"
+}
+
+###
+
+### List all registrations (admin only)
+GET {{baseUrl}}/api/registrations
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Get a single registration (admin only)
+GET {{baseUrl}}/api/registrations/{{registrationId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Approve a registration (admin only)
+PATCH {{baseUrl}}/api/registrations/{{registrationId}}/approve
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "stationId": null
+}
+
+###
+
+### Reject a registration (admin only)
+PATCH {{baseUrl}}/api/registrations/{{registrationId}}/reject
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "reason": "Incomplete documentation provided"
+}

@@ -1,0 +1,43 @@
+### Admin enrols a guide in a module
+POST {{baseUrl}}/api/enrolments
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "guideId": "{{userId}}",
+  "moduleId": "{{moduleId}}"
+}
+
+###
+
+### Guide self-enrolls in a published module
+POST {{baseUrl}}/api/enrolments/me
+Content-Type: application/json
+Authorization: Bearer {{guideToken}}
+
+{
+  "moduleId": "{{moduleId}}"
+}
+
+###
+
+### List enrolments (admin sees all, guide sees own)
+GET {{baseUrl}}/api/enrolments
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Update due date on an enrolment (admin only)
+PATCH {{baseUrl}}/api/enrolments/{{enrolmentId}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "dueAt": "2026-12-31T23:59:59.000Z"
+}
+
+###
+
+### Remove an enrolment (admin only)
+DELETE {{baseUrl}}/api/enrolments/{{enrolmentId}}
+Authorization: Bearer {{adminToken}}

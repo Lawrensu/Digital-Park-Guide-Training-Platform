@@ -12,7 +12,7 @@ import {
 
 const router = Router();
 
-// routes are wired up — implement the controller functions and schemas to make them work
+// routes are wired up; implement controller functions and schemas
 router.post('/login', validate(loginSchema), authController.login);
 router.post('/refresh', authController.refresh);
 router.post('/logout', requireAuth, authController.logout);

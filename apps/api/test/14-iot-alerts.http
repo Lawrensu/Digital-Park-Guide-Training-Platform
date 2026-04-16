@@ -1,0 +1,46 @@
+### Internal ingest (NOT under /api, uses x-internal-secret header)
+POST {{baseUrl}}/internal/iot-alerts
+Content-Type: application/json
+x-internal-secret: {{internalSecret}}
+
+{
+  "deviceIdentifier": "ESP32-001",
+  "detectionType": "WILDLIFE_DISTURBANCE",
+  "confidence": 0.94,
+  "evidenceS3Key": "iot-evidence/2026-04-16/test-frame.jpg",
+  "detectedAt": "2026-04-16T10:00:00.000Z"
+}
+
+###
+
+### List IoT alerts (admin only)
+GET {{baseUrl}}/api/iot-alerts
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Get a single alert (admin only)
+GET {{baseUrl}}/api/iot-alerts/{{alertId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Flag as CONFIRMED
+PATCH {{baseUrl}}/api/iot-alerts/{{alertId}}/flag
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "status": "CONFIRMED"
+}
+
+###
+
+### Flag as FALSE_DETECTION
+PATCH {{baseUrl}}/api/iot-alerts/{{alertId}}/flag
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "status": "FALSE_DETECTION"
+}

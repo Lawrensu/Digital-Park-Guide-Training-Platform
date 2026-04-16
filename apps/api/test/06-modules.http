@@ -1,0 +1,50 @@
+### Create a module (admin only)
+POST {{baseUrl}}/api/modules
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "title": "Wildlife Identification Basics",
+  "description": "Learn to identify common Bornean wildlife species"
+}
+
+###
+
+### List modules
+GET {{baseUrl}}/api/modules
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Get a module
+GET {{baseUrl}}/api/modules/{{moduleId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Update a module
+PATCH {{baseUrl}}/api/modules/{{moduleId}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "description": "Updated description for wildlife identification"
+}
+
+###
+
+### Publish a module (notifies all active guides)
+PATCH {{baseUrl}}/api/modules/{{moduleId}}/publish
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Archive a module
+PATCH {{baseUrl}}/api/modules/{{moduleId}}/archive
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Delete a module (blocked if enrolments or certifications exist)
+DELETE {{baseUrl}}/api/modules/{{moduleId}}
+Authorization: Bearer {{adminToken}}

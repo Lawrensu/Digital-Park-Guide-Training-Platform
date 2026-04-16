@@ -1,0 +1,63 @@
+### Add a TEXT content item
+POST {{baseUrl}}/api/modules/{{moduleId}}/content-items
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "type": "TEXT",
+  "title": "Introduction to Bornean Biodiversity",
+  "textContent": "<p>Borneo is home to over 15,000 plant species.</p>",
+  "order": 1
+}
+
+###
+
+### Add a VIDEO content item
+POST {{baseUrl}}/api/modules/{{moduleId}}/content-items
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "type": "VIDEO",
+  "title": "Field Identification Techniques",
+  "videoSource": "YOUTUBE",
+  "videoUrl": "https://www.youtube.com/watch?v=example",
+  "allowOffline": false,
+  "order": 2
+}
+
+###
+
+### List content items for a module
+GET {{baseUrl}}/api/modules/{{moduleId}}/content-items
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Update a content item
+PATCH {{baseUrl}}/api/modules/{{moduleId}}/content-items/{{contentItemId}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "title": "Updated Title"
+}
+
+###
+
+### Reorder content items
+PATCH {{baseUrl}}/api/modules/{{moduleId}}/content-items/reorder
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "items": [
+    { "id": "{{contentItemId}}", "order": 0 }
+  ]
+}
+
+###
+
+### Delete a content item
+DELETE {{baseUrl}}/api/modules/{{moduleId}}/content-items/{{contentItemId}}
+Authorization: Bearer {{adminToken}}

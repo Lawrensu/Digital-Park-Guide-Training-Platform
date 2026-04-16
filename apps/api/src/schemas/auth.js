@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-// Cyndia — define the shape of each request body here
+// Cyndia: define the shape of each request body here
 // these get passed into validate() in routes/auth.js
 // refer to docs/api/api_plan.md for what each endpoint expects
 

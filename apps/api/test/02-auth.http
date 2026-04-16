@@ -1,0 +1,51 @@
+### Login as admin (seed account)
+# Copy accessToken from response into adminToken in the environment
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "LawrensuLeo@gmail.com",
+  "password": "Minecraft26!"
+}
+
+###
+
+### Refresh access token (requires active refresh cookie from login above)
+POST {{baseUrl}}/api/auth/refresh
+
+###
+
+### Logout
+POST {{baseUrl}}/api/auth/logout
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Forgot password (always returns 200)
+POST {{baseUrl}}/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "LawrensuLeo@gmail.com"
+}
+
+###
+
+### Set password with activation token
+POST {{baseUrl}}/api/auth/set-password
+Content-Type: application/json
+
+{
+  "token": "{{activationToken}}",
+  "password": "NewPassword123!"
+}
+
+###
+
+### Resend activation email (account must be INACTIVE)
+POST {{baseUrl}}/api/auth/resend-activation
+Content-Type: application/json
+
+{
+  "email": "test-guide@example.com"
+}

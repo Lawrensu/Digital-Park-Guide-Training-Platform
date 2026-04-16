@@ -180,7 +180,7 @@ export const forgotPassword = async (req, res) => {
 			await sendPasswordResetEmail(user.email, resetUrl);
 		}
 
-		// always return 200 — don't leak whether the email exists
+		// always return 200 to avoid leaking whether the email exists
 		return res.status(200).json({ success: true, data: { message: 'If an account with that email exists, a reset link has been sent' } });
 	} catch (err) {
 		return res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });

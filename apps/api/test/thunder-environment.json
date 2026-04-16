@@ -1,0 +1,24 @@
+{
+  "_id": "env_sfc_local",
+  "name": "SFC Local",
+  "variables": [
+    { "name": "baseUrl", "value": "http://localhost:3000" },
+    { "name": "adminToken", "value": "" },
+    { "name": "guideToken", "value": "" },
+    { "name": "internalSecret", "value": "dev-internal-secret-local" },
+    { "name": "registrationId", "value": "" },
+    { "name": "userId", "value": "" },
+    { "name": "stationId", "value": "" },
+    { "name": "moduleId", "value": "" },
+    { "name": "contentItemId", "value": "" },
+    { "name": "enrolmentId", "value": "" },
+    { "name": "quizId", "value": "" },
+    { "name": "questionId", "value": "" },
+    { "name": "attemptId", "value": "" },
+    { "name": "certId", "value": "" },
+    { "name": "badgeId", "value": "" },
+    { "name": "notifId", "value": "" },
+    { "name": "alertId", "value": "" },
+    { "name": "activationToken", "value": "" }
+  ]
+}

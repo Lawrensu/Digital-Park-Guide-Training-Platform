@@ -77,7 +77,7 @@ export const callback = async (req, res) => {
 		const { 'billplz[id]': billId, 'billplz[paid]': paidRaw } = req.body;
 		const paid = paidRaw === 'true' || paidRaw === true;
 
-		// TODO: verify X-Signature once BILLPLZ_X_SIGNATURE is set
+		// TODO: verify X Signature once BILLPLZ_X_SIGNATURE is set
 		// const xSig = req.headers['x-signature'];
 		// const expected = crypto.createHmac('sha256', process.env.BILLPLZ_X_SIGNATURE)
 		//   .update(`${billId}|${paid}`)

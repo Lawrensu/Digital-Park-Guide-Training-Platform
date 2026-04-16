@@ -1,0 +1,37 @@
+### Create a station (admin only)
+POST {{baseUrl}}/api/stations
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "name": "Semenggoh Nature Reserve"
+}
+
+###
+
+### List all stations
+GET {{baseUrl}}/api/stations
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Get a station
+GET {{baseUrl}}/api/stations/{{stationId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Update a station
+PATCH {{baseUrl}}/api/stations/{{stationId}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "name": "Semenggoh Wildlife Centre"
+}
+
+###
+
+### Delete a station (blocked if guides are assigned)
+DELETE {{baseUrl}}/api/stations/{{stationId}}
+Authorization: Bearer {{adminToken}}

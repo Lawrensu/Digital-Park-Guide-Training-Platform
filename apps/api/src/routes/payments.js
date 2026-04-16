@@ -9,7 +9,7 @@ const router = Router();
 
 router.post('/initiate', requireAuth, requireRole('GUIDE'), validate(initiatePaymentSchema), paymentsController.initiate);
 
-// BillPlz calls this webhook directly — no JWT auth, payload verified by X-Signature
+// BillPlz calls this webhook directly; no JWT auth, payload verified by X Signature
 router.post('/callback', paymentsController.callback);
 
 export default router;
