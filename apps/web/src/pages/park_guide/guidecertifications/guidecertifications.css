@@ -1,0 +1,141 @@
+@reference "tailwindcss";
+
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
+:root {
+  --gc-primary-color: #2E7D32;
+  --gc-primary-hover: #1B5E20;
+  --gc-bg-color:      #F4F7F6;
+  --gc-white:         #FFFFFF;
+  --gc-text-main:     #333333;
+  --gc-text-sub:      #666666;
+  --gc-border-color:  #E0E0E0;
+  --gc-danger-color:  #D32F2F;
+  --gc-warning-bg:    #FFF3E0;
+  --gc-warning-text:  #E65100;
+  --gc-success-bg:    #E8F5E9;
+  --gc-success-text:  #2E7D32;
+}
+
+/* --- Layout --- */
+.gc-container {
+  @apply flex min-h-screen bg-[var(--gc-bg-color)] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif];
+}
+
+.gc-main {
+  @apply flex-1 p-8 box-border;
+}
+
+/* --- Header --- */
+.gc-header h1 {
+  @apply text-[1.75rem] text-[var(--gc-text-main)] m-0 mb-8 font-bold;
+}
+
+/* --- Stats Grid --- */
+.gc-stats-grid {
+  @apply grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-6 mb-10;
+}
+
+.gc-stat-card {
+  @apply bg-[var(--gc-white)] p-6 rounded-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.05)] flex items-center gap-4 border border-transparent transition-transform duration-200 hover:-translate-y-[2px] hover:border-[var(--gc-border-color)];
+}
+
+.gc-stat-icon {
+  @apply w-12 h-12 rounded-[10px] bg-[var(--gc-bg-color)] flex items-center justify-center text-[1.5rem];
+}
+
+.gc-stat-info h3 {
+  @apply m-0 text-[1.5rem] font-bold text-[var(--gc-text-main)];
+}
+
+.gc-stat-info p {
+  @apply m-0 text-[0.875rem] text-[var(--gc-text-sub)];
+}
+
+/* --- Certification List --- */
+.gc-section-title {
+  @apply text-[1.1rem] font-semibold text-[var(--gc-text-main)] mb-4 flex items-center gap-2;
+}
+
+.gc-list {
+  @apply flex flex-col gap-4;
+}
+
+.gc-card {
+  @apply bg-[var(--gc-white)] p-6 rounded-[12px] flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[var(--gc-border-color)];
+}
+
+.gc-card-left {
+  @apply flex items-center gap-6;
+}
+
+.gc-cert-icon {
+  @apply w-14 h-14 bg-[#FFF8E1] text-[#FBC02D] rounded-full flex items-center justify-center text-[1.75rem];
+}
+
+.gc-details h4 {
+  @apply m-0 mb-1 text-[1.1rem] text-[var(--gc-text-main)];
+}
+
+.gc-details span {
+  @apply text-[0.85rem] text-[var(--gc-text-sub)];
+}
+
+/* --- Status Badges --- */
+.gc-badge {
+  @apply inline-block py-1 px-3 rounded-[20px] text-[0.75rem] font-semibold uppercase mt-2;
+}
+
+.gc-badge.active {
+  @apply bg-[var(--gc-success-bg)] text-[var(--gc-success-text)];
+}
+
+.gc-badge.review {
+  @apply bg-[var(--gc-warning-bg)] text-[var(--gc-warning-text)];
+}
+
+.gc-processing-text {
+  @apply ml-2 text-[0.8rem] text-[var(--gc-text-sub)] italic;
+}
+
+/* --- Actions --- */
+.gc-actions {
+  @apply flex gap-3;
+}
+
+.gc-btn {
+  @apply py-2 px-4 rounded-[6px] text-[0.875rem] font-semibold cursor-pointer transition-all duration-200 border-0 flex items-center gap-2;
+}
+
+.gc-btn-pdf {
+  @apply bg-[#FFEBEE] text-[var(--gc-danger-color)] hover:bg-[#FFCDD2];
+}
+
+.gc-btn-view {
+  @apply bg-[var(--gc-primary-color)] text-[var(--gc-white)] hover:bg-[var(--gc-primary-hover)];
+}
+
+/* --- Footer Note --- */
+.gc-footer-note {
+  @apply mt-8 text-[0.85rem] text-[var(--gc-text-sub)] bg-[#E8F5E9] p-4 rounded-[8px] border-l-4 border-l-[var(--gc-primary-color)] leading-[1.5];
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .gc-main {
+    @apply ml-0 p-4;
+  }
+
+  .gc-card {
+    @apply flex-col items-start gap-4;
+  }
+
+  .gc-actions {
+    @apply w-full justify-start;
+  }
+
+  .gc-stat-card {
+    @apply p-4;
+  }
+}

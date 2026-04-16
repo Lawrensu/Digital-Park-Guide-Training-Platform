@@ -1,0 +1,83 @@
+@reference "tailwindcss";
+
+/* ─────────────────────────────────────────
+   NAVBAR (Sidebar)
+───────────────────────────────────────── */
+
+.navbar {
+  @apply w-[220px] h-screen bg-[#1a3a2a] flex flex-col px-[14px] py-6 shrink-0 sticky top-0 overflow-y-auto;
+}
+
+/* ── Brand ── */
+.navbar-brand {
+  @apply flex items-center gap-[10px] px-[6px] pb-5;
+}
+
+.navbar-brand-icon {
+  @apply w-9 h-9 bg-[#266841] rounded-lg flex items-center justify-center text-lg shrink-0;
+}
+
+.navbar-brand-name {
+  @apply [font-family:var(--font-outfit)] text-[15px] font-semibold text-white leading-[1.3];
+}
+
+.navbar-brand-sub {
+  @apply [font-family:var(--font-outfit)] text-[11px] text-white/50 leading-[1.4];
+}
+
+/* ── Divider ── */
+.navbar-divider {
+  @apply h-px bg-white/10 mx-[6px] my-1;
+}
+
+/* ── Navigation ── */
+.navbar-nav {
+  @apply flex flex-col gap-0.5 py-[14px];
+}
+
+.navbar-nav-item {
+  @apply flex items-center gap-[10px] px-3 py-[10px] rounded-lg [font-family:var(--font-outfit)] text-[13.5px] font-medium text-white/60 no-underline relative transition-[background-color,color] duration-150 hover:bg-white/[0.07] hover:text-white/90;
+}
+
+.navbar-nav-item--active {
+  @apply bg-[#1f4d35] text-white font-semibold before:content-[''] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3px] before:h-[22px] before:bg-[#38945e] before:rounded-[0_3px_3px_0];
+}
+
+.navbar-nav-icon {
+  @apply text-[15px] w-5 text-center shrink-0;
+}
+
+.navbar-nav-label {
+  @apply flex-1;
+}
+
+.navbar-nav-badge {
+  @apply min-w-[18px] h-[18px] px-[5px] bg-[#c96d38] text-white [font-family:var(--font-outfit)] text-[11px] font-semibold rounded-[9px] flex items-center justify-center;
+}
+
+/* ── Spacer ── */
+.navbar-spacer {
+  @apply flex-1;
+}
+
+/* ── User Profile ── */
+.navbar-user {
+  @apply flex items-center gap-[10px] pt-4 px-[6px] pb-1;
+}
+
+.navbar-user-avatar {
+  @apply w-9 h-9 bg-[#2d7d4e] rounded-full flex items-center justify-center [font-family:var(--font-outfit)] text-xs font-semibold text-white shrink-0;
+}
+
+.navbar-user-name {
+  @apply [font-family:var(--font-outfit)] text-[13px] font-semibold text-white leading-[1.3];
+}
+
+.navbar-user-role {
+  @apply [font-family:var(--font-outfit)] text-[11px] text-white/50;
+}
+
+/* ── Logout Button ── */
+.navbar-logout-btn {
+  @apply w-full mt-3 p-[10px] bg-white/[0.08] border border-white/[0.15] rounded-lg text-white/75 [font-family:var(--font-outfit)] text-[13px] cursor-pointer transition-[background,color] duration-200 hover:bg-red-500/25 hover:text-white hover:border-red-500/50;
+}

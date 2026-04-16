@@ -1,0 +1,159 @@
+@reference "tailwindcss";
+
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
+:root {
+  --gm-primary-color: #2E7D32;
+  --gm-primary-hover: #1B5E20;
+  --gm-bg-color:      #F4F7F6;
+  --gm-white:         #FFFFFF;
+  --gm-text-main:     #333333;
+  --gm-text-sub:      #666666;
+  --gm-border-color:  #E0E0E0;
+  --gm-success-bg:    #E8F5E9;
+  --gm-success-text:  #2E7D32;
+  --gm-warning-bg:    #FFF3E0;
+  --gm-warning-text:  #E65100;
+  --gm-info-bg:       #E3F2FD;
+  --gm-info-text:     #1565C0;
+  --gm-gray-bg:       #F5F5F5;
+}
+
+/* --- Layout --- */
+.gm-container {
+  @apply flex min-h-screen bg-[var(--gm-bg-color)] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif];
+}
+
+.gm-main {
+  @apply flex-1 p-8 box-border;
+}
+
+/* --- Header --- */
+.gm-page-title {
+  @apply text-[1.75rem] text-[var(--gm-text-main)] m-0 mb-6 font-bold;
+}
+
+/* --- Stats Row --- */
+.gm-stats-row {
+  @apply grid grid-cols-4 gap-6 mb-10;
+}
+
+.gm-stat-box {
+  @apply bg-[var(--gm-white)] p-6 rounded-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.05)] flex flex-col justify-center items-center text-center border-t-4 border-t-[var(--gm-primary-color)];
+}
+
+.gm-stat-num {
+  @apply text-[2rem] font-bold text-[var(--gm-primary-color)] mb-1;
+}
+
+.gm-stat-label {
+  @apply text-[0.9rem] text-[var(--gm-text-sub)] font-medium;
+}
+
+/* --- Module Grid --- */
+.gm-module-grid {
+  @apply grid grid-cols-[repeat(auto-fill,minmax(350px,1fr))] gap-6;
+}
+
+.gm-card {
+  @apply bg-[var(--gm-white)] rounded-[12px] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[var(--gm-border-color)] flex flex-col transition-[transform,box-shadow] duration-200 hover:-translate-y-[3px] hover:shadow-[0_8px_16px_rgba(0,0,0,0.1)];
+}
+
+/* --- Card Header --- */
+.gm-card-header {
+  @apply flex justify-between items-start mb-4;
+}
+
+.gm-title {
+  @apply text-[1.1rem] font-bold text-[var(--gm-text-main)] m-0 leading-[1.4];
+}
+
+/* --- Status Badges --- */
+.gm-badge {
+  @apply text-[0.75rem] font-bold py-1 px-[0.6rem] rounded-[4px] uppercase whitespace-nowrap ml-2;
+}
+
+.gm-badge.track {
+  @apply bg-[var(--gm-success-bg)] text-[var(--gm-success-text)];
+}
+
+.gm-badge.progress {
+  @apply bg-[var(--gm-info-bg)] text-[var(--gm-info-text)];
+}
+
+.gm-badge.completed {
+  @apply bg-[var(--gm-success-bg)] text-[var(--gm-success-text)];
+}
+
+.gm-badge.late {
+  @apply bg-[#FFEBEE] text-[#D32F2F];
+}
+
+.gm-badge.not-started {
+  @apply bg-[var(--gm-gray-bg)] text-[#666];
+}
+
+/* --- Progress Bar --- */
+.gm-progress-container {
+  @apply mb-4;
+}
+
+.gm-progress-labels {
+  @apply flex justify-between text-[0.8rem] text-[var(--gm-text-sub)] mb-[0.35rem];
+}
+
+.gm-bar-bg {
+  @apply w-full h-[6px] bg-[#E0E0E0] rounded-[3px] overflow-hidden;
+}
+
+.gm-bar-fill {
+  @apply h-full bg-[var(--gm-primary-color)] rounded-[3px];
+}
+
+/* --- Card Info --- */
+.gm-info-row {
+  @apply flex gap-4 text-[0.85rem] text-[var(--gm-text-sub)] mb-6;
+}
+
+.gm-info-item {
+  @apply flex items-center gap-[0.3rem];
+}
+
+/* --- Buttons --- */
+.gm-card-footer {
+  @apply mt-auto flex justify-end;
+}
+
+.gm-btn {
+  @apply py-2 px-5 rounded-[6px] text-[0.9rem] font-semibold cursor-pointer border-0 transition-[background] duration-200;
+}
+
+.gm-btn-continue {
+  @apply bg-[var(--gm-primary-color)] text-[var(--gm-white)] hover:bg-[var(--gm-primary-hover)];
+}
+
+.gm-btn-view {
+  @apply bg-transparent border border-[var(--gm-primary-color)] text-[var(--gm-primary-color)] hover:bg-[var(--gm-success-bg)];
+}
+
+.gm-btn-enrol {
+  @apply bg-[var(--gm-white)] border border-[var(--gm-border-color)] text-[var(--gm-text-main)] hover:bg-[#f0f0f0];
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .gm-stats-row {
+    @apply grid-cols-2;
+  }
+}
+
+@media (max-width: 768px) {
+  .gm-main {
+    @apply ml-0 p-4;
+  }
+
+  .gm-module-grid {
+    @apply grid-cols-1;
+  }
+}

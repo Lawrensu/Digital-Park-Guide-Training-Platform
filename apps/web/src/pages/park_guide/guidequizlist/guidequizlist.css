@@ -1,0 +1,151 @@
+@reference "tailwindcss";
+
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
+:root {
+  --gql-primary-color: #2E7D32;
+  --gql-primary-hover: #1B5E20;
+  --gql-bg-color:      #F4F7F6;
+  --gql-white:         #FFFFFF;
+  --gql-text-main:     #333333;
+  --gql-text-sub:      #666666;
+  --gql-border-color:  #E0E0E0;
+  --gql-blue-bg:       #E3F2FD;
+  --gql-blue-text:     #1565C0;
+  --gql-orange-bg:     #FFF3E0;
+  --gql-orange-text:   #E65100;
+  --gql-green-bg:      #E8F5E9;
+  --gql-green-text:    #2E7D32;
+}
+
+/* --- Layout --- */
+.gql-container {
+  @apply flex min-h-screen bg-[var(--gql-bg-color)] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif];
+}
+
+.gql-main {
+  @apply flex-1 p-8 box-border;
+}
+
+/* --- Header --- */
+.gql-page-title {
+  @apply text-[1.75rem] text-[var(--gql-text-main)] m-0 mb-6 font-bold;
+}
+
+/* --- Stats Grid --- */
+.gql-stats-grid {
+  @apply grid grid-cols-4 gap-6 mb-10;
+}
+
+.gql-stat-card {
+  @apply bg-[var(--gql-white)] p-6 rounded-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.05)] flex items-center gap-4 border-t-4 border-t-transparent;
+}
+
+.gql-stat-card.upcoming {
+  @apply border-t-[var(--gql-blue-text)];
+}
+
+.gql-stat-card.pending {
+  @apply border-t-[var(--gql-orange-text)];
+}
+
+.gql-stat-card.completed {
+  @apply border-t-[var(--gql-primary-color)];
+}
+
+.gql-stat-card.total {
+  @apply border-t-[#607D8B];
+}
+
+.gql-stat-icon {
+  @apply w-12 h-12 rounded-full flex items-center justify-center text-[1.5rem] bg-[#f5f5f5];
+}
+
+.gql-stat-info h3 {
+  @apply m-0 text-[1.5rem] font-bold text-[var(--gql-text-main)];
+}
+
+.gql-stat-info p {
+  @apply m-0 text-[0.9rem] text-[var(--gql-text-sub)];
+}
+
+/* --- Quiz Table Container --- */
+.gql-table-container {
+  @apply bg-[var(--gql-white)] rounded-[12px] shadow-[0_1px_3px_rgba(0,0,0,0.05)] overflow-hidden;
+}
+
+.gql-table {
+  @apply w-full border-collapse text-left;
+}
+
+.gql-table th {
+  @apply py-5 px-6 text-[0.85rem] uppercase tracking-[0.5px] text-[var(--gql-text-sub)] bg-[#FAFAFA] border-b border-[var(--gql-border-color)] font-bold;
+}
+
+.gql-table td {
+  @apply py-5 px-6 border-b border-[#f0f0f0] text-[var(--gql-text-main)] align-middle;
+}
+
+.gql-table tr:last-child td {
+  @apply border-b-0;
+}
+
+.gql-table tr:hover {
+  @apply bg-[#F9F9F9];
+}
+
+.gql-quiz-title {
+  @apply font-semibold text-[1rem] block;
+}
+
+.gql-module-name {
+  @apply text-[0.85rem] text-[var(--gql-text-sub)] mt-1 block;
+}
+
+/* --- Status Badges --- */
+.gql-badge {
+  @apply inline-flex items-center py-1 px-3 rounded-[20px] text-[0.8rem] font-semibold;
+}
+
+.gql-badge.upcoming {
+  @apply bg-[var(--gql-blue-bg)] text-[var(--gql-blue-text)];
+}
+
+.gql-badge.pending {
+  @apply bg-[var(--gql-orange-bg)] text-[var(--gql-orange-text)];
+}
+
+.gql-badge.passed {
+  @apply bg-[var(--gql-green-bg)] text-[var(--gql-green-text)];
+}
+
+/* --- Buttons --- */
+.gql-btn {
+  @apply py-2 px-4 rounded-[6px] text-[0.85rem] font-semibold no-underline cursor-pointer inline-block transition-all duration-200 border-0;
+}
+
+.gql-btn-start {
+  @apply bg-[var(--gql-primary-color)] text-[var(--gql-white)] hover:bg-[var(--gql-primary-hover)];
+}
+
+.gql-btn-outline {
+  @apply bg-transparent border border-[var(--gql-border-color)] text-[var(--gql-text-main)] hover:border-[var(--gql-text-sub)] hover:bg-[#f5f5f5];
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .gql-stats-grid {
+    @apply grid-cols-2;
+  }
+}
+
+@media (max-width: 768px) {
+  .gql-main {
+    @apply ml-0 p-4;
+  }
+
+  .gql-table-container {
+    @apply overflow-x-auto;
+  }
+}

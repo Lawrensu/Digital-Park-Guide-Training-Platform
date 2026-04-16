@@ -1,0 +1,128 @@
+@reference "tailwindcss";
+
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
+:root {
+  --gvc-primary-color: #2E7D32;
+  --gvc-bg-color:      #F4F7F6;
+  --gvc-white:         #FFFFFF;
+  --gvc-text-main:     #333333;
+  --gvc-text-sub:      #666666;
+  --gvc-border-color:  #E0E0E0;
+  --gvc-gold:          #C5A059;
+  --gvc-success-bg:    #E8F5E9;
+  --gvc-success-text:  #2E7D32;
+}
+
+/* --- Layout --- */
+.gvc-container {
+  @apply flex min-h-screen bg-[var(--gvc-bg-color)] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif];
+}
+
+.gvc-main {
+  @apply flex-1 p-8 box-border;
+}
+
+.gvc-layout {
+  @apply grid grid-cols-[1.5fr_1fr] gap-8;
+}
+
+/* --- Left Column: Details --- */
+.gvc-details-section h1 {
+  @apply text-[1.75rem] text-[var(--gvc-text-main)] m-0 mb-6 font-bold;
+}
+
+.gvc-details-card {
+  @apply bg-[var(--gvc-white)] p-8 rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.05)];
+}
+
+.gvc-detail-row {
+  @apply flex border-b border-[#f0f0f0] py-4 last:border-b-0;
+}
+
+.gvc-label {
+  @apply w-[180px] text-[0.9rem] text-[var(--gvc-text-sub)] font-semibold shrink-0;
+}
+
+.gvc-value {
+  @apply text-[0.95rem] text-[var(--gvc-text-main)] font-medium;
+}
+
+.gvc-badge-active {
+  @apply inline-block bg-[var(--gvc-success-bg)] text-[var(--gvc-success-text)] py-1 px-3 rounded-[20px] text-[0.8rem] font-bold uppercase;
+}
+
+/* --- Right Column --- */
+.gvc-right-col {
+  @apply flex flex-col gap-8;
+}
+
+/* --- Certificate Preview --- */
+.gvc-preview-card {
+  @apply bg-[var(--gvc-white)] rounded-[12px] p-6 shadow-[0_2px_8px_rgba(0,0,0,0.05)] flex flex-col items-center text-center;
+}
+
+.gvc-cert-visual {
+  @apply border-2 border-[var(--gvc-gold)] p-8 w-full h-[300px] bg-[radial-gradient(#fff_20%,#fcfcfc_20%)] [background-size:10px_10px] relative flex flex-col justify-center items-center text-[var(--gvc-text-main)];
+}
+
+.gvc-cert-visual::before {
+  @apply content-[''] absolute top-[5px] left-[5px] right-[5px] bottom-[5px] border border-[var(--gvc-gold)] pointer-events-none;
+}
+
+.gvc-cert-visual h3 {
+  @apply m-0 mb-4 text-[var(--gvc-primary-color)] uppercase tracking-[2px] text-[1rem];
+}
+
+.gvc-cert-visual h2 {
+  @apply m-0 mb-2 [font-family:'Times_New_Roman',serif] text-[1.5rem] text-[var(--gvc-text-main)];
+}
+
+.gvc-cert-visual .cert-icon {
+  @apply text-[3rem] my-4 text-[var(--gvc-gold)];
+}
+
+.gvc-cert-visual p {
+  @apply m-0 text-[0.8rem] text-[var(--gvc-text-sub)];
+}
+
+/* --- Other Certifications --- */
+.gvc-other-section h3 {
+  @apply text-[1.1rem] text-[var(--gvc-text-main)] m-0 mb-4 border-b-2 border-b-[var(--gvc-primary-color)] pb-2 inline-block;
+}
+
+.gvc-other-list {
+  @apply list-none p-0 m-0 bg-[var(--gvc-white)] rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] overflow-hidden;
+}
+
+.gvc-other-item {
+  @apply py-4 px-6 border-b border-[#f0f0f0] flex items-center justify-between cursor-pointer transition-[background] duration-200 last:border-b-0 hover:bg-[#f9f9f9];
+}
+
+.gvc-other-info {
+  @apply flex items-center gap-3;
+}
+
+.gvc-other-icon {
+  @apply w-8 h-8 bg-[#FFF8E1] text-[#FBC02D] rounded-full flex items-center justify-center text-[1rem];
+}
+
+.gvc-other-text {
+  @apply text-[0.9rem] font-medium text-[var(--gvc-text-main)];
+}
+
+.gvc-arrow {
+  @apply text-[#ccc];
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .gvc-layout {
+    @apply grid-cols-1;
+  }
+
+  .gvc-main {
+    @apply ml-0 p-4;
+  }
+}

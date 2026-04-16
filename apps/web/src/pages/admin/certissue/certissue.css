@@ -1,0 +1,200 @@
+@reference "tailwindcss";
+
+/* --- Layout & Page Structure --- */
+.ci-page-container { 
+    @apply flex min-h-screen bg-[#f3f4f6]; 
+}
+
+.ci-main-wrapper   { 
+    @apply flex flex-col flex-1 overflow-hidden; 
+}
+
+/* --- Topbar --- */
+.ci-topbar {
+  @apply flex items-center justify-between px-8 h-16 bg-white border-b border-[#e5e7eb];
+}
+
+.ci-title        { 
+    @apply text-xl font-semibold text-[#111827] m-0; 
+}
+
+.ci-search-box   { 
+    @apply flex items-center gap-2 bg-[#f9fafb] border border-[#e5e7eb] rounded-[6px] px-3 py-[6px] w-[300px]; 
+}
+
+.ci-search-box input {
+  @apply border-none bg-transparent outline-none w-full text-[0.9rem] text-[#374151];
+}
+
+.ci-user-actions { 
+    @apply flex items-center gap-3; 
+}
+
+.ci-icon-btn {
+  @apply bg-transparent border-none cursor-pointer relative text-[#6b7280] p-1 rounded-full transition-colors duration-200 hover:bg-[#f3f4f6] hover:text-[#111827];
+}
+
+.ci-notification-dot {
+  @apply absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border border-white;
+}
+
+.ci-avatar {
+  @apply w-9 h-9 bg-[#e5e7eb] rounded-full flex items-center justify-center text-[0.85rem] font-semibold text-[#374151];
+}
+
+/* --- Main Content Area --- */
+.ci-content-area { 
+    @apply flex-1 p-8 overflow-y-auto flex flex-col; 
+}
+
+.ci-back-btn {
+  @apply bg-transparent border-none text-[#4b5563] text-[0.9rem] cursor-pointer p-0 mb-6 w-fit hover:text-[#111827] hover:underline;
+}
+
+.ci-layout-grid  { 
+    @apply flex gap-8 items-start; 
+}
+
+/* --- Left Column: Form --- */
+.ci-form-column { 
+    @apply flex-1 max-w-[600px]; 
+}
+
+.ci-alert-box {
+  @apply flex items-start gap-3 bg-[#ecfdf5] border border-[#a7f3d0] text-[#065f46] p-4 rounded-[6px] mb-6;
+}
+
+.ci-alert-icon {
+  @apply bg-[#10b981] text-white w-5 h-5 rounded-full flex items-center justify-center text-xs shrink-0;
+}
+
+.ci-card       { 
+    @apply bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] p-8; 
+}
+
+.ci-card-title { 
+    @apply mt-0 mb-6 text-[1.1rem] text-[#111827] border-b-2 border-[#e5e7eb] pb-2; 
+}
+
+.ci-form-group { 
+    @apply mb-5; 
+}
+
+.ci-form-group label {
+  @apply block mb-2 text-[0.9rem] font-medium text-[#374151];
+}
+
+.ci-form-group input {
+  @apply w-full py-[0.6rem] px-[0.8rem] border border-[#d1d5db] rounded-[6px] text-[0.95rem] text-[#374151] transition-[border-color] duration-200;
+}
+
+.ci-form-group input:focus {
+  @apply outline-none border-[#2E7D32] shadow-[0_0_0_2px_rgba(46,125,50,0.1)];
+}
+
+.ci-row { 
+    @apply flex gap-6; 
+}
+
+.ci-half {
+    @apply flex-1; 
+}
+
+.ci-form-actions { 
+    @apply mt-8 flex gap-4; 
+}
+
+.ci-btn-primary {
+  @apply py-3 px-6 bg-[#2E7D32] text-white border-none rounded-[6px] font-medium cursor-pointer transition-colors duration-200 hover:bg-[#1b5e20];
+}
+
+.ci-btn-secondary {
+  @apply py-3 px-6 bg-transparent text-[#4b5563] border border-[#d1d5db] rounded-[6px] font-medium cursor-pointer transition-colors duration-200 hover:bg-[#f3f4f6];
+}
+
+/* --- Right Column: Preview --- */
+.ci-preview-column { 
+    @apply w-[450px] shrink-0 sticky top-8; 
+}
+
+.ci-preview-header { 
+    @apply mb-4 text-center text-[1.1rem] font-semibold text-[#6b7280]; 
+}
+
+/* Certificate Paper Design */
+.ci-certificate-paper {
+  @apply bg-white w-full aspect-[210/297] shadow-[0_10px_25px_rgba(0,0,0,0.15)] p-5 relative overflow-hidden;
+}
+
+.ci-cert-border {
+  @apply w-full h-full border-[5px] border-double border-[#2E7D32] p-[30px] flex flex-col justify-between text-center relative;
+}
+
+.ci-cert-header { 
+    @apply mb-5; 
+}
+
+.ci-cert-logo   { 
+    @apply mb-[10px]; 
+}
+
+.ci-logo-circle {
+  @apply w-[60px] h-[60px] bg-[#2E7D32] text-white rounded-full mx-auto flex items-center justify-center font-bold text-[1.2rem];
+}
+
+.ci-cert-title {
+  @apply [font-family:'Times_New_Roman',serif] text-[2rem] text-[#2E7D32] m-0 uppercase tracking-[1px] border-b-2 border-[#e5e7eb] pb-[10px] inline-block;
+}
+
+.ci-cert-body { 
+    @apply flex-1 flex flex-col justify-center gap-[10px] py-[10px]; 
+}
+
+.ci-cert-intro,
+.ci-cert-text  { 
+    @apply [font-family:'Times_New_Roman',serif] text-[1.1rem] text-[#555] m-0; 
+}
+
+.ci-cert-name  { 
+    @apply [font-family:'Times_New_Roman',serif] text-[1.8rem] text-[#111827] my-[10px] font-bold italic; 
+}
+
+.ci-cert-course  { 
+    @apply [font-family:'Times_New_Roman',serif] text-[1.4rem] text-[#2E7D32] my-[10px] font-bold; 
+}
+
+.ci-cert-company { 
+    @apply [font-family:'Times_New_Roman',serif] text-[1.1rem] text-[#374151] font-semibold; 
+}
+
+.ci-cert-footer {
+  @apply mt-[30px] flex justify-between items-end pt-5 border-t border-[#e5e7eb];
+}
+
+.ci-cert-date    { 
+    @apply flex flex-col items-center w-[30%]; 
+}
+
+.ci-date-label   { 
+    @apply text-[0.8rem] text-[#6b7280] uppercase mb-1; 
+}
+
+.ci-date-value   { 
+    @apply [font-family:'Times_New_Roman',serif] text-base font-bold text-[#111827]; 
+}
+
+.ci-cert-signature { 
+    @apply flex flex-col items-center w-[40%]; 
+}
+
+.ci-signature-line { 
+    @apply w-full h-10 border-b border-[#374151] mb-2; 
+}
+
+.ci-signer-name  { 
+    @apply [font-family:'Times_New_Roman',serif] text-base font-bold text-[#111827] m-0; 
+}
+
+.ci-signer-title { 
+    @apply text-[0.85rem] text-[#6b7280] m-0; 
+}

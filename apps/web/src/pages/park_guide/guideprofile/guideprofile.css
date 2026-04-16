@@ -1,0 +1,175 @@
+@reference "tailwindcss";
+
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
+:root {
+  --gp-primary-color: #2E7D32;
+  --gp-primary-hover: #1B5E20;
+  --gp-bg-color:      #F4F7F6;
+  --gp-white:         #FFFFFF;
+  --gp-text-main:     #333333;
+  --gp-text-sub:      #666666;
+  --gp-border-color:  #E0E0E0;
+  --gp-danger-color:  #D32F2F;
+  --gp-danger-hover:  #B71C1C;
+}
+
+/* --- Layout --- */
+.gp-container {
+  @apply flex min-h-screen bg-[var(--gp-bg-color)] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif];
+}
+
+.gp-main {
+  @apply flex-1 p-8 box-border flex flex-col;
+}
+
+/* --- Header Card --- */
+.gp-header-card {
+  @apply bg-[var(--gp-white)] rounded-[12px] p-10 text-center shadow-[0_2px_8px_rgba(0,0,0,0.05)] mb-8 relative overflow-hidden;
+}
+
+.gp-header-card::before {
+  @apply content-[''] absolute top-0 left-0 w-full h-[80px] bg-[var(--gp-primary-color)] z-0;
+}
+
+.gp-avatar {
+  @apply w-[100px] h-[100px] bg-[var(--gp-white)] text-[var(--gp-primary-color)] rounded-full flex items-center justify-center text-[2.5rem] font-bold mx-auto mb-4 relative z-[1] border-4 border-[var(--gp-white)] shadow-[0_4px_6px_rgba(0,0,0,0.1)];
+}
+
+.gp-name {
+  @apply text-[1.5rem] font-bold text-[var(--gp-text-main)] m-0 mb-2 relative z-[1];
+}
+
+.gp-role-badge {
+  @apply inline-block bg-[#E8F5E9] text-[var(--gp-primary-color)] py-1 px-4 rounded-[20px] text-[0.9rem] font-semibold relative z-[1];
+}
+
+/* --- Stats Grid --- */
+.gp-stats-grid {
+  @apply grid grid-cols-4 gap-6 mb-8;
+}
+
+.gp-stat-box {
+  @apply bg-[var(--gp-white)] p-6 rounded-[12px] text-center shadow-[0_1px_3px_rgba(0,0,0,0.05)] border-t-4 border-t-[var(--gp-primary-color)];
+}
+
+.gp-stat-number {
+  @apply text-[2rem] font-bold text-[var(--gp-primary-color)] m-0;
+}
+
+.gp-stat-label {
+  @apply text-[0.9rem] text-[var(--gp-text-sub)] m-0 mt-2;
+}
+
+/* --- Content Grid --- */
+.gp-content-grid {
+  @apply grid grid-cols-2 gap-8 mb-8;
+}
+
+.gp-card {
+  @apply bg-[var(--gp-white)] p-6 rounded-[12px] shadow-[0_1px_3px_rgba(0,0,0,0.05)];
+}
+
+.gp-card-title {
+  @apply text-[1.1rem] font-bold text-[var(--gp-text-main)] m-0 mb-6 pb-3 border-b border-[#f0f0f0];
+}
+
+/* --- Personal Info --- */
+.gp-info-row {
+  @apply flex justify-between mb-4 text-[0.95rem];
+}
+
+.gp-info-label {
+  @apply text-[var(--gp-text-sub)] font-medium;
+}
+
+.gp-info-value {
+  @apply text-[var(--gp-text-main)] font-semibold text-right;
+}
+
+/* --- Badges --- */
+.gp-badge-header {
+  @apply flex justify-between items-center mb-3;
+}
+
+.gp-badge-count {
+  @apply text-[0.9rem] text-[var(--gp-text-sub)];
+}
+
+.gp-progress-bg {
+  @apply w-full h-[10px] bg-[#E0E0E0] rounded-[5px] overflow-hidden;
+}
+
+.gp-progress-fill {
+  @apply h-full w-[50%] bg-[var(--gp-primary-color)] rounded-[5px];
+}
+
+.gp-badge-text {
+  @apply mt-2 text-[0.85rem] text-[var(--gp-text-sub)] text-right;
+}
+
+/* --- Certifications List --- */
+.gp-cert-item {
+  @apply flex items-center justify-between py-4 border-b border-[#f9f9f9] last:border-b-0;
+}
+
+.gp-cert-info {
+  @apply flex items-center gap-3;
+}
+
+.gp-cert-icon {
+  @apply w-10 h-10 bg-[#FFF8E1] text-[#FBC02D] rounded-[8px] flex items-center justify-center text-[1.25rem];
+}
+
+.gp-cert-title {
+  @apply text-[0.95rem] font-semibold text-[var(--gp-text-main)];
+}
+
+.gp-cert-actions {
+  @apply flex gap-2;
+}
+
+.gp-btn-small {
+  @apply py-[0.35rem] px-3 text-[0.8rem] rounded-[4px] cursor-pointer border border-transparent font-semibold;
+}
+
+.gp-btn-pdf {
+  @apply bg-[#FFEBEE] text-[var(--gp-danger-color)] border-[#FFCDD2];
+}
+
+.gp-btn-print {
+  @apply bg-[#F5F5F5] text-[var(--gp-text-sub)];
+}
+
+/* --- Footer Buttons --- */
+.gp-footer-actions {
+  @apply flex justify-end gap-4 mt-auto;
+}
+
+.gp-btn {
+  @apply py-3 px-8 rounded-[8px] text-[1rem] font-semibold cursor-pointer border-0 transition-all duration-200;
+}
+
+.gp-btn-session {
+  @apply bg-transparent border border-[var(--gp-border-color)] text-[var(--gp-text-sub)] hover:bg-[#f0f0f0];
+}
+
+.gp-btn-logout {
+  @apply bg-[var(--gp-danger-color)] text-[var(--gp-white)] hover:bg-[var(--gp-danger-hover)];
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .gp-content-grid {
+    @apply grid-cols-1;
+  }
+
+  .gp-stats-grid {
+    @apply grid-cols-2;
+  }
+
+  .gp-main {
+    @apply ml-0 p-4;
+  }
+}

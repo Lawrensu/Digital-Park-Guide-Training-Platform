@@ -1,0 +1,197 @@
+@reference "tailwindcss";
+
+/* --- Layout & Page Structure --- */
+.gq-page-container {
+  @apply flex min-h-screen bg-[#f3f4f6];
+}
+
+.gq-main-wrapper {
+  @apply flex flex-col flex-1 overflow-hidden;
+}
+
+.gq-page-container {
+  @apply flex min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif];
+}
+
+.gq-title {
+  @apply text-[1.75rem] text-[#333333] font-bold;
+}
+
+.gq-search-box {
+  @apply flex items-center gap-2 bg-[#f9fafb] border border-[#e5e7eb] rounded-[6px] py-[6px] px-3 w-[300px];
+}
+
+.gq-search-box input {
+  @apply border-0 bg-transparent outline-none w-full text-[0.9rem] text-[#374151];
+}
+
+.gq-user-actions {
+  @apply flex items-center gap-3;
+}
+
+.gq-icon-btn {
+  @apply bg-transparent border-0 cursor-pointer relative text-[#6b7280] p-1 rounded-full transition-colors duration-200 hover:bg-[#f3f4f6] hover:text-[#111827];
+}
+
+.gq-notification-dot {
+  @apply absolute top-[2px] right-[2px] w-2 h-2 bg-[#ef4444] rounded-full border border-white;
+}
+
+.gq-avatar {
+  @apply w-9 h-9 bg-[#e5e7eb] rounded-full flex items-center justify-center text-[0.85rem] font-semibold text-[#374151];
+}
+
+/* --- Main Content Area --- */
+.gq-content-area {
+  @apply flex-1 p-8 overflow-y-auto flex flex-col gap-6;
+}
+
+/* --- Quiz Header Card --- */
+.gq-quiz-header-card {
+  @apply bg-white rounded-[8px] p-8 shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] border-l-[5px] border-l-[#2E7D32] flex justify-between items-start flex-wrap gap-6;
+}
+
+.gq-quiz-info {
+  @apply flex-1;
+}
+
+.gq-breadcrumb {
+  @apply text-[0.85rem] text-[#6b7280] mb-2;
+}
+
+.gq-quiz-title {
+  @apply m-0 mb-2 text-[1.75rem] text-[#111827] font-bold;
+}
+
+.gq-module-tag {
+  @apply inline-block bg-[#ecfdf5] text-[#059669] py-1 px-3 rounded-[4px] text-[0.85rem] font-semibold;
+}
+
+.gq-stats-row {
+  @apply flex gap-6;
+}
+
+.gq-stat-box {
+  @apply flex flex-col items-center justify-center py-3 px-6 bg-[#f9fafb] rounded-[8px] min-w-[100px] border border-[#e5e7eb];
+}
+
+.gq-stat-label {
+  @apply text-[0.75rem] text-[#6b7280] uppercase tracking-[0.05em] mb-1;
+}
+
+.gq-stat-value {
+  @apply text-[1.25rem] font-bold text-[#111827];
+}
+
+.gq-time-box {
+  @apply border-[#fee2e2] bg-[#fef2f2] flex-row gap-2;
+}
+
+.gq-time-text {
+  @apply font-mono text-[1.5rem] font-bold text-[#dc2626];
+}
+
+.gq-score-highlight {
+  @apply text-[#059669];
+}
+
+/* --- Question Cards --- */
+.gq-questions-list {
+  @apply flex flex-col gap-6;
+}
+
+.gq-question-card {
+  @apply bg-white rounded-[8px] p-8 border border-[#e5e7eb] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-[border-color] duration-200;
+}
+
+.gq-question-card.gq-completed {
+  @apply border-l-[5px] border-l-[#10b981];
+}
+
+.gq-q-header {
+  @apply flex justify-between items-center mb-4 pb-3 border-b border-[#f3f4f6];
+}
+
+.gq-q-number {
+  @apply text-[0.9rem] font-bold text-[#6b7280];
+}
+
+.gq-q-type {
+  @apply text-[0.75rem] bg-[#e5e7eb] text-[#374151] py-[2px] px-2 rounded-[4px] font-semibold;
+}
+
+.gq-check-icon {
+  @apply text-[#10b981];
+}
+
+.gq-q-text {
+  @apply m-0 mb-6 text-[1.1rem] text-[#1f2937] leading-[1.6];
+}
+
+.gq-input-area {
+  @apply mt-4;
+}
+
+/* --- MCQ Options --- */
+.gq-options-grid {
+  @apply grid grid-cols-1 gap-[10px];
+}
+
+.gq-option-label {
+  @apply flex items-center gap-3 py-3 px-4 border border-[#d1d5db] rounded-[6px] cursor-pointer transition-all duration-200 hover:bg-[#f9fafb] hover:border-[#9ca3af];
+}
+
+.gq-option-label input {
+  @apply accent-[#2E7D32] w-[18px] h-[18px];
+}
+
+.gq-option-label.gq-selected {
+  @apply bg-[#ecfdf5] border-[#10b981] text-[#064e3b] font-medium;
+}
+
+/* --- True/False --- */
+.gq-tf-grid {
+  @apply flex gap-4;
+}
+
+.gq-tf-label {
+  @apply flex-1 flex items-center justify-center gap-2 p-4 border border-[#d1d5db] rounded-[6px] cursor-pointer transition-all duration-200 font-semibold text-[#4b5563] hover:bg-[#f9fafb];
+}
+
+.gq-tf-label input {
+  @apply accent-[#2E7D32] w-[18px] h-[18px];
+}
+
+.gq-tf-label.gq-selected {
+  @apply bg-[#2E7D32] border-[#2E7D32] text-white;
+}
+
+/* --- Text Area --- */
+.gq-text-input {
+  @apply w-full p-3 border border-[#d1d5db] rounded-[6px] text-[1rem] [font-family:inherit] resize-y focus:outline-none focus:border-[#2E7D32] focus:shadow-[0_0_0_2px_rgba(46,125,50,0.1)];
+}
+
+/* --- Footer Actions --- */
+.gq-footer-actions {
+  @apply bg-white py-6 px-8 rounded-[8px] shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border border-[#e5e7eb] flex justify-between items-center mt-auto;
+}
+
+.gq-footer-info {
+  @apply flex items-center gap-4 text-[#6b7280] text-[0.9rem];
+}
+
+.gq-separator {
+  @apply text-[#d1d5db];
+}
+
+.gq-buttons {
+  @apply flex gap-4;
+}
+
+.gq-btn-secondary {
+  @apply py-3 px-6 bg-transparent border border-[#d1d5db] text-[#374151] rounded-[6px] font-medium cursor-pointer transition-colors duration-200 hover:bg-[#f3f4f6];
+}
+
+.gq-btn-primary {
+  @apply py-3 px-8 bg-[#2E7D32] text-white border-0 rounded-[6px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#1b5e20];
+}

@@ -1,0 +1,201 @@
+@reference "tailwindcss";
+
+/* --- Layout & Page Structure --- */
+.gd-page-container {
+  @apply flex min-h-screen bg-[#f3f4f6];
+}
+
+.gd-main-wrapper {
+  @apply flex flex-col flex-1 overflow-hidden;
+}
+
+/* --- Topbar --- */
+.gd-topbar {
+  @apply flex items-center justify-between px-8 h-16 bg-white border-b border-[#e5e7eb];
+}
+
+.gd-title {
+  @apply text-xl font-semibold text-[#111827] m-0;
+}
+
+.gd-search-box {
+  @apply flex items-center gap-2 bg-[#f9fafb] border border-[#e5e7eb] rounded-[6px] px-3 py-[6px] w-[300px];
+}
+
+.gd-search-box input {
+  @apply border-none bg-transparent outline-none w-full text-[0.9rem] text-[#374151];
+}
+
+.gd-user-actions {
+  @apply flex items-center gap-3;
+}
+
+.gd-icon-btn {
+  @apply bg-transparent border-none cursor-pointer relative text-[#6b7280] p-1 rounded-full transition-colors duration-200 hover:bg-[#f3f4f6] hover:text-[#111827];
+}
+
+.gd-notification-dot {
+  @apply absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full border border-white;
+}
+
+.gd-avatar {
+  @apply w-9 h-9 bg-[#e5e7eb] rounded-full flex items-center justify-center text-[0.85rem] font-semibold text-[#374151];
+}
+
+/* --- Main Content Area --- */
+.gd-content-area {
+  @apply flex-1 p-8 overflow-y-auto;
+}
+
+/* --- Profile Header --- */
+.gd-profile-header {
+  @apply bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.1)] p-8 flex items-center gap-6 mb-8 border-l-[5px] border-l-[#2E7D32];
+}
+
+.gd-avatar-large {
+  @apply w-20 h-20 bg-[#2E7D32] text-white rounded-full flex items-center justify-center text-[1.8rem] font-bold shrink-0;
+}
+
+.gd-profile-info {
+  @apply flex flex-col gap-2;
+}
+
+.gd-profile-name {
+  @apply m-0 text-2xl text-[#111827];
+}
+
+.gd-status-badge {
+  @apply inline-block py-1 px-3 rounded-[20px] text-[0.85rem] font-semibold w-fit;
+}
+
+.gd-status-active {
+  @apply bg-[#ecfdf5] text-[#059669];
+}
+
+/* --- Stats Grid --- */
+.gd-stats-grid {
+  @apply grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-6 mb-8;
+}
+
+.gd-stat-card {
+  @apply bg-white p-6 rounded-lg shadow-[0_1px_2px_rgba(0,0,0,0.05)] border border-[#e5e7eb] flex items-center gap-4;
+}
+
+.gd-stat-icon {
+  @apply w-10 h-10 bg-[#f0fdf4] text-[#2E7D32] rounded-lg flex items-center justify-center shrink-0;
+}
+
+.gd-stat-info {
+  @apply flex flex-col;
+}
+
+.gd-stat-value {
+  @apply text-2xl font-bold text-[#111827] leading-none;
+}
+
+.gd-stat-label {
+  @apply text-[0.85rem] text-[#6b7280] mt-1;
+}
+
+/* --- Dashboard Layout --- */
+.gd-dashboard-grid {
+  @apply grid grid-cols-[2fr_1fr] gap-8;
+}
+
+.gd-section {
+  @apply bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] overflow-hidden flex flex-col;
+}
+
+.gd-section-header {
+  @apply flex justify-between items-center px-6 py-4 border-b border-[#f3f4f6];
+}
+
+.gd-section-header h3 {
+  @apply m-0 text-base text-[#111827] font-semibold;
+}
+
+.gd-link-btn {
+  @apply bg-transparent border-none text-[#2E7D32] text-[0.85rem] font-medium cursor-pointer hover:underline;
+}
+
+/* --- Enrolments List --- */
+.gd-card-list {
+  @apply p-4 flex flex-col gap-4;
+}
+
+.gd-course-card {
+  @apply flex justify-between items-center p-4 border border-[#f3f4f6] rounded-[6px] transition-all duration-200 hover:border-[#d1d5db] hover:shadow-[0_2px_4px_rgba(0,0,0,0.05)];
+}
+
+.gd-course-info {
+  @apply flex-1;
+}
+
+.gd-course-title {
+  @apply m-0 mb-2 text-[0.95rem] text-[#374151] font-medium;
+}
+
+.gd-progress-container {
+  @apply flex items-center gap-[10px];
+}
+
+.gd-progress-bar-bg {
+  @apply flex-1 h-[6px] bg-[#e5e7eb] rounded-[3px] overflow-hidden max-w-[200px];
+}
+
+.gd-progress-bar-fill {
+  @apply h-full bg-[#2E7D32] rounded-[3px];
+}
+
+.gd-progress-text {
+  @apply text-[0.8rem] text-[#6b7280] font-medium min-w-[35px] text-right;
+}
+
+.gd-btn-continue {
+  @apply bg-[#2E7D32] text-white border-none py-[6px] px-4 rounded-[4px] text-[0.85rem] font-medium cursor-pointer ml-4 hover:bg-[#1b5e20];
+}
+
+/* --- Right Column Lists --- */
+.gd-right-column {
+  @apply flex flex-col gap-8;
+}
+
+.gd-card-simple {
+  @apply p-2;
+}
+
+.gd-list-item-simple {
+  @apply flex items-start gap-3 p-3 border-b border-[#f3f4f6] transition-colors duration-150 last:border-b-0 hover:bg-[#fafafa];
+}
+
+.gd-list-icon {
+  @apply text-[#2E7D32] shrink-0 mt-0.5;
+}
+
+.gd-list-content {
+  @apply flex flex-col gap-1 w-full;
+}
+
+.gd-list-title {
+  @apply text-[0.9rem] text-[#374151] font-medium;
+}
+
+.gd-list-date {
+  @apply text-xs text-[#9ca3af];
+}
+
+.gd-list-meta {
+  @apply flex justify-between items-center;
+}
+
+.gd-score-badge {
+  @apply text-xs font-bold py-[2px] px-[6px] rounded-[4px];
+}
+
+.gd-score-badge.high {
+  @apply bg-[#ecfdf5] text-[#059669];
+}
+
+.gd-score-badge.medium {
+  @apply bg-[#fff7ed] text-[#ea580c];
+}

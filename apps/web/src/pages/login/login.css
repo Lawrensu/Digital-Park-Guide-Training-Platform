@@ -1,0 +1,236 @@
+@reference "tailwindcss";
+
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
+:root {
+  --green-dark:   #1b3a2d;
+  --green-mid:    #2d6a4f;
+  --green-accent: #3a7d5a;
+  --cream:        #f0efe9;
+  --white:        #ffffff;
+  --text-dark:    #1a1a1a;
+  --text-muted:   #6b7280;
+  --text-light:   #9ca3af;
+  --border:       #e2e2dc;
+  --input-bg:     #f9f9f7;
+  --shadow-card:  0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* ─────────────────────────────────────────
+   RESET / LAYOUT
+───────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.login-layout {
+  @apply flex min-h-screen [font-family:'Segoe_UI',system-ui,sans-serif];
+}
+
+/* ─────────────────────────────────────────
+   LEFT PANEL
+───────────────────────────────────────── */
+.left-panel {
+  @apply relative [flex:0_0_48%] bg-[var(--green-dark)] flex flex-col justify-between py-[40px] px-[48px] overflow-hidden text-white;
+}
+
+.deco-circle {
+  @apply absolute rounded-full pointer-events-none;
+}
+
+.deco-circle--1 {
+  @apply w-[380px] h-[380px] -top-[120px] -right-[60px] bg-[radial-gradient(circle_at_42%_40%,rgba(120,180,140,0.35)_0%,rgba(80,140,100,0.18)_40%,rgba(50,100,70,0.08)_65%,transparent_85%)];
+}
+
+.deco-circle--2 {
+  @apply w-[380px] h-[380px] -bottom-[120px] -left-[80px] bg-[radial-gradient(circle_at_55%_42%,rgba(120,180,140,0.30)_0%,rgba(80,140,100,0.14)_40%,rgba(50,100,70,0.06)_65%,transparent_85%)];
+}
+
+.deco-circle--3 {
+  @apply w-[260px] h-[260px] bottom-[60px] -right-[30px] bg-[radial-gradient(circle_at_40%_38%,rgba(120,180,140,0.28)_0%,rgba(80,140,100,0.12)_45%,rgba(50,100,70,0.05)_65%,transparent_85%)];
+}
+
+.brand-logo {
+  @apply w-10 h-10 bg-[var(--green-mid)] rounded-[8px] flex items-center justify-center font-bold text-[13px] tracking-[0.5px] text-white;
+}
+
+.brand-text {
+  @apply flex flex-col;
+}
+
+.brand-name {
+  @apply text-[15px] font-semibold text-white leading-[1.2];
+}
+
+.brand-sub {
+  @apply text-[12px] text-white/60;
+}
+
+.left-content {
+  @apply relative z-[1] flex-1 flex flex-col justify-center gap-7;
+}
+
+.hero-text h1 {
+  @apply text-[36px] font-bold leading-[1.2] text-white tracking-[-0.5px];
+}
+
+.hero-accent {
+  @apply text-[#6fcf97];
+}
+
+.hero-desc {
+  @apply text-[14px] leading-[1.65] text-white/65 max-w-[380px];
+}
+
+.stats-divider {
+  @apply h-px bg-white/15;
+}
+
+.stats {
+  @apply flex items-center gap-8;
+}
+
+.stat {
+  @apply flex flex-col gap-0.5;
+}
+
+.stat-value {
+  @apply text-[28px] font-bold text-white leading-none;
+}
+
+.stat-label {
+  @apply text-[12px] text-white/55;
+}
+
+.stat-sep {
+  @apply w-px h-9 bg-white/20;
+}
+
+.left-footer {
+  @apply relative z-[1] text-[12px] text-white/40;
+}
+
+/* ─────────────────────────────────────────
+   RIGHT PANEL
+───────────────────────────────────────── */
+.right-panel {
+  @apply flex-1 bg-[var(--cream)] flex flex-col items-center justify-center py-[48px] px-8 gap-5;
+}
+
+.form-card {
+  @apply bg-[var(--white)] rounded-[16px] shadow-[var(--shadow-card)] pt-[40px] px-[40px] pb-7 w-full max-w-[420px];
+}
+
+.form-header {
+  @apply mb-7;
+}
+
+.form-header h2 {
+  @apply text-[24px] font-bold text-[var(--text-dark)] mb-1;
+}
+
+.form-header p {
+  @apply text-[14px] text-[var(--text-muted)];
+}
+
+.login-form {
+  @apply flex flex-col gap-[18px];
+}
+
+.field {
+  @apply flex flex-col gap-[6px];
+}
+
+.field label {
+  @apply text-[13px] font-medium text-[var(--text-dark)];
+}
+
+.input-wrap {
+  @apply relative flex items-center;
+}
+
+.input-icon {
+  @apply absolute left-3 text-[var(--text-light)] flex items-center pointer-events-none;
+}
+
+.input-wrap input {
+  @apply w-full py-[10px] pr-[40px] pl-[36px] border border-[var(--border)] rounded-[8px] bg-[var(--input-bg)] text-[14px] text-[var(--text-dark)] outline-none transition-[border-color] duration-200;
+}
+
+.input-wrap input:focus {
+  @apply border-[var(--green-mid)];
+}
+
+.toggle-pw {
+  @apply absolute right-[10px] bg-transparent border-0 cursor-pointer text-[var(--text-light)] flex items-center p-1 hover:text-[var(--text-muted)];
+}
+
+.remember-label {
+  @apply flex items-center gap-2 text-[13px] text-[var(--text-muted)] cursor-pointer;
+}
+
+.remember-label input[type='checkbox'] {
+  @apply w-[15px] h-[15px] accent-[var(--green-dark)] cursor-pointer;
+}
+
+.btn-signin {
+  @apply flex items-center justify-center gap-2 w-full py-[13px] bg-[var(--green-dark)] text-white border-0 rounded-[8px] text-[15px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[var(--green-mid)];
+}
+
+.btn-chevron {
+  @apply flex items-center;
+}
+
+.restriction-note {
+  @apply text-[12px] text-[var(--text-light)] leading-[1.6] text-center;
+}
+
+.sso-divider {
+  @apply h-px bg-[var(--border)];
+}
+
+.btn-sso {
+  @apply w-full py-[11px] bg-transparent border border-[var(--border)] rounded-[8px] text-[14px] text-[var(--text-dark)] cursor-pointer transition-[border-color,background] duration-200 hover:border-[var(--green-mid)] hover:bg-[rgba(45,106,79,0.04)];
+}
+
+.card-footer {
+  @apply mt-6 text-[11.5px] text-[var(--text-light)] text-center;
+}
+
+.help-text {
+  @apply text-[12.5px] text-[var(--text-muted)] text-center leading-[1.7];
+}
+
+.help-text a {
+  @apply text-[var(--green-mid)] no-underline hover:underline;
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .login-layout {
+    @apply flex-col;
+  }
+
+  .left-panel {
+    @apply [flex:0_0_auto] py-8 px-6 min-h-[280px];
+  }
+
+  .hero-text h1 {
+    @apply text-[26px];
+  }
+
+  .right-panel {
+    @apply py-8 px-5;
+  }
+
+  .form-card {
+    @apply pt-7 px-6 pb-5;
+  }
+}
