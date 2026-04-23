@@ -1,43 +1,35 @@
 // src/components/OfflineBanner.js
-import React, { useEffect, useState } from 'react';
-import { View, Text, Animated } from 'react-native';
+// Animated offline banner — slides in from top when network drops
+import React, { useEffect, useRef } from 'react';
+import { Animated, View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS } from '../theme/fonts';
 
-/**
- * Slim banner shown when the app detects it's offline.
- * Slides in from the top and stays until connectivity is restored.
- *
- * Props:
- *   visible – boolean: show/hide the banner
- *   message – override the default message string
- */
 export default function OfflineBanner({ visible = false, message }) {
-  const [slideAnim] = useState(new Animated.Value(-60));
+  const slideAnim = useRef(new Animated.Value(-52)).current;
 
   useEffect(() => {
     Animated.timing(slideAnim, {
-      toValue: visible ? 0 : -60,
-      duration: 280,
+      toValue: visible ? 0 : -52,
+      duration: 300,
       useNativeDriver: true,
     }).start();
   }, [visible]);
 
   return (
-    <Animated.View
-      style={{
-        transform: [{ translateY: slideAnim }],
-        backgroundColor: '#92400e',
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        gap: 10,
-      }}
-    >
+    <Animated.View style={{
+      transform: [{ translateY: slideAnim }],
+      backgroundColor: '#92400e',
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      gap: 8,
+      zIndex: 999,
+    }}>
       <Ionicons name="cloud-offline-outline" size={16} color="#fef3c7" />
-      <Text style={{ fontSize: 13, color: '#fef3c7', fontWeight: '600', flex: 1 }}>
-        {message || 'You\'re offline — showing cached content. Progress will sync when reconnected.'}
+      <Text style={{ fontSize: 12, color: '#fef3c7', fontWeight: '600', flex: 1, fontFamily: FONTS.body }}>
+        {message || "You're offline — progress is saved locally and will sync on reconnect."}
       </Text>
     </Animated.View>
   );
