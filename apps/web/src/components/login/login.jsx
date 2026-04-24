@@ -81,7 +81,6 @@ function Login() {
         <div className="form-card">
           <div className="form-header">
             <h2>Welcome back</h2>
-            <p>Sign in to access the admin dashboard</p>
           </div>
  
           <form className="login-form" onSubmit={handleLogin}>
@@ -167,13 +166,13 @@ function Login() {
  
             <div className="divider" />
  
-            <button type="button" className="btn-sso">
-              Sign in with SSO (Sarawak Gov Portal)
+            <button type="button" className="btn-sso" onClick={() => window.location.href = '/register'}>
+              Register to become a park guide
             </button>
           </form>
  
           <p className="card-footer">
-            SFC Training Platform v2.4.1 &middot; &copy; 2026 Sarawak Forestry Corporation
+            &copy; 2026 Sarawak Forestry Corporation
           </p>
         </div>
  

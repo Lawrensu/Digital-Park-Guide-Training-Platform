@@ -1,5 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import Login from './pages/login/login'
+import Login from './components/login/login'
+import Register from './components/register/register'
+
+// import admin
 import Dashboard from './pages/admin/dashboard/dashboard'
 import Module from './pages/admin/module/module'
 import RegistrationPage from './pages/admin/registration/registration'
@@ -41,6 +44,8 @@ function App() {
             //Public Routes
             <Route path="/" element={<Login />} />
             <Route path="/login" element={<Navigate to="/" replace />} />
+
+            <Route path="/register" element={<Register />} />
 
             // admin routes          
             <Route path="/dashboard" element={
