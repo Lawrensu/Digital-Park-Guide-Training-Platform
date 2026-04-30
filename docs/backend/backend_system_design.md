@@ -5,9 +5,9 @@
 
 ## User Roles
 
-**Admin/Trainer** : manages the platform: approves registrations, creates training content, grades assessments, issues certifications, monitors IoT alerts.
+**Admin/Trainer** : manages the platform: approves registrations, creates training content, grades assessments, issues certifications, monitors IoT alerts, manages stations. Accessible via both web and mobile.
 
-**Park Guide** : consumes the platform: registers, enrols in modules, completes training, earns certifications, receives notifications. Must work fully offline on mobile.
+**Park Guide** : consumes the platform: registers, enrols in modules, completes training, earns certifications, receives notifications. Assigned to a station. Must work fully offline on mobile. Accessible via both web and mobile.
 
 ---
 
@@ -26,6 +26,21 @@
 **On rejection:**
 - No `User` record created
 - Rejection email sent. Admin optionally includes reason.
+
+---
+
+## Station Management
+
+Stations are named SFC park locations (e.g., Semenggoh Nature Reserve, Gunung Mulu National Park). Admins manage the station list from the dashboard — no code deployment or schema migration needed to add new locations.
+
+- `Station` table: `id` (UUID PK), `name` (VARCHAR UNIQUE), `created_at`
+- `User.station_id` is a nullable FK → `Station.id`
+  - Guides only — admin accounts are never assigned a station
+  - Set by admin on approval or updated later via the guide management page
+- Admin can filter the guide list by station: `GET /api/users?role=GUIDE&stationId=:id`
+- Station is displayed on the guide's profile on both web and mobile
+- Delete guard: a station cannot be deleted while guides are assigned to it — enforced at application layer
+- Station name must be unique — prevents duplicate entries for the same location
 
 ---
 
@@ -76,9 +91,23 @@
 ## Retake & Payment
 
 - No retake limit
-- Each retake requires payment via **Billplz** (FPX, sandbox available, flat RM1–1.50/transaction)
-- Retake price configurable per quiz by admin
-- Do not implement until Billplz integration is confirmed
+- Each retake (attempt_number > 1) requires a successful BillPlz payment
+- Retake price configurable per quiz by admin via `retake_price_myr` (nullable — null means price not yet set)
+- Payment gateway: **BillPlz** (FPX, Malaysia)
+  - Sandbox: `https://www.billplz-sandbox.com/api/v3`
+  - Production: `https://www.billplz.com/api/v3`
+
+**Flow:**
+1. Guide initiates retake → `POST /api/payments/initiate { quizId }`
+2. Server checks: quiz has price, guide has at least one prior attempt, no existing PENDING payment
+3. Server creates BillPlz bill, stores `Payment` row (status `PENDING`)
+4. Returns `{ url }` — frontend redirects guide to BillPlz
+5. Guide completes FPX payment on BillPlz
+6. BillPlz calls `POST /api/payments/callback` (webhook)
+7. Server verifies X-Signature: `HMAC-SHA256(key=BILLPLZ_X_SIGNATURE, data="<billId>|<paid>")`
+8. Payment status updated to `PAID` or `FAILED`
+9. Guide returns to frontend — retake is now unlocked
+10. `POST /api/quiz-attempts` checks for a `PAID` payment with `quiz_attempt_id = null` before creating attempt; on success links the payment to the new attempt
 
 ---
 
@@ -105,12 +134,13 @@ Triggered after admin approves a graded quiz attempt.
 
 ## Badges
 
-Count-based achievement markers shown on guide profile.
+Count-based achievement markers shown on guide profile. **For Park Guides only — admin accounts do not earn or display badges. Admin authorisation is assumed by role.**
 
 - Badge fields: image, description (e.g. "Finished 3 modules in a row")
 - Awarded server-side automatically when a module is approved/certified
 - Threshold configurable per badge (e.g. complete 3 modules = badge)
 - Not client-triggered
+- `UserBadge` must only be created for users with `role = GUIDE` — enforced at application layer before insert
 
 ---
 
@@ -120,6 +150,8 @@ Count-based achievement markers shown on guide profile.
 - On reconnect: `POST /api/sync` sends batched progress + quiz attempts
 - Each item includes device-side `completedAt` timestamp
 - **Conflict policy: last-write-wins.** Archived modules still accept offline submissions.
+- **Sprint 1 scope:** only quiz attempts are persisted on sync. Content-item progress items are acknowledged but not written — no `completedAt` column on `Enrolment` and no `ContentItemProgress` table exists yet. If per-item progress tracking is needed in Sprint 2, add a `ContentItemProgress` table to the schema.
+- **Retake payment gate is skipped for offline sync** — the guide presumably completed payment before going offline, and no re-check is possible.
 
 ---
 
@@ -151,7 +183,10 @@ ESP32 detects violation
 → API emits Socket.io event to admin dashboard
 → Admin notified via push + email
 → Admin flags: CONFIRMED or FALSE_DETECTION
+→ [After 30 days] AWS S3 Lifecycle Policy automatically transitions frame to S3 Glacier
 ```
+
+**Evidence archival:** Age-based. AWS S3 Lifecycle Policy transitions evidence frames from S3 Standard to S3 Glacier after **30 days**. No application code required — configured once on the S3 bucket. Retrieval from Glacier takes minutes to hours and incurs additional cost, so the 30-day window ensures all active alert reviews are resolved before frames become cold-storage only.
 
 **Socket.io event payload (`iot:alert`):**
 ```json
@@ -184,7 +219,76 @@ Every route falls into one of:
 ## Admin Account Creation
 
 - **Bootstrap:** `prisma db seed` creates initial admin accounts. Credentials read from `.env`. Idempotent (upsert).
-- **Ongoing:** any admin can create new admin accounts via `POST /api/users/admins` (admin-only route). All admins have equal privileges.
+- **Ongoing:** any admin can create new admin accounts via `POST /api/users/admins` (admin-only route). New admins are created with `status = INACTIVE` and no password — the same activation flow as guide approval is triggered (generate `PasswordResetToken`, send activation email, 24hr expiry). All admins have equal privileges once activated.
+
+---
+
+## Enrolments
+
+Guides may enrol in any PUBLISHED module freely. There are no hard prerequisites enforced by the system; admins note dependencies in the module description.
+
+**Admin enrolment:** `POST /api/enrolments` with guideId and moduleId. Admin may also set a dueAt date at enrolment time.
+
+**Guide self-enrolment:** `POST /api/enrolments/me` with moduleId. Module must be PUBLISHED. Returns 403 if module is DRAFT or ARCHIVED.
+
+**Duplicate prevention:** A unique constraint on (guideId, moduleId) in the database ensures a guide cannot be enrolled twice. Returns 409 on collision.
+
+**Due date update:** Admin may update dueAt on an existing enrolment via `PATCH /api/enrolments/:id`.
+
+**Remove:** Admin may remove an enrolment via `DELETE /api/enrolments/:id`. Returns 204 on success.
+
+---
+
+## Content Item Reorder
+
+Content items within a module are ordered by an integer `order` field. The reorder endpoint accepts an array of `{ id, order }` pairs:
+
+- All item IDs must belong to the specified module; returns 400 if any foreign ID is provided
+- Updates are applied in a single Prisma transaction to keep order state consistent
+- After reorder, a subsequent GET returns items sorted by the new order values
+
+**Partial reorder** is not supported. Send the full ordered list each time.
+
+---
+
+## Uploads
+
+Files are never uploaded through the API directly. The client requests a pre-signed S3 URL and uploads to S3 directly from the browser or device.
+
+**Endpoint:** `POST /api/uploads/presign`
+
+**Request body:**
+```json
+{ "purpose": "cv", "contentType": "application/pdf", "extension": "pdf" }
+```
+
+**Response:**
+```json
+{ "success": true, "data": { "url": "<presigned upload url>", "key": "cv/<uuid>.pdf" } }
+```
+
+**Purpose to S3 folder mapping:**
+
+| Purpose | S3 folder prefix | Auth required |
+|---------|-----------------|---------------|
+| cv | cv/ | None (pre-registration) |
+| content-image | content/ | Admin |
+| badge-image | badges/ | Admin |
+| iot-evidence | iot-evidence/ | Auth |
+
+Pre-signed URL expiry: 300 seconds. The client must complete the upload within this window. After upload, the client sends the S3 key back to the relevant endpoint (e.g. cvS3Key on registration submit).
+
+---
+
+## Badge Admin Management
+
+While badges are awarded automatically server-side, the badge definitions themselves are managed by admins:
+
+- `POST /api/badges` to create a badge with a name, description, image S3 key, and threshold (number of certifications required)
+- `PATCH /api/badges/:id` to update any of those fields
+- `DELETE /api/badges/:id` to remove a badge definition
+
+Deleting a badge definition does not remove earned UserBadge rows from existing guides. The auto-award logic runs inside `checkAndAwardBadges(guideId)` which is called fire-and-forget after every certification issuance. It checks the guide's total certification count against all badge thresholds and upserts matching UserBadge rows.
 
 ---
 
@@ -192,5 +296,5 @@ Every route falls into one of:
 
 | Item | Status |
 |------|--------|
-| Billplz integration | Confirmed |
-| Badge threshold values | Decided by team (count-based confirmed AS OF NOW) |
+| Billplz integration | Confirmed as payment gateway. `retake_price_myr` on `Quiz` is nullable until active. |
+| Badge threshold values | Count-based confirmed. Specific threshold values (e.g. 3 modules = badge) are set by admin per badge via the dashboard; not hardcoded. |

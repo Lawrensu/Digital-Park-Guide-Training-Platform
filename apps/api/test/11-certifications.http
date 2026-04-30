@@ -1,0 +1,29 @@
+### Issue a certification (admin only, attempt must be GRADED and passed)
+POST {{baseUrl}}/api/certifications
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "quizAttemptId": "{{attemptId}}",
+  "issuerName": "Dr. Ahmad bin Ismail",
+  "issuerTitle": "Director, Sarawak Forestry Corporation",
+  "companyName": "Sarawak Forestry Corporation",
+  "expiryDate": "2028-04-16T00:00:00.000Z"
+}
+
+###
+
+### List certifications
+GET {{baseUrl}}/api/certifications
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Get a pre-signed download URL (S3 call skipped in testing)
+GET {{baseUrl}}/api/certifications/{{certId}}/download
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Public verify a certificate (no auth required)
+GET {{baseUrl}}/api/certifications/verify/{{certId}}

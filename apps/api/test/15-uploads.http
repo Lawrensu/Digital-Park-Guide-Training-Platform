@@ -1,0 +1,59 @@
+### Presign for CV upload (no auth required)
+POST {{baseUrl}}/api/uploads/presign
+Content-Type: application/json
+
+{
+  "purpose": "cv",
+  "contentType": "application/pdf",
+  "extension": "pdf"
+}
+
+###
+
+### Presign for content image (admin only)
+POST {{baseUrl}}/api/uploads/presign
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "purpose": "content-image",
+  "contentType": "image/webp",
+  "extension": "webp"
+}
+
+###
+
+### No auth for non-cv purpose (expect 401)
+POST {{baseUrl}}/api/uploads/presign
+Content-Type: application/json
+
+{
+  "purpose": "content-image",
+  "contentType": "image/webp",
+  "extension": "webp"
+}
+
+###
+
+### Guide token for admin-only purpose (expect 403)
+POST {{baseUrl}}/api/uploads/presign
+Content-Type: application/json
+Authorization: Bearer {{guideToken}}
+
+{
+  "purpose": "badge-image",
+  "contentType": "image/webp",
+  "extension": "webp"
+}
+
+###
+
+### Invalid purpose value (expect 400)
+POST {{baseUrl}}/api/uploads/presign
+Content-Type: application/json
+
+{
+  "purpose": "invalid-purpose",
+  "contentType": "image/jpeg",
+  "extension": "jpg"
+}

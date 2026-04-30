@@ -1,0 +1,41 @@
+### Get own notification inbox
+GET {{baseUrl}}/api/notifications
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Mark a single notification as read
+PATCH {{baseUrl}}/api/notifications/{{notifId}}/read
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Mark all notifications as read
+PATCH {{baseUrl}}/api/notifications/read-all
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Admin sends custom notification to specific users
+POST {{baseUrl}}/api/notifications/custom
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "userIds": ["{{userId}}"],
+  "title": "Important update",
+  "body": "Please review the newly published module."
+}
+
+###
+
+### Admin sends custom notification to all guides
+POST {{baseUrl}}/api/notifications/custom
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "role": "GUIDE",
+  "title": "System maintenance",
+  "body": "The platform will be unavailable on Sunday from 2am to 4am."
+}

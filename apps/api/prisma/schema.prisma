@@ -1,13 +1,448 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+    provider = "postgresql"
+}
+
+
+enum Role {
+    ADMIN
+    GUIDE
+}
+
+enum UserStatus {
+    INACTIVE
+    ACTIVE
+    SUSPENDED
+}
+
+enum ApplicationStatus {
+    PENDING
+    APPROVED
+    REJECTED
+}
+
+enum ModuleStatus {
+    DRAFT
+    PUBLISHED
+    ARCHIVED
+}
+
+enum ContentType {
+    VIDEO
+    IMAGE
+    TEXT
+    INFOGRAPHIC
+    QUIZ
+}
+
+enum VideoSource {
+    S3
+    YOUTUBE
+}
+
+enum InfographicSubtype {
+    HOTSPOT
+    SCENARIO
+    STEPPER
+}
+
+enum QuestionType {
+    MCQ
+    TRUE_FALSE
+    SHORT_ANSWER
+    LONG_ANSWER
+}
+
+enum AttemptStatus {
+    PENDING_REVIEW
+    GRADED
+}
+
+enum DetectionType {
+    PLANT_DAMAGE
+    WILDLIFE_DISTURBANCE
+}
+
+enum AlertStatus {
+    PENDING
+    CONFIRMED
+    FALSE_DETECTION
+}
+
+enum DeviceStatus {
+    ACTIVE
+    INACTIVE
+    DECOMMISSIONED
+}
+
+enum NotificationType {
+    REGISTRATION
+    IOT_ALERT
+    MODULE_PUBLISHED
+    DEADLINE_REMINDER
+    QUIZ_RESULT
+    CERTIFICATE_APPROVED
+    CUSTOM
+}
+
+enum PaymentStatus {
+    PENDING
+    PAID
+    FAILED
+}
+
+
+model Station {
+    id          String   @id @default(uuid()) @map("id")
+    name        String   @unique @map("name")
+    createdAt   DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+    guides      User[]
+
+    @@map("station")
+}
+
+model RegistrationApplication {
+    id                String            @id @default(uuid()) @map("id")
+    firstName         String            @map("first_name")
+    lastName          String            @map("last_name")
+    email             String            @unique @map("email")
+    icPassportNumber  String            @map("ic_passport_number")
+    address           String            @map("address")
+    reason            String            @map("reason")
+    cvS3Key           String            @map("cv_s3_key")
+    status            ApplicationStatus @default(PENDING) @map("status")
+    rejectionReason   String?           @map("rejection_reason")
+    reviewedBy        String?           @map("reviewed_by")
+    reviewedAt        DateTime?         @db.Timestamptz(6) @map("reviewed_at")
+    submittedAt       DateTime          @default(now()) @db.Timestamptz(6) @map("submitted_at")
+
+    reviewer          User?             @relation("ApplicationReviewer", fields: [reviewedBy], references: [id])
+    user              User?             @relation("ApplicationUser")
+
+    @@map("registration_application")
+}
+
+model User {
+    id                        String                    @id @default(uuid()) @map("id")
+    applicationId             String?                   @unique @map("application_id")
+    role                      Role                      @map("role")
+    username                  String                    @unique @map("username")
+    email                     String                    @unique @map("email")
+    passwordHash              String?                   @map("password_hash")
+    icPassportNumber          String?                   @map("ic_passport_number")
+    status                    UserStatus                @default(INACTIVE) @map("status")
+    stationId                 String?                   @map("station_id")
+    startDate                 DateTime?                 @db.Date @map("start_date")
+    createdAt                 DateTime                  @default(now()) @db.Timestamptz(6) @map("created_at")
+    updatedAt                 DateTime                  @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+    application               RegistrationApplication?  @relation("ApplicationUser", fields: [applicationId], references: [id])
+    reviewedApplications      RegistrationApplication[] @relation("ApplicationReviewer")
+    station                   Station?                  @relation(fields: [stationId], references: [id])
+    passwordResetTokens       PasswordResetToken[]
+    createdModules            Module[]                  @relation("ModuleCreator")
+    enrolments                Enrolment[]
+    quizAttempts              QuizAttempt[]             @relation("QuizAttemptGuide")
+    gradedAttempts            QuizAttempt[]             @relation("QuizAttemptGrader")
+    guideCertifications       Certification[]           @relation("CertificationGuide")
+    issuedCertifications      Certification[]           @relation("CertificationIssuer")
+    userBadges                UserBadge[]
+    currentDevice             IoTDevice?                @relation("DeviceCurrentGuide")
+    deviceAssignments         DeviceAssignment[]
+    guideAlerts               IoTAlert[]                @relation("AlertGuide")
+    flaggedAlerts             IoTAlert[]                @relation("AlertFlagger")
+    notifications             Notification[]
+    payments                  Payment[]
+
+    @@map("user")
+}
+
+model PasswordResetToken {
+    id          String   @id @default(uuid()) @map("id")
+    userId      String   @map("user_id")
+    tokenHash   String   @map("token_hash")
+    expiresAt   DateTime @db.Timestamptz(6) @map("expires_at")
+    createdAt   DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+
+    user        User     @relation(fields: [userId], references: [id])
+
+    @@map("password_reset_token")
+}
+
+model Module {
+    id            String       @id @default(uuid()) @map("id")
+    title         String       @map("title")
+    description   String       @map("description")
+    status        ModuleStatus @default(DRAFT) @map("status")
+    createdBy     String       @map("created_by")
+    createdAt     DateTime     @default(now()) @db.Timestamptz(6) @map("created_at")
+    updatedAt     DateTime     @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+    creator       User         @relation("ModuleCreator", fields: [createdBy], references: [id])
+    contentItems  ContentItem[]
+    quizzes       Quiz[]
+    enrolments    Enrolment[]
+    certifications Certification[]
+
+    @@map("module")
+}
+
+model ContentItem {
+    id                    String              @id @default(uuid()) @map("id")
+    moduleId              String              @map("module_id")
+    order                 Int                 @map("order")
+    type                  ContentType         @map("type")
+    title                 String?             @map("title")
+    videoSource           VideoSource?        @map("video_source")
+    videoUrl              String?             @map("video_url")
+    allowOffline          Boolean?            @map("allow_offline")
+    imageS3Key            String?             @map("image_s3_key")
+    textContent           String?             @map("text_content")
+    infographicSubtype    InfographicSubtype? @map("infographic_subtype")
+    infographicContent    Json?               @map("infographic_content")
+    quizId                String?             @map("quiz_id")
+    createdAt             DateTime            @default(now()) @db.Timestamptz(6) @map("created_at")
+    updatedAt             DateTime            @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+    module                Module              @relation(fields: [moduleId], references: [id])
+    quiz                  Quiz?               @relation(fields: [quizId], references: [id])
+
+    @@map("content_item")
+}
+
+model Quiz {
+    id                String        @id @default(uuid()) @map("id")
+    moduleId          String        @map("module_id")
+    title             String        @map("title")
+    passScorePct      Int           @map("pass_score_pct")
+    timeLimitMinutes  Int?          @map("time_limit_minutes")
+    retakePriceMyr    Decimal?      @map("retake_price_myr") @db.Decimal
+    showScoreToGuide  Boolean       @default(true) @map("show_score_to_guide")
+    createdAt         DateTime      @default(now()) @db.Timestamptz(6) @map("created_at")
+    updatedAt         DateTime      @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+    module            Module        @relation(fields: [moduleId], references: [id])
+    questions         Question[]
+    contentItems      ContentItem[]
+    quizAttempts      QuizAttempt[]
+    payments          Payment[]
+
+    @@map("quiz")
+}
+
+model Question {
+    id                String           @id @default(uuid()) @map("id")
+    quizId            String           @map("quiz_id")
+    type              QuestionType     @map("type")
+    text              String           @map("text")
+    maxScore          Decimal          @map("max_score") @db.Decimal
+    order             Int              @map("order")
+    createdAt         DateTime         @default(now()) @db.Timestamptz(6) @map("created_at")
+
+    quiz              Quiz             @relation(fields: [quizId], references: [id])
+    options           QuestionOption[]
+    questionAttempts  QuestionAttempt[]
+
+    @@map("question")
+}
+
+model QuestionOption {
+    id                String           @id @default(uuid()) @map("id")
+    questionId        String           @map("question_id")
+    text              String           @map("text")
+    isCorrect         Boolean          @map("is_correct")
+    order             Int              @map("order")
+
+    question          Question         @relation(fields: [questionId], references: [id])
+    questionAttempts  QuestionAttempt[]
+
+    @@map("question_option")
+}
+
+model Enrolment {
+    id          String    @id @default(uuid()) @map("id")
+    guideId     String    @map("guide_id")
+    moduleId    String    @map("module_id")
+    dueAt       DateTime? @db.Timestamptz(6) @map("due_at")
+    enrolledAt  DateTime  @default(now()) @db.Timestamptz(6) @map("enrolled_at")
+
+    guide       User      @relation(fields: [guideId], references: [id])
+    module      Module    @relation(fields: [moduleId], references: [id])
+
+    @@unique([guideId, moduleId])
+    @@map("enrolment")
+}
+
+model QuizAttempt {
+    id                String           @id @default(uuid()) @map("id")
+    quizId            String           @map("quiz_id")
+    guideId           String           @map("guide_id")
+    attemptNumber     Int              @map("attempt_number")
+    status            AttemptStatus    @default(PENDING_REVIEW) @map("status")
+    totalScore        Decimal?         @map("total_score") @db.Decimal
+    submittedAt       DateTime         @db.Timestamptz(6) @map("submitted_at")
+    gradedAt          DateTime?        @db.Timestamptz(6) @map("graded_at")
+    gradedBy          String?          @map("graded_by")
+    createdAt         DateTime         @default(now()) @db.Timestamptz(6) @map("created_at")
+
+    quiz              Quiz             @relation(fields: [quizId], references: [id])
+    guide             User             @relation("QuizAttemptGuide", fields: [guideId], references: [id])
+    grader            User?            @relation("QuizAttemptGrader", fields: [gradedBy], references: [id])
+    questionAttempts  QuestionAttempt[]
+    certifications    Certification[]
+    payments          Payment[]
+
+    @@map("quiz_attempt")
+}
+
+model QuestionAttempt {
+    id                String          @id @default(uuid()) @map("id")
+    quizAttemptId     String          @map("quiz_attempt_id")
+    questionId        String          @map("question_id")
+    selectedOptionId  String?         @map("selected_option_id")
+    textResponse      String?         @map("text_response")
+    scoreAwarded      Decimal?        @map("score_awarded") @db.Decimal
+    isAutoScored      Boolean         @map("is_auto_scored")
+
+    quizAttempt       QuizAttempt     @relation(fields: [quizAttemptId], references: [id])
+    question          Question        @relation(fields: [questionId], references: [id])
+    selectedOption    QuestionOption? @relation(fields: [selectedOptionId], references: [id])
+
+    @@map("question_attempt")
+}
+
+model Certification {
+    id              String      @id @default(uuid()) @map("id")
+    guideId         String      @map("guide_id")
+    quizAttemptId   String      @map("quiz_attempt_id")
+    moduleId        String      @map("module_id")
+    companyName     String      @map("company_name")
+    issuerName      String      @map("issuer_name")
+    issuerTitle     String      @map("issuer_title")
+    issueDate       DateTime    @db.Date @map("issue_date")
+    expiryDate      DateTime?   @db.Date @map("expiry_date")
+    pdfS3Key        String      @map("pdf_s3_key")
+    issuedBy        String      @map("issued_by")
+    createdAt       DateTime    @default(now()) @db.Timestamptz(6) @map("created_at")
+
+    guide           User        @relation("CertificationGuide", fields: [guideId], references: [id])
+    quizAttempt     QuizAttempt @relation(fields: [quizAttemptId], references: [id])
+    module          Module      @relation(fields: [moduleId], references: [id])
+    issuer          User        @relation("CertificationIssuer", fields: [issuedBy], references: [id])
+
+    @@map("certification")
+}
+
+model Badge {
+    id            String      @id @default(uuid()) @map("id")
+    name          String      @map("name")
+    description   String      @map("description")
+    imageS3Key    String      @map("image_s3_key")
+    threshold     Int         @map("threshold")
+    createdAt     DateTime    @default(now()) @db.Timestamptz(6) @map("created_at")
+
+    userBadges    UserBadge[]
+
+    @@map("badge")
+}
+
+model UserBadge {
+    id          String   @id @default(uuid()) @map("id")
+    userId      String   @map("user_id")
+    badgeId     String   @map("badge_id")
+    awardedAt   DateTime @default(now()) @db.Timestamptz(6) @map("awarded_at")
+
+    user        User     @relation(fields: [userId], references: [id])
+    badge       Badge    @relation(fields: [badgeId], references: [id])
+
+    @@unique([userId, badgeId])
+    @@map("user_badge")
+}
+
+model IoTDevice {
+    id                  String             @id @default(uuid()) @map("id")
+    deviceIdentifier    String             @unique @map("device_identifier")
+    currentGuideId      String?            @unique @map("current_guide_id")
+    status              DeviceStatus       @default(ACTIVE) @map("status")
+    registeredAt        DateTime           @default(now()) @db.Timestamptz(6) @map("registered_at")
+
+    currentGuide        User?              @relation("DeviceCurrentGuide", fields: [currentGuideId], references: [id])
+    deviceAssignments   DeviceAssignment[]
+    alerts              IoTAlert[]
+
+    @@map("iot_device")
+}
+
+model DeviceAssignment {
+    id            String    @id @default(uuid()) @map("id")
+    deviceId      String    @map("device_id")
+    guideId       String    @map("guide_id")
+    assignedAt    DateTime  @db.Timestamptz(6) @map("assigned_at")
+    unassignedAt  DateTime? @db.Timestamptz(6) @map("unassigned_at")
+
+    device        IoTDevice @relation(fields: [deviceId], references: [id])
+    guide         User      @relation(fields: [guideId], references: [id])
+
+    @@map("device_assignment")
+}
+
+model IoTAlert {
+    id              String        @id @default(uuid()) @map("id")
+    deviceId        String        @map("device_id")
+    guideId         String        @map("guide_id")
+    detectionType   DetectionType @map("detection_type")
+    confidence      Decimal       @map("confidence") @db.Decimal
+    evidenceS3Key   String        @map("evidence_s3_key")
+    status          AlertStatus   @default(PENDING) @map("status")
+    flaggedBy       String?       @map("flagged_by")
+    flaggedAt       DateTime?     @db.Timestamptz(6) @map("flagged_at")
+    detectedAt      DateTime      @db.Timestamptz(6) @map("detected_at")
+    createdAt       DateTime      @default(now()) @db.Timestamptz(6) @map("created_at")
+
+    device          IoTDevice     @relation(fields: [deviceId], references: [id])
+    guide           User          @relation("AlertGuide", fields: [guideId], references: [id])
+    flagger         User?         @relation("AlertFlagger", fields: [flaggedBy], references: [id])
+
+    @@map("iot_alert")
+}
+
+model Payment {
+    id              String        @id @default(uuid()) @map("id")
+    quizId          String        @map("quiz_id")
+    userId          String        @map("user_id")
+    quizAttemptId   String?       @map("quiz_attempt_id")
+    amount          Decimal       @db.Decimal(10, 2) @map("amount")
+    currency        String        @default("MYR") @map("currency")
+    billplzBillId   String        @unique @map("billplz_bill_id")
+    status          PaymentStatus @default(PENDING) @map("status")
+    createdAt       DateTime      @default(now()) @db.Timestamptz(6) @map("created_at")
+    updatedAt       DateTime      @updatedAt @db.Timestamptz(6) @map("updated_at")
+
+    quiz            Quiz          @relation(fields: [quizId], references: [id])
+    user            User          @relation(fields: [userId], references: [id])
+    quizAttempt     QuizAttempt?  @relation(fields: [quizAttemptId], references: [id])
+
+    @@map("payment")
+}
+
+
+// reference_id has no DB-level FK; polymorphic resolution is handled at the application layer
+model Notification {
+    id              String           @id @default(uuid()) @map("id")
+    userId          String           @map("user_id")
+    type            NotificationType @map("type")
+    referenceId     String?          @map("reference_id")
+    referenceType   String?          @map("reference_type")
+    title           String           @map("title")
+    body            String           @map("body")
+    isRead          Boolean          @default(false) @map("is_read")
+    createdAt       DateTime         @default(now()) @db.Timestamptz(6) @map("created_at")
+
+    user            User             @relation(fields: [userId], references: [id])
+
+    @@map("notification")
 }

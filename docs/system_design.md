@@ -11,6 +11,8 @@
 | Cache / Session | Redis via Upstash |
 | Auth | JWT (access + refresh token) |
 | File Storage | AWS S3 (active assets), S3 Glacier (evidence archival) |
+| Image Processing | sharp (server-side WebP conversion on upload) |
+| Certificate Generation | pdf-lib (overlay dynamic fields onto Figma-exported PDF template) |
 | IoT Communication | MQTT over TLS via AWS IoT Core |
 | IoT Hardware | NodeMCU ESP32 + camera module, Arduino Uno R4 Minima |
 | AI Inference | YOLOv8n → ONNX (INT8 quantised) → edge deployment on ESP32 |
@@ -31,8 +33,8 @@ Monorepo managed by pnpm workspaces and Turborepo.
 /
 ├── apps/
 │   ├── api/          ← Node.js + Express backend
-│   ├── web/          ← React + Vite web dashboard
-│   └── mobile/       ← React Native + Expo mobile app
+│   ├── web/          ← React + Vite web application — both Admin/Trainer and Park Guide
+│   └── mobile/       ← React Native + Expo mobile application — both Admin/Trainer and Park Guide
 ├── packages/
 │   ├── types/        ← shared Zod schemas and JS type definitions
 │   └── utils/        ← shared utility functions
@@ -50,15 +52,17 @@ Monorepo managed by pnpm workspaces and Turborepo.
 ## Frontend
 
 ### Web App : React + Vite
-- Admin and Trainer-facing dashboard
-- Manages training modules, monitors guide progress, certifications, and real-time IoT alerts
+- Accessible to both Admin/Trainer and Park Guide — role-based access control determines visible routes after login
+- Admin/Trainer features: module management, guide oversight, registration review, quiz grading, certification issuance, IoT alert monitoring, notifications, station management, admin account settings
+- Park Guide features: registration (public, pre-login), browse and enrol in modules, view content, take quizzes, view certifications, view badges, notifications, profile
 - Styled with TailwindCSS + shadcn/ui component library
 - Data fetching managed by TanStack Query
 - Charts and progress visualisations via Recharts
 
 ### Mobile App : React Native + Expo
-- Park Guide-facing application
-- Delivers training content, assessments, and certification tracking
+- Accessible to both Admin/Trainer and Park Guide — role-based access control determines visible screens after login
+- Park Guide features: same as web guide features, with the addition of full offline operation
+- Admin/Trainer features: same as web admin features accessible from mobile
 - **Offline-first:** guides work in areas with no connectivity (day trips to multi-day expeditions)
 - Local data stored in Expo SQLite; synced to API when connectivity returns
 - Styled with NativeWind (TailwindCSS for React Native)
@@ -76,6 +80,7 @@ Monorepo managed by pnpm workspaces and Turborepo.
 - Organised internally by domain: `auth`, `registrations`, `users`, `modules`, `enrolments`, `quizzes`, `certifications`, `notifications`, `iot-alerts`, `uploads`, `sync`
 - Request validation via Zod schemas on every POST and PATCH
 - Real-time alert push to connected admin clients via Socket.io
+- All uploaded images converted to WebP server-side via `sharp` before storing to S3
 
 ---
 
@@ -93,6 +98,7 @@ JWT with refresh token rotation. No session-based auth.
 - Mobile stores refresh token in Expo SecureStore
 - Web stores refresh token in HttpOnly cookie
 - On 401, client silently calls `POST /api/auth/refresh`. If refresh token is also expired, redirect to login.
+- On guide account approval: a one-time activation token is generated, its hash + expiry stored in `PasswordResetToken` table. Guide receives email with set-password link. Token expires in 24 hours. Resend activation reuses the same endpoint, invalidating the previous token first.
 
 ---
 
@@ -116,7 +122,7 @@ JWT with refresh token rotation. No session-based auth.
 
 ### AWS S3
 - **S3 Standard (hot):** active training media, uploaded CVs, certificate PDFs, user-facing assets
-- **S3 Glacier (cold):** long-term archival of IoT evidence frames after a defined retention period
+- **S3 Glacier (cold):** long-term archival of IoT evidence frames. AWS S3 Lifecycle Policy automatically transitions evidence frames from S3 Standard → S3 Glacier after **30 days**. No application code required as it is configured once on the S3 bucket. 30 days provides sufficient window for admins to review and flag alerts before frames become cold-storage only.
 - Files are accessed via pre-signed URLs generated on-demand by the API (short expiry, typically 15 minutes)
 
 ---
@@ -208,4 +214,4 @@ Two Compose files:
 | S3 | Active file storage |
 | S3 Glacier | Evidence frame archival |
 | IoT Core | MQTT broker for ESP32 device communication |
-| SES | Transactional email (registration, notifications) |
+| SES | Transactional email (registration, activation, notifications) |

@@ -1,0 +1,61 @@
+### List all users (admin only)
+GET {{baseUrl}}/api/users
+Authorization: Bearer {{adminToken}}
+
+###
+
+### List guides only
+GET {{baseUrl}}/api/users?role=GUIDE
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Get a specific user
+GET {{baseUrl}}/api/users/{{userId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Update a user
+PATCH {{baseUrl}}/api/users/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "stationId": "{{stationId}}"
+}
+
+###
+
+### Suspend a user
+PATCH {{baseUrl}}/api/users/{{userId}}/status
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "status": "SUSPENDED"
+}
+
+###
+
+### Reactivate a user
+PATCH {{baseUrl}}/api/users/{{userId}}/status
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "status": "ACTIVE"
+}
+
+###
+
+### Create a new admin account (admin only)
+POST {{baseUrl}}/api/users/admins
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "firstName": "New",
+  "lastName": "Admin",
+  "email": "newadmin@sfcpark.com"
+}
