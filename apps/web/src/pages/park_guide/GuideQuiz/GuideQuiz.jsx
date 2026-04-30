@@ -1,240 +1,225 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import GuideNavbar from '../../../components/guidenavbar/guidenavbar'
-import './guidequiz.css'
+import { useQuery, useMutation } from '@tanstack/react-query'
+import GuideNavbar from '../../../components/GuideNavbar/GuideNavbar'
+import * as quizzesApi from '../../../api/quizzes.js'
+import * as quizAttemptsApi from '../../../api/quizAttempts.js'
 
-// --- Icons ---
-const BellIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-  </svg>
-)
-
-const SearchIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-)
 
 const TimerIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="10"></circle>
-    <polyline points="12 6 12 12 16 14"></polyline>
-  </svg>
+	<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+		<circle cx="12" cy="12" r="10"></circle>
+		<polyline points="12 6 12 12 16 14"></polyline>
+	</svg>
 )
 
 const CheckCircleIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2">
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-  </svg>
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2">
+		<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+		<polyline points="22 4 12 14.01 9 11.01"></polyline>
+	</svg>
 )
 
-const ClockIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="10"></circle>
-    <polyline points="12 6 12 12 16 14"></polyline>
-  </svg>
-)
 
 export default function GuideQuizPage() {
-  const navigate = useNavigate()
-  const { id } = useParams()
+	const { quizId } = useParams()
+	const navigate   = useNavigate()
 
-  // Quiz State
-  const [timeLeft, setTimeLeft] = useState(38 * 60 + 45) // 38:45 in seconds
-  
-  // Mock Questions based on description
-  const [questions, setQuestions] = useState([
-    {
-      id: 1,
-      type: 'Multiple Choice',
-      text: 'What is the first step when encountering an injured Orangutan?',
-      options: [
-        'Approach slowly to assess the injury',
-        'Contact the Wildlife Rescue Unit immediately',
-        'Offer food and water',
-        'Try to move it to a safer location'
-      ],
-      answer: null, // Index of selected option
-      completed: false
-    },
-    {
-      id: 2,
-      type: 'True/False',
-      text: 'It is safe to administer oral rehydration salts to an unconscious visitor.',
-      options: ['True', 'False'],
-      answer: null,
-      completed: true // Marked as completed in description
-    },
-    {
-      id: 3,
-      type: 'Short Answer',
-      text: 'List the signals of heatstroke and the emergency procedure.',
-      answer: '',
-      completed: true
-    },
-    {
-      id: 4,
-      type: 'Long Answer',
-      text: 'Describe the protocol for closing a road after a wildlife accident.',
-      answer: '',
-      completed: false
-    }
-  ])
+	const { data: quiz, isLoading, error } = useQuery({
+		queryKey: ['quizzes', quizId],
+		queryFn: async () => {
+			const res = await quizzesApi.getOne(quizId)
+			return res.data.data
+		},
+		enabled: !!quizId,
+	})
 
-  // Timer Effect
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 0) {
-          clearInterval(timer)
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
+	const questions = quiz?.questions ?? []
 
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60)
-    const s = seconds % 60
-    return `${m}:${s < 10 ? '0' : ''}${s}`
-  }
+	const totalSeconds = quiz?.timeLimitMinutes ? quiz.timeLimitMinutes * 60 : 0
+	const [timeLeft, setTimeLeft] = useState(totalSeconds)
 
-  const handleOptionSelect = (qId, optionIndex) => {
-    setQuestions(prev => prev.map(q => {
-      if (q.id === qId) {
-        return { ...q, answer: optionIndex, completed: true }
-      }
-      return q
-    }))
-  }
+	useEffect(() => {
+		if (quiz?.timeLimitMinutes) setTimeLeft(quiz.timeLimitMinutes * 60)
+	}, [quiz?.timeLimitMinutes])
 
-  const handleTextChange = (qId, value) => {
-    setQuestions(prev => prev.map(q => {
-      if (q.id === qId) {
-        return { ...q, answer: value, completed: value.length > 0 }
-      }
-      return q
-    }))
-  }
+	useEffect(() => {
+		if (timeLeft <= 0) return
+		const timer = setInterval(() => {
+			setTimeLeft(prev => {
+				if (prev <= 1) { clearInterval(timer); return 0 }
+				return prev - 1
+			})
+		}, 1000)
+		return () => clearInterval(timer)
+	}, [timeLeft > 0])
 
-  return (
-    <div className="gq-page-container">
-      <GuideNavbar />
+	const formatTime = (seconds) => {
+		const m = Math.floor(seconds / 60)
+		const s = seconds % 60
+		return `${m}:${s < 10 ? '0' : ''}${s}`
+	}
 
-      <div className="gq-main-wrapper">      
+	const [answers, setAnswers] = useState({})
 
-        {/* Main Content */}
-        <main className="gq-content-area">
-          <header className="gq-topbar">
-            <h1 className="gq-title">Quizzes</h1>
-          </header>
-          
-          {/* Quiz Info Header */}
-          <div className="gq-quiz-header-card">
-            <div className="gq-quiz-info">
-              <div className="gq-breadcrumb">Modules / Forest Safety / Final Quiz</div>
-              <h2 className="gq-quiz-title">Forest Safety – Final Quiz</h2>
-              <div className="gq-module-tag">MOD - 001 Forest Safety & Hazard Awareness</div>
-            </div>
+	const answeredCount = Object.values(answers).filter(v => v !== '' && v !== null && v !== undefined).length
 
-            <div className="gq-stats-row">
-              <div className="gq-stat-box gq-time-box">
-                <TimerIcon />
-                <span className="gq-time-text">{formatTime(timeLeft)}</span>
-              </div>
-              <div className="gq-stat-box">
-                <span className="gq-stat-label">Progress</span>
-                <span className="gq-stat-value">2 / 8</span>
-              </div>
-              <div className="gq-stat-box">
-                <span className="gq-stat-label">Score</span>
-                <span className="gq-stat-value gq-score-highlight">70%</span>
-              </div>
-            </div>
-          </div>
+	const setAnswer = (questionId, value) => {
+		setAnswers(prev => ({ ...prev, [questionId]: value }))
+	}
 
-          {/* Questions List */}
-          <div className="gq-questions-list">
-            {questions.map((q, index) => (
-              <div key={q.id} className={`gq-question-card ${q.completed ? 'gq-completed' : ''}`}>
-                
-                <div className="gq-q-header">
-                  <div className="gq-q-number">Question {index + 1}</div>
-                  <div className="gq-q-type">{q.type}</div>
-                  {q.completed && <CheckCircleIcon className="gq-check-icon" />}
-                </div>
+	const submitMutation = useMutation({
+		mutationFn: () => {
+			const answersPayload = questions.map(q => ({
+				questionId: q.id,
+				value: String(answers[q.id] ?? ''),
+			}))
+			return quizAttemptsApi.submit({ quizId, answers: answersPayload })
+		},
+		onSuccess: () => {
+			navigate(`/guide/quiz/${quizId}/result`)
+		},
+	})
 
-                <h4 className="gq-q-text">{q.text}</h4>
+	if (isLoading) {
+		return (
+			<div className="flex min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+				<GuideNavbar />
+				<main className="flex-1 p-8"><p className="text-center py-12 text-[#666666]">Loading quiz…</p></main>
+			</div>
+		)
+	}
 
-                {/* Input Area based on Type */}
-                <div className="gq-input-area">
-                  {q.type === 'Multiple Choice' && (
-                    <div className="gq-options-grid">
-                      {q.options.map((opt, i) => (
-                        <label key={i} className={`gq-option-label ${q.answer === i ? 'gq-selected' : ''}`}>
-                          <input 
-                            type="radio" 
-                            name={`q-${q.id}`} 
-                            checked={q.answer === i}
-                            onChange={() => handleOptionSelect(q.id, i)}
-                          />
-                          <span>{opt}</span>
-                        </label>
-                      ))}
-                    </div>
-                  )}
+	if (error || !quiz) {
+		return (
+			<div className="flex min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+				<GuideNavbar />
+				<main className="flex-1 p-8"><p className="text-center py-12 text-red-500">Quiz not found.</p></main>
+			</div>
+		)
+	}
 
-                  {q.type === 'True/False' && (
-                    <div className="gq-tf-grid">
-                      {q.options.map((opt, i) => (
-                        <label key={i} className={`gq-tf-label ${q.answer === i ? 'gq-selected' : ''}`}>
-                          <input 
-                            type="radio" 
-                            name={`q-${q.id}`} 
-                            checked={q.answer === i}
-                            onChange={() => handleOptionSelect(q.id, i)}
-                          />
-                          <span>{opt}</span>
-                        </label>
-                      ))}
-                    </div>
-                  )}
+	const trueFalseOptions = ['True', 'False']
 
-                  {(q.type === 'Short Answer' || q.type === 'Long Answer') && (
-                    <textarea 
-                      className="gq-text-input"
-                      rows={q.type === 'Long Answer' ? 6 : 3}
-                      placeholder="Type your answer here..."
-                      value={q.answer}
-                      onChange={(e) => handleTextChange(q.id, e.target.value)}
-                    ></textarea>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+	return (
+		<div className="flex min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+			<GuideNavbar />
 
-          {/* Footer Actions */}
-          <div className="gq-footer-actions">
-            <div className="gq-footer-info">
-              <span>Total Questions: 8</span>
-              <span className="gq-separator">|</span>
-              <span>Total Points: 50</span>
-            </div>
-            <div className="gq-buttons">
-              <button className="gq-btn-secondary">Save Progress</button>
-              <button className="gq-btn-primary">Submit Quiz</button>
-            </div>
-          </div>
+			<div className="flex flex-col flex-1 overflow-hidden">
+				<main className="flex-1 p-8 overflow-y-auto flex flex-col gap-6">
+					<header>
+						<h1 className="text-[1.75rem] text-[#333333] font-bold">Quiz</h1>
+					</header>
 
-        </main>
-      </div>
-    </div>
-  )
+					<div className="bg-white rounded-[8px] p-8 shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] border-l-[5px] border-l-[#2E7D32] flex justify-between items-start flex-wrap gap-6">
+						<div className="flex-1">
+							<div className="text-[0.85rem] text-[#6b7280] mb-2">{quiz.module?.title ?? '—'}</div>
+							<h2 className="m-0 mb-2 text-[1.75rem] text-[#111827] font-bold">{quiz.title}</h2>
+							{quiz.module?.title && (
+								<div className="inline-block bg-[#ecfdf5] text-[#059669] py-1 px-3 rounded-[4px] text-[0.85rem] font-semibold">{quiz.module.title}</div>
+							)}
+						</div>
+
+						<div className="flex gap-6">
+							{quiz.timeLimitMinutes && (
+								<div className="flex flex-row items-center justify-center gap-2 py-3 px-6 bg-[#fef2f2] rounded-[8px] min-w-[100px] border border-[#fee2e2]">
+									<TimerIcon />
+									<span className={`font-mono text-[1.5rem] font-bold ${timeLeft < 60 ? 'text-[#dc2626]' : 'text-[#374151]'}`}>{formatTime(timeLeft)}</span>
+								</div>
+							)}
+							<div className="flex flex-col items-center justify-center py-3 px-6 bg-[#f9fafb] rounded-[8px] min-w-[100px] border border-[#e5e7eb]">
+								<span className="text-[0.75rem] text-[#6b7280] uppercase tracking-[0.05em] mb-1">Progress</span>
+								<span className="text-[1.25rem] font-bold text-[#111827]">{answeredCount} / {questions.length}</span>
+							</div>
+						</div>
+					</div>
+
+					{submitMutation.isError && (
+						<p className="text-red-500 text-[0.9rem] bg-[#fef2f2] py-3 px-4 rounded-[6px]">
+							{submitMutation.error?.response?.data?.error?.message ?? 'Failed to submit quiz. Please try again.'}
+						</p>
+					)}
+
+					<div className="flex flex-col gap-6">
+						{questions.map((q, index) => {
+							const answer    = answers[q.id]
+							const answered  = answer !== undefined && answer !== '' && answer !== null
+							const options   = q.type === 'TRUE_FALSE' ? trueFalseOptions : (q.options ?? [])
+
+							return (
+								<div
+									key={q.id}
+									className={`bg-white rounded-[8px] p-8 border border-[#e5e7eb] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-[border-color] duration-200 ${answered ? 'border-l-[5px] border-l-[#10b981]' : ''}`}
+								>
+									<div className="flex justify-between items-center mb-4 pb-3 border-b border-[#f3f4f6]">
+										<div className="text-[0.9rem] font-bold text-[#6b7280]">Question {index + 1}</div>
+										<div className="flex items-center gap-3">
+											<div className="text-[0.75rem] bg-[#e5e7eb] text-[#374151] py-[2px] px-2 rounded-[4px] font-semibold">{q.type}</div>
+											{q.points != null && <div className="text-[0.75rem] text-[#6b7280]">{q.points} pts</div>}
+											{answered && <CheckCircleIcon />}
+										</div>
+									</div>
+
+									<h4 className="m-0 mb-6 text-[1.1rem] text-[#1f2937] leading-[1.6]">{q.text}</h4>
+
+									<div className="mt-4">
+										{(q.type === 'MCQ' || q.type === 'TRUE_FALSE') && (
+											<div className={q.type === 'TRUE_FALSE' ? 'flex gap-4' : 'grid grid-cols-1 gap-[10px]'}>
+												{options.map((opt, i) => (
+													<label
+														key={i}
+														className={`flex items-center gap-3 py-3 px-4 border border-[#d1d5db] rounded-[6px] cursor-pointer transition-all duration-200
+															${q.type === 'TRUE_FALSE' ? 'flex-1 justify-center font-semibold text-[#4b5563]' : ''}
+															${answer === opt
+																? (q.type === 'TRUE_FALSE' ? 'bg-[#2E7D32] border-[#2E7D32] text-white' : 'bg-[#ecfdf5] border-[#10b981] text-[#064e3b] font-medium')
+																: 'hover:bg-[#f9fafb] hover:border-[#9ca3af]'}
+														`}
+													>
+														<input
+															type="radio"
+															name={`q-${q.id}`}
+															checked={answer === opt}
+															onChange={() => setAnswer(q.id, opt)}
+															className="accent-[#2E7D32] w-[18px] h-[18px]"
+														/>
+														<span>{opt}</span>
+													</label>
+												))}
+											</div>
+										)}
+
+										{(q.type === 'SHORT_ANSWER' || q.type === 'LONG_ANSWER') && (
+											<textarea
+												className="w-full p-3 border border-[#d1d5db] rounded-[6px] text-[1rem] font-[inherit] resize-y focus:outline-none focus:border-[#2E7D32] focus:shadow-[0_0_0_2px_rgba(46,125,50,0.1)]"
+												rows={q.type === 'LONG_ANSWER' ? 6 : 3}
+												placeholder="Type your answer here..."
+												value={answers[q.id] ?? ''}
+												onChange={(e) => setAnswer(q.id, e.target.value)}
+											/>
+										)}
+									</div>
+								</div>
+							)
+						})}
+					</div>
+
+					<div className="bg-white py-6 px-8 rounded-[8px] shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border border-[#e5e7eb] flex justify-between items-center mt-auto">
+						<div className="flex items-center gap-4 text-[#6b7280] text-[0.9rem]">
+							<span>Total Questions: {questions.length}</span>
+							<span className="text-[#d1d5db]">|</span>
+							<span>Answered: {answeredCount}</span>
+						</div>
+						<button
+							onClick={() => submitMutation.mutate()}
+							disabled={submitMutation.isPending}
+							className="py-3 px-8 bg-[#2E7D32] text-white border-0 rounded-[6px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#1b5e20] disabled:opacity-50 disabled:cursor-not-allowed"
+						>
+							{submitMutation.isPending ? 'Submitting…' : 'Submit Quiz'}
+						</button>
+					</div>
+
+				</main>
+			</div>
+		</div>
+	)
 }

@@ -1,226 +1,185 @@
 import { useState } from 'react'
-import Navbar from '../../../components/navbar/navbar'
-import './setting.css'
+import { NavLink } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import Navbar from '../../../components/Navbar/Navbar'
+import * as usersApi from '../../../api/users.js'
 
-const initialAdmins = [
-  { id: 1, name: 'Admin User',   email: 'admin@sfc.com',        role: 'Super Admin', status: 'Active',   lastLogin: '2026-04-13' },
-  { id: 2, name: 'Trainer One',  email: 'trainer1@sfc.com',     role: 'Trainer',     status: 'Active',   lastLogin: '2026-04-12' },
-  { id: 3, name: 'Trainer Two',  email: 'trainer2@sfc.com',     role: 'Trainer',     status: 'Active',   lastLogin: '2026-04-10' },
-  { id: 4, name: 'Backup Admin', email: 'backup@sfc.com',       role: 'Admin',       status: 'Inactive', lastLogin: '2026-03-01' },
+
+const SETTINGS_TABS = [
+    { label: 'Admin Accounts', to: '/settings/admins'   },
+    { label: 'Stations',       to: '/settings/stations' },
 ]
 
-const ROLES = ['Admin', 'Trainer', 'Super Admin']
-const TABS = ['Admin Accounts', 'System Config', 'Notifications']
+const STATUS_BADGE = {
+    ACTIVE:   'bg-[#dcfce7] text-[#166534]',
+    INACTIVE: 'bg-[#f3f4f6] text-[#6b7280]',
+}
 
-const systemConfig = [
-  { label: 'Session Timeout',   value: '30 Minutes',  desc: 'Automatic logout after inactivity' },
-  { label: 'Password Policy',   value: 'Strong',      desc: 'Minimum length and complexity required' },
-  { label: 'Two-Factor Auth',   value: 'Enabled',     desc: 'Extra layer of security for all accounts' },
-  { label: 'Platform Version',  value: 'v2.4.0',      desc: 'Current deployed application version' },
-  { label: 'Data Backup',       value: 'Daily',       desc: 'Automated daily backup of all records' },
-  { label: 'Maintenance Mode',  value: 'Off',         desc: 'Enable to show maintenance page to users' },
-]
-
-const notifConfig = [
-  { label: 'New Registration',    desc: 'Notify admins when a new guide registration is submitted',  enabled: true  },
-  { label: 'Quiz Submission',     desc: 'Notify admins when a guide submits a quiz for review',       enabled: true  },
-  { label: 'IoT Critical Alert',  desc: 'Push notifications for critical sensor/device alerts',       enabled: true  },
-  { label: 'Module Published',    desc: 'Notify all active guides when a new module is published',    enabled: false },
-  { label: 'Certificate Expiry',  desc: 'Remind guides 30 days before their certification expires',   enabled: true  },
-  { label: 'System Broadcast',    desc: 'Allow admins to send broadcast messages to all guides',      enabled: false },
-]
 
 export default function SettingPage() {
-  const [activeTab, setActiveTab]     = useState('Admin Accounts')
-  const [admins, setAdmins]           = useState(initialAdmins)
-  const [fullName, setFullName]       = useState('')
-  const [email, setEmail]             = useState('')
-  const [role, setRole]               = useState('Admin')
-  const [notifs, setNotifs]           = useState(notifConfig)
+    const queryClient = useQueryClient()
+    const [showModal, setShowModal] = useState(false)
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName]   = useState('')
+    const [email, setEmail]         = useState('')
+    const [formError, setFormError] = useState('')
 
-  const handleCreate = () => {
-    if (!fullName.trim() || !email.trim()) return
-    const newAdmin = {
-      id: Date.now(),
-      name: fullName.trim(),
-      email: email.trim(),
-      role,
-      status: 'Active',
-      lastLogin: '—',
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['users', 'admins'],
+        queryFn: async () => {
+            const res = await usersApi.getAll({ role: 'ADMIN' })
+            return res.data.data
+        },
+    })
+
+    const admins = data ?? []
+
+    const createMutation = useMutation({
+        mutationFn: () => usersApi.createAdmin({ firstName: firstName.trim(), lastName: lastName.trim(), email: email.trim() }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['users', 'admins'] })
+            setFirstName('')
+            setLastName('')
+            setEmail('')
+            setFormError('')
+            setShowModal(false)
+        },
+        onError: (err) => {
+            setFormError(err.response?.data?.error?.message ?? 'Failed to create admin.')
+        },
+    })
+
+    const handleCreate = () => {
+        if (!firstName.trim() || !lastName.trim() || !email.trim()) {
+            setFormError('All fields are required.')
+            return
+        }
+        setFormError('')
+        createMutation.mutate()
     }
-    setAdmins(prev => [...prev, newAdmin])
-    setFullName('')
-    setEmail('')
-    setRole('Admin')
-  }
 
-  const toggleNotif = (idx) => {
-    setNotifs(prev => prev.map((n, i) => i === idx ? { ...n, enabled: !n.enabled } : n))
-  }
+    return (
+        <div className="flex h-screen bg-[#f0f4f1] overflow-hidden">
+            <Navbar />
 
-  return (
-    <div className="set-layout">
-      <Navbar />
+            <main className="flex-1 overflow-y-auto p-8">
+                <div className="max-w-4xl mx-auto">
 
-      <div className="set-main">
-        {/* Topbar */}
-        <header className="set-topbar">
-          <h1 className="set-topbar-title">Settings</h1>
-          <div className="set-topbar-right">
-            <button className="set-icon-btn" aria-label="Notifications">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
-            </button>
-            <div className="set-avatar">AM</div>
-          </div>
-        </header>
-
-        {/* Content */}
-        <main className="set-content">
-
-          {/* Tabs */}
-          <div className="set-tabs">
-            {TABS.map(tab => (
-              <button
-                key={tab}
-                className={`set-tab ${activeTab === tab ? 'set-tab--active' : ''}`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-
-          {/* ── Admin Accounts ── */}
-          {activeTab === 'Admin Accounts' && (
-            <>
-              {/* Table section */}
-              <div className="set-table-section">
-                <div className="set-table-header">
-                  <h2 className="set-section-title">Admin Accounts</h2>
-                  <button className="set-btn-add">+ Add Admin</button>
-                </div>
-                <div className="set-table-wrap">
-                  <table className="set-table">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Last Login</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {admins.map(admin => (
-                        <tr key={admin.id}>
-                          <td className="set-name">{admin.name}</td>
-                          <td className="set-muted">{admin.email}</td>
-                          <td className="set-role">{admin.role}</td>
-                          <td>
-                            <span className={`set-badge set-badge--${admin.status.toLowerCase()}`}>
-                              {admin.status}
-                            </span>
-                          </td>
-                          <td className="set-muted">{admin.lastLogin}</td>
-                          <td>
-                            <button className="set-btn-edit">Edit</button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Create form */}
-              <div className="set-form-card">
-                <h2 className="set-section-title">Create New Admin</h2>
-                <div className="set-form-row">
-                  <div className="set-form-field">
-                    <label className="set-label">Full Name</label>
-                    <input
-                      className="set-input"
-                      type="text"
-                      placeholder="Enter full name"
-                      value={fullName}
-                      onChange={e => setFullName(e.target.value)}
-                    />
-                  </div>
-                  <div className="set-form-field">
-                    <label className="set-label">Email</label>
-                    <input
-                      className="set-input"
-                      type="email"
-                      placeholder="Enter email address"
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="set-form-bottom">
-                  <div className="set-form-field">
-                    <label className="set-label">Role</label>
-                    <select
-                      className="set-select"
-                      value={role}
-                      onChange={e => setRole(e.target.value)}
-                    >
-                      {ROLES.map(r => <option key={r}>{r}</option>)}
-                    </select>
-                  </div>
-                  <button className="set-btn-create" onClick={handleCreate}>Create</button>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* ── System Config ── */}
-          {activeTab === 'System Config' && (
-            <div className="set-config-section">
-              <h2 className="set-section-title">System Configuration</h2>
-              <div className="set-config-list">
-                {systemConfig.map(item => (
-                  <div key={item.label} className="set-config-item">
-                    <div className="set-config-info">
-                      <p className="set-config-label">{item.label}</p>
-                      <p className="set-config-desc">{item.desc}</p>
+                    <div className="mb-6">
+                        <h1 className="[font-family:var(--font-outfit)] text-[26px] font-bold text-[#1a3a2a]">Settings</h1>
+                        <p className="[font-family:var(--font-outfit)] text-sm text-[#5a7a6a] mt-1">Manage admin accounts and park stations.</p>
                     </div>
-                    <span className="set-config-value">{item.value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
-          {/* ── Notifications ── */}
-          {activeTab === 'Notifications' && (
-            <div className="set-config-section">
-              <h2 className="set-section-title">Notification Settings</h2>
-              <div className="set-config-list">
-                {notifs.map((item, idx) => (
-                  <div key={item.label} className="set-config-item">
-                    <div className="set-config-info">
-                      <p className="set-config-label">{item.label}</p>
-                      <p className="set-config-desc">{item.desc}</p>
+                    <div className="flex gap-1 mb-6 border-b border-[#d4e4da]">
+                        {SETTINGS_TABS.map(tab => (
+                            <NavLink
+                                key={tab.to}
+                                to={tab.to}
+                                className={({ isActive }) =>
+                                    `px-5 py-2.5 [font-family:var(--font-outfit)] text-sm font-medium border-b-2 transition-colors duration-150 ${
+                                        isActive
+                                            ? 'border-[#266841] text-[#266841]'
+                                            : 'border-transparent text-[#5a7a6a] hover:text-[#1a3a2a]'
+                                    }`
+                                }
+                            >
+                                {tab.label}
+                            </NavLink>
+                        ))}
                     </div>
-                    <button
-                      className={`set-toggle ${item.enabled ? 'set-toggle--on' : ''}`}
-                      onClick={() => toggleNotif(idx)}
-                      aria-label={`Toggle ${item.label}`}
-                    >
-                      <span className="set-toggle-thumb" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
-        </main>
-      </div>
-    </div>
-  )
+                    <div className="bg-white rounded-xl border border-[#d4e4da] p-6">
+                        <div className="flex items-center justify-between mb-5">
+                            <div>
+                                <h2 className="[font-family:var(--font-outfit)] text-[17px] font-semibold text-[#1a3a2a]">Admin Accounts</h2>
+                                <p className="[font-family:var(--font-outfit)] text-sm text-[#5a7a6a] mt-0.5">Manage who has admin access to the platform.</p>
+                            </div>
+                            <button
+                                onClick={() => { setShowModal(true); setFormError('') }}
+                                className="flex items-center gap-2 px-4 py-2 bg-[#266841] text-white [font-family:var(--font-outfit)] text-sm font-medium rounded-lg hover:bg-[#1f5435] transition-colors duration-150"
+                            >
+                                + Add Admin
+                            </button>
+                        </div>
+
+                        {isLoading && <p className="[font-family:var(--font-outfit)] text-sm text-[#5a7a6a] py-4 text-center">Loading admins…</p>}
+                        {error && <p className="[font-family:var(--font-outfit)] text-sm text-red-500 py-4 text-center">Failed to load admins.</p>}
+
+                        {!isLoading && !error && (
+                            <table className="w-full text-sm [font-family:var(--font-outfit)]">
+                                <thead>
+                                    <tr className="text-left text-[#5a7a6a] border-b border-[#e8f0eb]">
+                                        <th className="pb-3 font-medium">Name</th>
+                                        <th className="pb-3 font-medium">Email</th>
+                                        <th className="pb-3 font-medium">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {admins.map(admin => (
+                                        <tr key={admin.id} className="border-b border-[#f0f4f1] hover:bg-[#f7faf8]">
+                                            <td className="py-3.5 font-medium text-[#1a3a2a]">{admin.firstName} {admin.lastName}</td>
+                                            <td className="py-3.5 text-[#5a7a6a]">{admin.email}</td>
+                                            <td className="py-3.5">
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGE[admin.status] ?? 'bg-[#f3f4f6] text-[#6b7280]'}`}>
+                                                    {admin.status === 'ACTIVE' ? 'Active' : admin.status === 'INACTIVE' ? 'Inactive' : admin.status}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
+                </div>
+            </main>
+
+            {showModal && (
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+                        <h3 className="[font-family:var(--font-outfit)] text-[17px] font-semibold text-[#1a3a2a] mb-4">Add Admin</h3>
+                        <div className="flex flex-col gap-3 mb-4">
+                            <input
+                                type="text"
+                                placeholder="First name"
+                                value={firstName}
+                                onChange={e => setFirstName(e.target.value)}
+                                className="w-full px-3 py-2.5 border border-[#d4e4da] rounded-lg [font-family:var(--font-outfit)] text-sm focus:outline-none focus:border-[#266841]"
+                            />
+                            <input
+                                type="text"
+                                placeholder="Last name"
+                                value={lastName}
+                                onChange={e => setLastName(e.target.value)}
+                                className="w-full px-3 py-2.5 border border-[#d4e4da] rounded-lg [font-family:var(--font-outfit)] text-sm focus:outline-none focus:border-[#266841]"
+                            />
+                            <input
+                                type="email"
+                                placeholder="Email address"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
+                                className="w-full px-3 py-2.5 border border-[#d4e4da] rounded-lg [font-family:var(--font-outfit)] text-sm focus:outline-none focus:border-[#266841]"
+                            />
+                        </div>
+                        {formError && <p className="[font-family:var(--font-outfit)] text-xs text-red-500 mb-3">{formError}</p>}
+                        <p className="[font-family:var(--font-outfit)] text-xs text-[#5a7a6a] mb-4">The new admin will receive an activation email to set their password.</p>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => { setShowModal(false); setFormError('') }}
+                                className="px-4 py-2 [font-family:var(--font-outfit)] text-sm text-[#5a7a6a] border border-[#d4e4da] rounded-lg hover:bg-[#f0f4f1] transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleCreate}
+                                disabled={createMutation.isPending}
+                                className="px-4 py-2 bg-[#266841] text-white [font-family:var(--font-outfit)] text-sm font-medium rounded-lg hover:bg-[#1f5435] transition-colors disabled:opacity-50"
+                            >
+                                {createMutation.isPending ? 'Sending…' : 'Send Invitation'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
 }

@@ -1,74 +1,88 @@
-import React, { createContext, useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
+import * as authApi from '../api/auth.js'
+import { setAccessToken, clearAccessToken, setOnAuthFailure } from '../api/client.js'
 
-const AuthContext = createContext(null);
+
+const AuthContext = createContext(null)
+
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    try {
-      const stored = localStorage.getItem('auth_user');
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
-  });
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+	const [user, setUser]       = useState(null)
+	const [loading, setLoading] = useState(false)
+	const [booting, setBooting] = useState(true)
+	const navigate = useNavigate()
 
-  const login = async (username, password) => {
-    setLoading(true);
-    
-    // Simulate network delay for a more realistic demo
-    await new Promise(resolve => setTimeout(resolve, 800));
+	const logout = useCallback(async () => {
+		try {
+			await authApi.logout()
+		} catch {
+			// Ignore logout API errors; clear local state regardless
+		}
+		clearAccessToken()
+		setUser(null)
+		navigate('/')
+	}, [navigate])
 
-    // Hardcoded credentials for Demo
-    // Admin: admin@sfc.com / admin123
-    // Guide: guide@sfc.com / guide123
-    
-    let mockUser = null;
+	useEffect(() => {
+		setOnAuthFailure(() => {
+			clearAccessToken()
+			setUser(null)
+			navigate('/')
+		})
+	}, [navigate])
 
-    if (username === 'admin@sfc.com' && password === 'admin123') {
-      mockUser = { id: 'admin-1', role: 'ADMIN', name: 'SFC Administrator' };
-    } else if (username === 'guide@sfc.com' && password === 'guide123') {
-      mockUser = { id: 'guide-1', role: 'GUIDE', name: 'Joey Mok (Guide)' };
-    }
+	useEffect(() => {
+		const silentRefresh = async () => {
+			try {
+				const { data } = await authApi.refresh()
+				setAccessToken(data.data.accessToken)
+				setUser(data.data.user)
+			} catch {
+				// No valid session; user stays null and sees login
+			} finally {
+				setBooting(false)
+			}
+		}
+		silentRefresh()
+	}, [])
 
-    if (mockUser) {
-      setUser(mockUser);
-      localStorage.setItem('auth_user', JSON.stringify(mockUser));
-      setLoading(false);
-      
-      // Redirect based on role
-      if (mockUser.role === 'ADMIN') {
-        navigate('/dashboard');
-      } else {
-        navigate('/guidedashboard'); 
-      }
-      
-      return { success: true };
-    } else {
-      setLoading(false);
-      return { success: false, message: 'Invalid username or password' };
-    }
-  };
+	const login = async (username, password) => {
+		setLoading(true)
+		try {
+			const { data } = await authApi.login(username, password)
+			setAccessToken(data.data.accessToken)
+			setUser(data.data.user)
+			if (data.data.user.role === 'ADMIN') {
+				navigate('/dashboard')
+			} else {
+				navigate('/guide/home')
+			}
+			return { success: true }
+		} catch (err) {
+			const message = err.response?.data?.error?.message ?? 'Invalid credentials'
+			return { success: false, message }
+		} finally {
+			setLoading(false)
+		}
+	}
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('auth_user');
-    navigate('/login');
-  };
+	if (booting) {
+		return null
+	}
 
-  return (
-    <AuthContext.Provider value={{ 
-      user, 
-      login, 
-      logout, 
-      loading,
-      isAuthenticated: !!user 
-    }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+	return (
+		<AuthContext.Provider value={{
+			user,
+			login,
+			logout,
+			loading,
+			isAuthenticated: !!user,
+		}}>
+			{children}
+		</AuthContext.Provider>
+	)
+}
 
-export const useAuth = () => useContext(AuthContext);
+
+export const useAuth = () => useContext(AuthContext)

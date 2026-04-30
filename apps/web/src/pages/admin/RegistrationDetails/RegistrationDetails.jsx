@@ -1,167 +1,211 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Navbar from '../../../components/navbar/navbar'; // Adjust path if needed
-import './registrationdetails.css';
+import { useNavigate, useParams } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import Navbar from '../../../components/Navbar/Navbar'
+import * as registrationsApi from '../../../api/registrations.js'
 
-const RegistrationDetails = () => {
-  
-  // Handle Approve
-  const handleApprove = () => {
-    alert('Application Approved');
-  };
 
-  // Handle Reject
-  const handleReject = () => {
-    alert('Application Rejected');
-  };
+const STATUS_BADGE = {
+	APPROVED: 'bg-[#e8f5ee] text-[#266841]',
+	PENDING:  'bg-[#fff3e0] text-[#b35c2a]',
+	REJECTED: 'bg-[#f5f5f4] text-[#78716c]',
+}
 
-  return (
-    <div className="registration-container flex">
-      {/* Sidebar */}
-      <Navbar />
+const STATUS_LABEL = { APPROVED: 'Approved', PENDING: 'Pending', REJECTED: 'Rejected' }
 
-      {/* Main Content */}
-      <div className="flex-1 p-8 overflow-auto">
-        <div className="page-header">
-          <h1 className="text-display text-[#1a3a2a]">Registrations</h1>
-          <div className="status-badge pending">Pending</div>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Left Column: Applicant Info & Resume (Takes up 2/3 space) */}
-          <div className="lg:col-span-2 space-y-6">
-            
-            {/* Personal Information Card */}
-            <div className="detail-card p-6">
-              <h3 className="text-h3 text-[#1a3a2a] mb-6 border-b border-[#f0e9db] pb-3">Personal Information</h3>
-              
-              <div className="info-grid">
-                <div className="info-item">
-                  <label className="text-label text-gray-500">Full Name</label>
-                  <p className="text-body-default text-[#1a3a2a] font-medium">Ahmad bin Yusof</p>
-                </div>
+export default function RegistrationDetails() {
+	const { id } = useParams()
+	const navigate = useNavigate()
+	const queryClient = useQueryClient()
+	const [remarks, setRemarks] = useState('')
 
-                <div className="info-item">
-                  <label className="text-label text-gray-500">ID Number</label>
-                  <p className="text-body-default text-[#1a3a2a]">900101-10-5555</p>
-                </div>
+	const { data: reg, isLoading, error } = useQuery({
+		queryKey: ['registrations', id],
+		queryFn: async () => {
+			const res = await registrationsApi.getOne(id)
+			return res.data.data
+		},
+	})
 
-                <div className="info-item">
-                  <label className="text-label text-gray-500">Email Address</label>
-                  <p className="text-body-default text-[#1a3a2a]">ahmad.yusof@example.com</p>
-                </div>
+	const approveMutation = useMutation({
+		mutationFn: () => registrationsApi.approve(id, { startDate: new Date().toISOString().slice(0, 10), remarks }),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['registrations'] })
+			navigate('/registrations')
+		},
+	})
 
-                <div className="info-item">
-                  <label className="text-label text-gray-500">Phone Number</label>
-                  <p className="text-body-default text-[#1a3a2a]">+60 12-345 6789</p>
-                </div>
+	const rejectMutation = useMutation({
+		mutationFn: () => registrationsApi.reject(id, { remarks }),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['registrations'] })
+			navigate('/registrations')
+		},
+	})
 
-                <div className="info-item full-width">
-                  <label className="text-label text-gray-500">Address</label>
-                  <p className="text-body-default text-[#1a3a2a]">
-                    123, Jalan Damansara,<br />
-                    50490 Kuala Lumpur,<br />
-                    Malaysia
-                  </p>
-                </div>
-              </div>
-            </div>
+	const handleViewCv = async () => {
+		try {
+			const res = await registrationsApi.getCvUrl(id)
+			window.open(res.data.data.url, '_blank')
+		} catch {
+			alert('Could not retrieve CV download link.')
+		}
+	}
 
-            {/* Resume Card */}
-            <div className="detail-card p-6">
-              <h3 className="text-h3 text-[#1a3a2a] mb-4 border-b border-[#f0e9db] pb-3">Uploaded Documents</h3>
-              
-              <div className="file-display">
-                <div className="file-icon">
-                  {/* Simple SVG PDF Icon */}
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="#b35c2a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M14 2V8H20" stroke="#b35c2a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M12 18V12" stroke="#b35c2a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M9 15H15" stroke="#b35c2a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-                <div className="file-details">
-                  <p className="text-body-default text-[#1a3a2a] font-medium">Ahmad_Bin_Yusof_CV.pdf</p>
-                  <p className="text-body-small text-gray-500">PDF Document • 2.4 MB</p>
-                </div>
-                <button className="btn-view-file text-label text-[#b35c2a] border border-[#b35c2a] rounded-lg px-4 py-2 hover:bg-[#fdfbf7] transition-colors">
-                  View
-                </button>
-              </div>
-            </div>
+	if (isLoading) {
+		return (
+			<div className="flex min-h-screen bg-[#fdfbf7]">
+				<Navbar />
+				<div className="flex-1 flex items-center justify-center">
+					<p className="[font-family:var(--font-outfit)] text-sm text-[#a8a29e]">Loading…</p>
+				</div>
+			</div>
+		)
+	}
 
-          </div>
+	if (error || !reg) {
+		return (
+			<div className="flex min-h-screen bg-[#fdfbf7]">
+				<Navbar />
+				<div className="flex-1 flex items-center justify-center">
+					<p className="[font-family:var(--font-outfit)] text-sm text-red-500">Failed to load registration.</p>
+				</div>
+			</div>
+		)
+	}
 
-          {/* Right Column: Progress & Decision (Takes up 1/3 space) */}
-          <div className="space-y-6">
-            
-            {/* Vertical Progress Tracker */}
-            <div className="detail-card p-6">
-              <h3 className="text-h3 text-[#1a3a2a] mb-6">Application Progress</h3>
-              
-              <div className="progress-vertical">
-                <div className="progress-step completed">
-                  <div className="step-marker"></div>
-                  <div className="step-content">
-                    <p className="text-label text-gray-900">Submitted</p>
-                    <p className="text-caption text-gray-500">12 Oct 2024</p>
-                  </div>
-                </div>
+	const isPending = reg.status === 'PENDING'
+	const actionPending = approveMutation.isPending || rejectMutation.isPending
 
-                <div className="progress-step completed">
-                  <div className="step-marker"></div>
-                  <div className="step-content">
-                    <p className="text-label text-gray-900">Verified</p>
-                    <p className="text-caption text-gray-500">13 Oct 2024</p>
-                  </div>
-                </div>
+	return (
+		<div className="bg-[#fdfbf7] min-h-screen flex">
+			<Navbar />
 
-                <div className="progress-step active">
-                  <div className="step-marker"></div>
-                  <div className="step-content">
-                    <p className="text-label text-[#1a3a2a] font-semibold">Waiting for Approval</p>
-                    <p className="text-caption text-[#b35c2a]">In Progress</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+			<div className="flex-1 p-8 overflow-auto">
+				<div className="flex justify-between items-center mb-8">
+					<div className="flex items-center gap-4">
+						<button
+							onClick={() => navigate('/registrations')}
+							className="[font-family:var(--font-outfit)] text-sm text-[#78716c] hover:text-[#1a3a2a] transition-colors"
+						>
+							← Back
+						</button>
+						<h1 className="[font-family:var(--font-outfit)] font-semibold text-[28px] text-[#1a3a2a]">Registration Details</h1>
+					</div>
+					<span className={`py-[6px] px-4 rounded-[20px] [font-family:var(--font-outfit)] font-semibold text-sm uppercase tracking-[0.5px] ${STATUS_BADGE[reg.status] ?? ''}`}>
+						{STATUS_LABEL[reg.status] ?? reg.status}
+					</span>
+				</div>
 
-            {/* Decision Section */}
-            <div className="detail-card p-6">
-              <h3 className="text-h3 text-[#1a3a2a] mb-4">Decision</h3>
-              
-              <div className="mb-4">
-                <label className="text-label text-gray-600 block mb-2">Remarks / Reason</label>
-                <textarea 
-                  className="form-textarea text-body-default"
-                  rows="4"
-                  placeholder="Enter decision remarks (optional)..."
-                ></textarea>
-              </div>
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-              <div className="flex flex-col gap-3">
-                <button 
-                  onClick={handleApprove}
-                  className="btn-approve text-label px-6 py-3 rounded-lg w-full"
-                >
-                  Approve Application
-                </button>
-                <button 
-                  onClick={handleReject}
-                  className="btn-reject text-label px-6 py-3 rounded-lg w-full"
-                >
-                  Reject Application
-                </button>
-              </div>
-            </div>
+					<div className="lg:col-span-2 space-y-6">
 
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+						<div className="bg-white border border-[#f0e9db] rounded-xl p-6">
+							<h3 className="[font-family:var(--font-outfit)] font-medium text-[20px] text-[#1a3a2a] mb-6 border-b border-[#f0e9db] pb-3">Personal Information</h3>
+							<div className="grid grid-cols-2 gap-6">
+								<div className="flex flex-col gap-1">
+									<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Full Name</label>
+									<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a] font-medium">{reg.firstName} {reg.lastName}</p>
+								</div>
+								<div className="flex flex-col gap-1">
+									<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">IC / Passport</label>
+									<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a]">{reg.icPassportNumber}</p>
+								</div>
+								<div className="flex flex-col gap-1">
+									<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Email Address</label>
+									<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a]">{reg.email}</p>
+								</div>
+								<div className="flex flex-col gap-1">
+									<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Submitted</label>
+									<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a]">{new Date(reg.createdAt).toLocaleDateString()}</p>
+								</div>
+								<div className="flex flex-col gap-1 col-span-2">
+									<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Address</label>
+									<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a] whitespace-pre-line">{reg.address}</p>
+								</div>
+								<div className="flex flex-col gap-1 col-span-2">
+									<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Reason for Applying</label>
+									<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a]">{reg.reason}</p>
+								</div>
+							</div>
+						</div>
 
-export default RegistrationDetails;
+						{reg.cvS3Key && (
+							<div className="bg-white border border-[#f0e9db] rounded-xl p-6">
+								<h3 className="[font-family:var(--font-outfit)] font-medium text-[20px] text-[#1a3a2a] mb-4 border-b border-[#f0e9db] pb-3">Uploaded CV</h3>
+								<div className="flex items-center gap-4 bg-[#f9f5ed] p-4 rounded-lg border border-[#f0e9db]">
+									<div className="flex items-center justify-center w-12 h-12 bg-white rounded-lg">
+										<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="#b35c2a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+											<path d="M14 2V8H20" stroke="#b35c2a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+										</svg>
+									</div>
+									<div className="flex-1">
+										<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a] font-medium">CV Document</p>
+										<p className="[font-family:var(--font-serif)] text-sm text-gray-500">Click View to open the pre-signed URL</p>
+									</div>
+									<button
+										onClick={handleViewCv}
+										className="[font-family:var(--font-outfit)] font-medium text-sm text-[#b35c2a] border border-[#b35c2a] rounded-lg px-4 py-2 bg-transparent cursor-pointer hover:bg-[#fdfbf7] transition-colors"
+									>
+										View
+									</button>
+								</div>
+							</div>
+						)}
+					</div>
+
+					<div className="space-y-6">
+
+						<div className="bg-white border border-[#f0e9db] rounded-xl p-6">
+							<h3 className="[font-family:var(--font-outfit)] font-medium text-[20px] text-[#1a3a2a] mb-4">Decision</h3>
+							<div className="mb-4">
+								<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-600 block mb-2">Remarks (optional)</label>
+								<textarea
+									className="w-full bg-[#f9f5ed] border border-[#f0e9db] rounded-lg px-4 py-3 [font-family:var(--font-serif)] resize-y transition-[border-color] duration-200 focus:outline-none focus:border-[#1a3a2a] focus:bg-white text-base"
+									rows="4"
+									placeholder="Enter decision remarks…"
+									value={remarks}
+									onChange={e => setRemarks(e.target.value)}
+									disabled={!isPending || actionPending}
+								/>
+							</div>
+							<div className="flex flex-col gap-3">
+								{isPending ? (
+									<>
+										<button
+											onClick={() => approveMutation.mutate()}
+											disabled={actionPending}
+											className="bg-[#1a3a2a] text-white border-none cursor-pointer transition-colors duration-200 hover:bg-[#132d20] disabled:opacity-50 [font-family:var(--font-outfit)] font-medium text-sm px-6 py-3 rounded-lg w-full"
+										>
+											{approveMutation.isPending ? 'Approving…' : 'Approve Application'}
+										</button>
+										<button
+											onClick={() => rejectMutation.mutate()}
+											disabled={actionPending}
+											className="bg-transparent border border-[#d32f2f] text-[#d32f2f] cursor-pointer transition-colors duration-200 hover:bg-[#ffebee] disabled:opacity-50 [font-family:var(--font-outfit)] font-medium text-sm px-6 py-3 rounded-lg w-full"
+										>
+											{rejectMutation.isPending ? 'Rejecting…' : 'Reject Application'}
+										</button>
+									</>
+								) : (
+									<p className="[font-family:var(--font-outfit)] text-sm text-[#78716c] text-center py-2">
+										This application has already been {STATUS_LABEL[reg.status]?.toLowerCase()}.
+									</p>
+								)}
+								{(approveMutation.error || rejectMutation.error) && (
+									<p className="[font-family:var(--font-outfit)] text-xs text-red-500 text-center">
+										Action failed. Please try again.
+									</p>
+								)}
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	)
+}

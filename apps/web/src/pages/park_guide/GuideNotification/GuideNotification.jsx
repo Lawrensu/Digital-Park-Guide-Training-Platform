@@ -1,152 +1,117 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import GuideNavbar from '../../../components/guidenavbar/guidenavbar'
-import './guidenotification.css';
+import { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import GuideNavbar from '../../../components/GuideNavbar/GuideNavbar'
+import * as notificationsApi from '../../../api/notifications.js'
+
+
+const ICON_CLASSES = {
+	CERTIFICATION_ISSUED:   'bg-[#E3F2FD] text-[#1976D2]',
+	QUIZ_ATTEMPT_SUBMITTED: 'bg-[#FFF3E0] text-[#F57C00]',
+	MODULE_PUBLISHED:       'bg-[#E8F5E9] text-[#2E7D32]',
+	CUSTOM:                 'bg-[#E8F5E9] text-[#2E7D32]',
+}
+
+function getIcon(type) {
+	const icons = {
+		CERTIFICATION_ISSUED:   '🎓',
+		QUIZ_ATTEMPT_SUBMITTED: '📝',
+		MODULE_PUBLISHED:       '🌿',
+		CUSTOM:                 '📣',
+	}
+	return icons[type] ?? '🔔'
+}
+
 
 const GuideNotification = () => {
-  // State for the active tab
-  const [activeTab, setActiveTab] = useState('unread');
+	const queryClient = useQueryClient()
+	const [activeTab, setActiveTab] = useState('unread')
 
-  // Mock Data based on the image description
-  const notifications = [
-    {
-      id: 1,
-      type: 'certificate',
-      icon: '🎓',
-      title: 'Certificate Issued – Eco - Tourism Fundamentals',
-      desc: 'Congratulations! You have successfully completed the module and can now download your certificate.',
-      time: 'Just now',
-      unread: true
-    },
-    {
-      id: 2,
-      type: 'quiz',
-      icon: '📝',
-      title: 'Quiz Result: Forest Safety – Final Quiz',
-      desc: 'You scored 85% on your recent attempt. Review your answers to see where you can improve.',
-      time: '2 hrs ago',
-      unread: true
-    },
-    {
-      id: 3,
-      type: 'deadline',
-      icon: '⚠️',
-      title: 'Deadline Reminder: Wildlife Identification',
-      desc: 'The assignment for this module is due tomorrow at 11:59 PM. Make sure to submit it on time.',
-      time: '5 hrs ago',
-      unread: true
-    },
-    {
-      id: 4,
-      type: 'module',
-      icon: '🌿',
-      title: 'New Module Available: Sustainable Gardening',
-      desc: 'A new learning path has been added to your dashboard. Start learning today!',
-      time: '1 day ago',
-      unread: true
-    },
-    {
-      id: 5,
-      type: 'certificate',
-      icon: '🎓',
-      title: 'Certificate Issued – Park History 101',
-      desc: 'Your certificate is ready for download.',
-      time: '2 days ago',
-      unread: false
-    }
-  ];
+	const { data, isLoading, error } = useQuery({
+		queryKey: ['notifications', 'mine'],
+		queryFn: async () => {
+			const res = await notificationsApi.getMine()
+			return res.data.data
+		},
+	})
 
-  // Filter logic
-  const filteredNotifications = notifications.filter(notif => {
-    if (activeTab === 'all') return true;
-    if (activeTab === 'unread') return notif.unread;
-    if (activeTab === 'modules') return notif.type === 'module';
-    return true;
-  });
+	const notifications = data ?? []
+	const unreadCount   = notifications.filter(n => !n.isRead).length
 
-  const getIconClass = (type) => {
-    switch(type) {
-      case 'certificate': return 'gn-icon-certificate';
-      case 'quiz': return 'gn-icon-quiz';
-      case 'deadline': return 'gn-icon-deadline';
-      case 'module': return 'gn-icon-module';
-      default: return 'gn-icon-module';
-    }
-  };
+	const markReadMutation = useMutation({
+		mutationFn: (id) => notificationsApi.markRead(id),
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications', 'mine'] }),
+	})
 
-  return (
-    <div className="gn-container">
-      <GuideNavbar />
-      
-      <main className="gn-main">
-        {/* Header */}
-        <header className="gn-header">
-          <div className="gn-header-title">
-            <h1>Notifications</h1>
-            <p className="gn-header-date">Monday, 14 April 2026</p>
-          </div>
-          
-          <div className="gn-header-stats">
-            <span className="gn-unread-count">
-              {notifications.filter(n => n.unread).length} unread
-            </span>
-          </div>
-        </header>
+	const filtered = notifications.filter(n => {
+		if (activeTab === 'all')    return true
+		if (activeTab === 'unread') return !n.isRead
+		if (activeTab === 'modules') return n.type === 'MODULE_PUBLISHED'
+		return true
+	})
 
-        {/* Tabs / Filters */}
-        <div className="gn-filters">
-          <button 
-            className={`gn-filter-tab ${activeTab === 'all' ? 'active' : ''}`}
-            onClick={() => setActiveTab('all')}
-          >
-            All
-          </button>
-          <button 
-            className={`gn-filter-tab ${activeTab === 'unread' ? 'active' : ''}`}
-            onClick={() => setActiveTab('unread')}
-          >
-            Unread ({notifications.filter(n => n.unread).length})
-          </button>
-          <button 
-            className={`gn-filter-tab ${activeTab === 'modules' ? 'active' : ''}`}
-            onClick={() => setActiveTab('modules')}
-          >
-            Modules
-          </button>
-        </div>
+	return (
+		<div className="flex min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+			<GuideNavbar />
 
-        {/* Notification List */}
-        <div className="gn-list">
-          {filteredNotifications.length > 0 ? (
-            filteredNotifications.map((notif) => (
-              <div 
-                key={notif.id} 
-                className={`gn-item ${notif.unread ? 'unread' : ''}`}
-              >
-                <div className={`gn-icon-box ${getIconClass(notif.type)}`}>
-                  {notif.icon}
-                </div>
-                
-                <div className="gn-content">
-                  <span className="gn-title">{notif.title}</span>
-                  <p className="gn-desc">{notif.desc}</p>
-                  <div className="gn-time">
-                    <span>🕒</span> {notif.time}
-                  </div>
-                </div>
+			<main className="flex-1 p-8 box-border">
+				<header className="flex justify-between items-center mb-8">
+					<div>
+						<h1 className="text-[1.75rem] text-[#333333] m-0 font-bold">Notifications</h1>
+					</div>
+					{unreadCount > 0 && (
+						<span className="text-[0.9rem] font-semibold text-[#666666] bg-[#E8F5E9] py-1 px-3 rounded-[20px] border border-[#C8E6C9]">
+							{unreadCount} unread
+						</span>
+					)}
+				</header>
 
-                {notif.unread && <div className="gn-dot"></div>}
-              </div>
-            ))
-          ) : (
-            <p style={{ color: '#666', textAlign: 'center', marginTop: '2rem' }}>
-              No notifications found.
-            </p>
-          )}
-        </div>
-      </main>
-    </div>
-  );
-};
+				<div className="flex gap-6 border-b border-[#E0E0E0] mb-6">
+					{[
+						{ key: 'all',     label: 'All' },
+						{ key: 'unread',  label: `Unread (${unreadCount})` },
+						{ key: 'modules', label: 'Modules' },
+					].map(tab => (
+						<button
+							key={tab.key}
+							className={`pb-3 text-[1rem] text-[#666666] cursor-pointer relative transition-colors duration-200 bg-transparent border-0 font-medium hover:text-[#2E7D32] ${activeTab === tab.key ? "text-[#2E7D32] font-bold after:content-[''] after:absolute after:-bottom-px after:left-0 after:w-full after:h-[3px] after:bg-[#2E7D32] after:rounded-t-[3px]" : ''}`}
+							onClick={() => setActiveTab(tab.key)}
+						>
+							{tab.label}
+						</button>
+					))}
+				</div>
 
-export default GuideNotification;
+				{isLoading && <p className="text-center py-8 text-[#666666]">Loading notifications…</p>}
+				{error && <p className="text-center py-8 text-red-500">Failed to load notifications.</p>}
+
+				{!isLoading && !error && (
+					<div className="flex flex-col gap-4">
+						{filtered.length > 0 ? filtered.map(notif => (
+							<div
+								key={notif.id}
+								className={`flex items-start bg-white p-5 rounded-[8px] shadow-[0_1px_3px_rgba(0,0,0,0.05)] transition-[transform,box-shadow] duration-200 relative cursor-pointer border border-transparent hover:-translate-y-[2px] hover:shadow-[0_4px_6px_rgba(0,0,0,0.08)] ${!notif.isRead ? 'bg-[#F1F8E9] border-l-4 border-l-[#2E7D32]' : ''}`}
+								onClick={() => { if (!notif.isRead) markReadMutation.mutate(notif.id) }}
+							>
+								<div className={`w-12 h-12 rounded-full flex items-center justify-center text-[1.5rem] mr-4 shrink-0 ${ICON_CLASSES[notif.type] ?? ICON_CLASSES.CUSTOM}`}>
+									{getIcon(notif.type)}
+								</div>
+								<div className="flex-1">
+									<span className="text-[1rem] font-bold text-[#333333] mb-1 block">{notif.title}</span>
+									<p className="text-[0.9rem] text-[#666666] leading-[1.4]">{notif.body}</p>
+									<div className="text-[0.8rem] text-[#888] mt-2 flex items-center gap-2">
+										<span>🕒</span> {new Date(notif.createdAt).toLocaleString()}
+									</div>
+								</div>
+								{!notif.isRead && <div className="w-[10px] h-[10px] bg-[#2E7D32] rounded-full absolute top-5 right-5" />}
+							</div>
+						)) : (
+							<p className="text-center mt-8 text-[#666666]">No notifications found.</p>
+						)}
+					</div>
+				)}
+			</main>
+		</div>
+	)
+}
+
+export default GuideNotification

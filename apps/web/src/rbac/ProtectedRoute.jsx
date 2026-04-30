@@ -14,7 +14,7 @@ export const ProtectedRoute = ({ children, allowedRoles }) => {
   // 2. If logged in but doesn't have the right role
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     // Redirect Admins to dashboard and Guides to home if they stray
-    const fallback = user.role === 'ADMIN' ? '/dashboard' : '/home';
+    const fallback = user.role === 'ADMIN' ? '/dashboard' : '/guide/home';
     return <Navigate to={fallback} replace />;
   }
 

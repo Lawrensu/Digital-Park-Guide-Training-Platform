@@ -1,179 +1,163 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import GuideNavbar from '../../../components/guidenavbar/guidenavbar'
-import './guidemodule.css';
+import { useQuery } from '@tanstack/react-query'
+import GuideNavbar from '../../../components/GuideNavbar/GuideNavbar'
+import * as modulesApi from '../../../api/modules.js'
+import * as enrolmentsApi from '../../../api/enrolments.js'
+
+
+const BADGE_CLASS = {
+	track:         'bg-[#E8F5E9] text-[#2E7D32]',
+	progress:      'bg-[#E3F2FD] text-[#1565C0]',
+	completed:     'bg-[#E8F5E9] text-[#2E7D32]',
+	'not-started': 'bg-[#F5F5F5] text-[#666]',
+}
+
 
 const GuideModule = () => {
-  const navigate = useNavigate()
-  // Mock Data for Stats
-  const stats = [
-    { label: 'Enrolled', count: 5 },
-    { label: 'Completed', count: 3 },
-    { label: 'In Progress', count: 2 },
-    { label: 'Not Enrolled', count: 3 },
-  ];
+	const navigate = useNavigate()
 
-  // Mock Data for Modules (Generating 8 as per description)
-  const modules = [
-    {
-      id: 1,
-      title: 'Forest Safety & Hazard Awareness',
-      progress: 75,
-      status: 'On Track',
-      statusClass: 'track',
-      dueDate: '20 Apr 2026',
-      items: 5,
-      action: 'Continue',
-      actionType: 'continue'
-    },
-    {
-      id: 2,
-      title: 'Eco - Tourism Fundamentals',
-      progress: 100,
-      status: 'Completed',
-      statusClass: 'completed',
-      dueDate: '15 Jan 2026',
-      items: 8,
-      action: 'View',
-      actionType: 'view'
-    },
-    {
-      id: 3,
-      title: 'Basic Wilderness First Aid',
-      progress: 30,
-      status: 'In Progress',
-      statusClass: 'progress',
-      dueDate: '10 May 2026',
-      items: 4,
-      action: 'Continue',
-      actionType: 'continue'
-    },
-    {
-      id: 4,
-      title: 'Wildlife Identification',
-      progress: 0,
-      status: 'Not Started',
-      statusClass: 'not-started',
-      dueDate: '01 Jun 2026',
-      items: 6,
-      action: 'Enrol',
-      actionType: 'enrol'
-    },
-    {
-      id: 5,
-      title: 'Sustainable Gardening',
-      progress: 0,
-      status: 'Not Started',
-      statusClass: 'not-started',
-      dueDate: '15 Jun 2026',
-      items: 3,
-      action: 'Enrol',
-      actionType: 'enrol'
-    },
-    {
-      id: 6,
-      title: 'Park History 101',
-      progress: 100,
-      status: 'Completed',
-      statusClass: 'completed',
-      dueDate: '10 Feb 2026',
-      items: 5,
-      action: 'View',
-      actionType: 'view'
-    },
-    {
-      id: 7,
-      title: 'Visitor Management',
-      progress: 45,
-      status: 'In Progress',
-      statusClass: 'progress',
-      dueDate: '25 Apr 2026',
-      items: 7,
-      action: 'Continue',
-      actionType: 'continue'
-    },
-    {
-      id: 8,
-      title: 'Emergency Protocols',
-      progress: 0,
-      status: 'Not Started',
-      statusClass: 'not-started',
-      dueDate: '30 Jun 2026',
-      items: 4,
-      action: 'Enrol',
-      actionType: 'enrol'
-    }
-  ];
+	const { data: modulesData, isLoading } = useQuery({
+		queryKey: ['modules', { status: 'PUBLISHED' }],
+		queryFn: async () => {
+			const res = await modulesApi.getAll({ status: 'PUBLISHED' })
+			return res.data.data
+		},
+	})
 
-  const renderButton = (type) => {
-    switch(type) {
-      case 'continue': return <button className="gm-btn gm-btn-continue" onClick={() => navigate('/guidemoduledetail')}>Continue</button>;
-      case 'view': return <button className="gm-btn gm-btn-view" onClick={() => navigate('/guidemoduledetail')}>View</button>;
-      case 'enrol': return <button className="gm-btn gm-btn-enrol" onClick={() => navigate('/guidemoduledetail')}>Enrol</button>;
-      default: return null;
-    }
-  };
+	const { data: enrolmentsData } = useQuery({
+		queryKey: ['enrolments', 'me'],
+		queryFn: async () => {
+			const res = await enrolmentsApi.getMyEnrolments()
+			return res.data.data
+		},
+	})
 
-  return (
-    <div className="gm-container">
-      <GuideNavbar />
-      
-      <main className="gm-main">
-        <h1 className="gm-page-title">My Modules</h1>
+	const modules    = modulesData    ?? []
+	const enrolments = enrolmentsData ?? []
 
-        {/* Stats Section */}
-        <div className="gm-stats-row">
-          {stats.map((stat, index) => (
-            <div key={index} className="gm-stat-box">
-              <div className="gm-stat-num">{stat.count}</div>
-              <div className="gm-stat-label">{stat.label}</div>
-            </div>
-          ))}
-        </div>
+	const enrolledCount    = enrolments.length
+	const completedCount   = enrolments.filter(e => e.completedAt).length
+	const inProgressCount  = enrolments.filter(e => !e.completedAt).length
+	const notEnrolledCount = Math.max(0, modules.length - enrolledCount)
 
-        {/* Modules Grid */}
-        <div className="gm-module-grid">
-          {modules.map((module) => (
-            <div key={module.id} className="gm-card">
-              <div className="gm-card-header">
-                <h3 className="gm-title">{module.title}</h3>
-                <span className={`gm-badge ${module.statusClass}`}>{module.status}</span>
-              </div>
+	const getModuleState = (mod) => {
+		const enrolment = enrolments.find(e => e.moduleId === mod.id)
+		if (!enrolment) return { status: 'Not Enrolled', statusClass: 'not-started', actionType: 'enrol', progress: 0, dueAt: null }
+		if (enrolment.completedAt) return { status: 'Completed', statusClass: 'completed', actionType: 'view', progress: 100, dueAt: enrolment.dueAt }
+		const pct = enrolment.progressPct ?? 0
+		if (pct >= 70) return { status: 'On Track', statusClass: 'track', actionType: 'continue', progress: pct, dueAt: enrolment.dueAt }
+		return { status: 'In Progress', statusClass: 'progress', actionType: 'continue', progress: pct, dueAt: enrolment.dueAt }
+	}
 
-              {/* Progress Bar (Hidden if 0%) */}
-              {module.progress > 0 && (
-                <div className="gm-progress-container">
-                  <div className="gm-progress-labels">
-                    <span>Progress</span>
-                    <span>{module.progress}%</span>
-                  </div>
-                  <div className="gm-bar-bg">
-                    <div 
-                      className="gm-bar-fill" 
-                      style={{ width: `${module.progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-              )}
+	const renderButton = (type, moduleId) => {
+		switch (type) {
+			case 'continue':
+				return (
+					<button
+						className="py-2 px-5 rounded-[6px] text-[0.9rem] font-semibold cursor-pointer border-0 transition-[background] duration-200 bg-[#2E7D32] text-white hover:bg-[#1B5E20]"
+						onClick={() => navigate(`/guide/modules/${moduleId}`)}
+					>
+						Continue
+					</button>
+				)
+			case 'view':
+				return (
+					<button
+						className="py-2 px-5 rounded-[6px] text-[0.9rem] font-semibold cursor-pointer border border-[#2E7D32] bg-transparent text-[#2E7D32] transition-[background] duration-200 hover:bg-[#E8F5E9]"
+						onClick={() => navigate(`/guide/modules/${moduleId}`)}
+					>
+						View
+					</button>
+				)
+			case 'enrol':
+				return (
+					<button
+						className="py-2 px-5 rounded-[6px] text-[0.9rem] font-semibold cursor-pointer border border-[#E0E0E0] bg-white text-[#333333] transition-[background] duration-200 hover:bg-[#f0f0f0]"
+						onClick={() => navigate(`/guide/modules/${moduleId}`)}
+					>
+						Enrol
+					</button>
+				)
+			default:
+				return null
+		}
+	}
 
-              <div className="gm-info-row">
-                <div className="gm-info-item">
-                  <span>📅</span> Due: {module.dueDate}
-                </div>
-                <div className="gm-info-item">
-                  <span>📚</span> {module.items} Items
-                </div>
-              </div>
+	const stats = [
+		{ label: 'Enrolled',     count: enrolledCount    },
+		{ label: 'Completed',    count: completedCount   },
+		{ label: 'In Progress',  count: inProgressCount  },
+		{ label: 'Not Enrolled', count: notEnrolledCount },
+	]
 
-              <div className="gm-card-footer">
-                {renderButton(module.actionType)}
-              </div>
-            </div>
-          ))}
-        </div>
-      </main>
-    </div>
-  );
-};
+	return (
+		<div className="flex min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+			<GuideNavbar />
 
-export default GuideModule;
+			<main className="flex-1 p-8 box-border">
+				<h1 className="text-[1.75rem] text-[#333333] m-0 mb-6 font-bold">My Modules</h1>
+
+				<div className="grid grid-cols-4 gap-6 mb-10">
+					{stats.map((stat, index) => (
+						<div key={index} className="bg-white p-6 rounded-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.05)] flex flex-col justify-center items-center text-center border-t-4 border-t-[#2E7D32]">
+							<div className="text-[2rem] font-bold text-[#2E7D32] mb-1">{stat.count}</div>
+							<div className="text-[0.9rem] text-[#666666] font-medium">{stat.label}</div>
+						</div>
+					))}
+				</div>
+
+				{isLoading && <p className="text-center py-8 text-[#666666]">Loading modules…</p>}
+
+				{!isLoading && (
+					<div className="grid grid-cols-[repeat(auto-fill,minmax(350px,1fr))] gap-6">
+						{modules.length > 0 ? modules.map((mod) => {
+							const { status, statusClass, actionType, progress, dueAt } = getModuleState(mod)
+							const itemCount = mod._count?.contentItems ?? mod.contentItems?.length ?? 0
+							return (
+								<div key={mod.id} className="bg-white rounded-[12px] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[#E0E0E0] flex flex-col transition-[transform,box-shadow] duration-200 hover:-translate-y-[3px] hover:shadow-[0_8px_16px_rgba(0,0,0,0.1)]">
+									<div className="flex justify-between items-start mb-4">
+										<h3 className="text-[1.1rem] font-bold text-[#333333] m-0 leading-[1.4]">{mod.title}</h3>
+										<span className={`text-[0.75rem] font-bold py-1 px-[0.6rem] rounded-[4px] uppercase whitespace-nowrap ml-2 ${BADGE_CLASS[statusClass]}`}>{status}</span>
+									</div>
+
+									{progress > 0 && (
+										<div className="mb-4">
+											<div className="flex justify-between text-[0.8rem] text-[#666666] mb-[0.35rem]">
+												<span>Progress</span>
+												<span>{progress}%</span>
+											</div>
+											<div className="w-full h-[6px] bg-[#E0E0E0] rounded-[3px] overflow-hidden">
+												<div className="h-full bg-[#2E7D32] rounded-[3px]" style={{ width: `${progress}%` }}></div>
+											</div>
+										</div>
+									)}
+
+									<div className="flex gap-4 text-[0.85rem] text-[#666666] mb-6">
+										{dueAt && (
+											<div className="flex items-center gap-[0.3rem]">
+												<span>📅</span> Due: {new Date(dueAt).toLocaleDateString()}
+											</div>
+										)}
+										{itemCount > 0 && (
+											<div className="flex items-center gap-[0.3rem]">
+												<span>📚</span> {itemCount} items
+											</div>
+										)}
+									</div>
+
+									<div className="mt-auto flex justify-end">
+										{renderButton(actionType, mod.id)}
+									</div>
+								</div>
+							)
+						}) : (
+							<p className="text-[#666666] col-span-full text-center py-8">No published modules available.</p>
+						)}
+					</div>
+				)}
+			</main>
+		</div>
+	)
+}
+
+export default GuideModule

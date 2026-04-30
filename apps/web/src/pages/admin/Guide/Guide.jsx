@@ -1,140 +1,159 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Navbar from '../../../components/navbar/navbar'
-import './guide.css'
+import { useQuery } from '@tanstack/react-query'
+import Navbar from '../../../components/Navbar/Navbar'
+import * as usersApi from '../../../api/users.js'
 
-const initialGuides = [
-  { id: 1, name: 'Siti Nurhaliza binti Tarudin', email: 'siti.nurhaliza@example.com', status: 'Active',    enrolments: 12, certs: 3 },
-  { id: 2, name: 'Lee Wei Ming',                 email: 'lee.weiming@example.com',    status: 'Active',    enrolments: 8,  certs: 2 },
-  { id: 3, name: 'Priya a/p Subramaniam',        email: 'priya.subra@example.com',    status: 'Suspended', enrolments: 5,  certs: 1 },
-  { id: 4, name: 'Ahmad bin Yusof',              email: 'ahmad.yusof@example.com',    status: 'Active',    enrolments: 15, certs: 4 },
-  { id: 5, name: 'Tan Mei Ling',                 email: 'tan.meiling@example.com',    status: 'Inactive',  enrolments: 0,  certs: 1 },
-  { id: 6, name: 'Muhammad Haziq bin Razlan',    email: 'haziq.razlan@example.com',   status: 'Active',    enrolments: 9,  certs: 2 },
-  { id: 7, name: 'Nur Afiqah binti Kamal',       email: 'afiqah.kamal@example.com',   status: 'Active',    enrolments: 11, certs: 3 },
-  { id: 8, name: 'Rajesh a/l Muthu',             email: 'rajesh.muthu@example.com',   status: 'Active',    enrolments: 6,  certs: 2 },
-]
 
 const STAT_CONFIG = [
-  { key: 'all',       label: 'Total Guides', colorClass: 'guide-stat--total'     },
-  { key: 'Active',    label: 'Active',       colorClass: 'guide-stat--active'    },
-  { key: 'Inactive',  label: 'Inactive',     colorClass: 'guide-stat--inactive'  },
-  { key: 'Suspended', label: 'Suspended',    colorClass: 'guide-stat--suspended' },
+	{ key: 'all',       label: 'Total Guides', colorClass: 'guide-stat--total'     },
+	{ key: 'ACTIVE',    label: 'Active',       colorClass: 'guide-stat--active'    },
+	{ key: 'INACTIVE',  label: 'Inactive',     colorClass: 'guide-stat--inactive'  },
+	{ key: 'SUSPENDED', label: 'Suspended',    colorClass: 'guide-stat--suspended' },
 ]
 
+const STAT_BEFORE_CLASSES = {
+	'guide-stat--total':     'before:bg-[#1a3a2a]',
+	'guide-stat--active':    'before:bg-[#2d7d4e]',
+	'guide-stat--inactive':  'before:bg-[#a8a29e]',
+	'guide-stat--suspended': 'before:bg-[#b35c2a]',
+}
+
+const STAT_VALUE_COLORS = {
+	'guide-stat--total':     'text-[#1a3a2a]',
+	'guide-stat--active':    'text-[#2d7d4e]',
+	'guide-stat--inactive':  'text-[#78716c]',
+	'guide-stat--suspended': 'text-[#b35c2a]',
+}
+
+const BADGE_CLASSES = {
+	ACTIVE:    'bg-[#e8f5ee] text-[#266841]',
+	SUSPENDED: 'bg-[#fdf0e6] text-[#b35c2a]',
+	INACTIVE:  'bg-[#f5f5f4] text-[#78716c]',
+}
+
+
 export default function GuidePage() {
-  const navigate = useNavigate()
-  const [searchQuery, setSearchQuery]   = useState('')
-  const [activeFilter, setActiveFilter] = useState('all')
+	const navigate = useNavigate()
+	const [searchQuery, setSearchQuery]   = useState('')
+	const [activeFilter, setActiveFilter] = useState('all')
 
-  const counts = {
-    all:       initialGuides.length,
-    Active:    initialGuides.filter(g => g.status === 'Active').length,
-    Inactive:  initialGuides.filter(g => g.status === 'Inactive').length,
-    Suspended: initialGuides.filter(g => g.status === 'Suspended').length,
-  }
+	const { data, isLoading, error } = useQuery({
+		queryKey: ['users', 'guides'],
+		queryFn: async () => {
+			const res = await usersApi.getAll({ role: 'GUIDE' })
+			return res.data.data
+		},
+	})
 
-  const filtered = initialGuides.filter(g => {
-    const q = searchQuery.toLowerCase()
-    const matchSearch = g.name.toLowerCase().includes(q) || g.email.toLowerCase().includes(q)
-    const matchFilter = activeFilter === 'all' || g.status === activeFilter
-    return matchSearch && matchFilter
-  })
+	const guides = data ?? []
 
-  return (
-    <div className="guide-layout">
-      <Navbar />
+	const counts = {
+		all:       guides.length,
+		ACTIVE:    guides.filter(g => g.status === 'ACTIVE').length,
+		INACTIVE:  guides.filter(g => g.status === 'INACTIVE').length,
+		SUSPENDED: guides.filter(g => g.status === 'SUSPENDED').length,
+	}
 
-      <div className="guide-main">
-        {/* ── Topbar ── */}
-        <header className="guide-topbar">
-          <h1 className="guide-topbar-title">Guides</h1>
-          <div className="guide-topbar-right">
-            <button className="guide-icon-btn" aria-label="Notifications">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
-            </button>
-            <div className="guide-avatar">AM</div>
-          </div>
-        </header>
+	const filtered = guides.filter(g => {
+		const name = `${g.firstName} ${g.lastName}`.toLowerCase()
+		const q = searchQuery.toLowerCase()
+		const matchSearch = name.includes(q) || g.email.toLowerCase().includes(q)
+		const matchFilter = activeFilter === 'all' || g.status === activeFilter
+		return matchSearch && matchFilter
+	})
 
-        {/* ── Content ── */}
-        <main className="guide-content">
+	return (
+		<div className="flex min-h-screen bg-[#fdfbf7]">
+			<Navbar />
 
-          {/* Stats */}
-          <section className="guide-stats">
-            {STAT_CONFIG.map(({ key, label, colorClass }) => (
-              <button
-                key={key}
-                className={`guide-stat ${colorClass} ${activeFilter === key ? 'guide-stat--active' : ''}`}
-                onClick={() => setActiveFilter(key)}
-              >
-                <span className="guide-stat-label">{label}</span>
-                <span className="guide-stat-value">{counts[key]}</span>
-              </button>
-            ))}
-          </section>
+			<div className="flex-1 flex flex-col min-w-0">
+				<header className="flex items-center justify-between px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
+					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">Guides</h1>
+					<div className="flex items-center gap-3">
+						<button className="w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" aria-label="Notifications">
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+								<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+							</svg>
+						</button>
+						<div className="w-9 h-9 rounded-full bg-[#2d7d4e] flex items-center justify-center [font-family:var(--font-outfit)] text-xs font-semibold text-white">AM</div>
+					</div>
+				</header>
 
-          {/* Table section */}
-          <section className="guide-table-section">
-            {/* Search row */}
-            <div className="guide-search-row">
-              <div className="guide-search-wrap">
-                <svg className="guide-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
-                <input
-                  type="text"
-                  className="guide-search-input"
-                  placeholder="Search guides…"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <span className="guide-result-count">{filtered.length} guide{filtered.length !== 1 ? 's' : ''}</span>
-            </div>
+				<main className="flex-1 p-8 flex flex-col gap-6 overflow-y-auto">
 
-            {/* Table */}
-            <div className="guide-table-wrap">
-              <table className="guide-table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Status</th>
-                    <th>Enrolments</th>
-                    <th>Certifications</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.length > 0 ? filtered.map(g => (
-                    <tr key={g.id}>
-                      <td><p className="guide-name">{g.name}</p></td>
-                      <td className="guide-muted">{g.email}</td>
-                      <td>
-                        <span className={`guide-badge guide-badge--${g.status.toLowerCase()}`}>{g.status}</span>
-                      </td>
-                      <td className="guide-count">{g.enrolments}</td>
-                      <td className="guide-count">{g.certs}</td>
-                      <td>
-                        <button className="guide-btn-view" onClick={() => navigate(`/guides/${g.id}`)}>
-                          View <span aria-hidden>→</span>
-                        </button>
-                      </td>
-                    </tr>
-                  )) : (
-                    <tr>
-                      <td colSpan="6" className="guide-empty">No guides found.</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
+					<section className="grid grid-cols-4 gap-4">
+						{STAT_CONFIG.map(({ key, label, colorClass }) => (
+							<button
+								key={key}
+								className={`bg-white border border-[#f0e9db] rounded-xl px-6 py-5 flex flex-col gap-2 cursor-pointer text-left transition-[box-shadow,border-color,transform] duration-200 relative overflow-hidden before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:rounded-[12px_0_0_12px] hover:shadow-[0_4px_16px_rgba(26,58,42,0.1)] hover:-translate-y-px ${STAT_BEFORE_CLASSES[colorClass]} ${activeFilter === key ? 'bg-[#f3faf6] border-[#2d7d4e] shadow-[0_4px_16px_rgba(26,58,42,0.12)]' : ''}`}
+								onClick={() => setActiveFilter(key)}
+							>
+								<span className="[font-family:var(--font-outfit)] text-xs font-medium text-[#78716c] uppercase tracking-[0.5px]">{label}</span>
+								<span className={`[font-family:var(--font-outfit)] text-[28px] font-semibold leading-none ${STAT_VALUE_COLORS[colorClass]}`}>{counts[key]}</span>
+							</button>
+						))}
+					</section>
 
-        </main>
-      </div>
-    </div>
-  )
+					<section className="bg-white border border-[#e7e5e4] rounded-xl overflow-hidden">
+						<div className="flex items-center justify-between px-6 py-4 border-b border-[#f5f5f4]">
+							<div className="relative flex items-center">
+								<svg className="absolute left-3 text-[#a8a29e] pointer-events-none" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+									<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+								</svg>
+								<input
+									type="text"
+									className="py-[9px] pr-[14px] pl-9 w-[280px] border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] transition-[border-color,background] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
+									placeholder="Search guides…"
+									value={searchQuery}
+									onChange={e => setSearchQuery(e.target.value)}
+								/>
+							</div>
+							<span className="[font-family:var(--font-outfit)] text-xs font-medium text-[#a8a29e]">{filtered.length} guide{filtered.length !== 1 ? 's' : ''}</span>
+						</div>
+
+						<div className="overflow-x-auto">
+							{isLoading && <p className="text-center py-12 [font-family:var(--font-outfit)] text-sm text-[#a8a29e]">Loading guides…</p>}
+							{error && <p className="text-center py-12 [font-family:var(--font-outfit)] text-sm text-red-500">Failed to load guides.</p>}
+							{!isLoading && !error && (
+								<table className="w-full border-collapse">
+									<thead>
+										<tr>
+											<th className="bg-[#fafaf9] px-6 py-[13px] [font-family:var(--font-outfit)] text-xs font-semibold text-[#78716c] text-left tracking-[0.3px] uppercase whitespace-nowrap border-b border-[#f5f5f4]">Name</th>
+											<th className="bg-[#fafaf9] px-6 py-[13px] [font-family:var(--font-outfit)] text-xs font-semibold text-[#78716c] text-left tracking-[0.3px] uppercase whitespace-nowrap border-b border-[#f5f5f4]">Email</th>
+											<th className="bg-[#fafaf9] px-6 py-[13px] [font-family:var(--font-outfit)] text-xs font-semibold text-[#78716c] text-left tracking-[0.3px] uppercase whitespace-nowrap border-b border-[#f5f5f4]">Status</th>
+											<th className="bg-[#fafaf9] px-6 py-[13px] [font-family:var(--font-outfit)] text-xs font-semibold text-[#78716c] text-left tracking-[0.3px] uppercase whitespace-nowrap border-b border-[#f5f5f4]">Username</th>
+											<th className="bg-[#fafaf9] px-6 py-[13px] [font-family:var(--font-outfit)] text-xs font-semibold text-[#78716c] text-left tracking-[0.3px] uppercase whitespace-nowrap border-b border-[#f5f5f4]">Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										{filtered.length > 0 ? filtered.map((g, idx) => (
+											<tr key={g.id} className={`hover:bg-[#fef7f0] ${idx === filtered.length - 1 ? '[&>td]:border-b-0' : ''}`}>
+												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle"><p className="[font-family:var(--font-serif)] text-[15px] text-[#1a3a2a]">{g.firstName} {g.lastName}</p></td>
+												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle [font-family:var(--font-serif)] text-sm text-[#78716c]">{g.email}</td>
+												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle">
+													<span className={`inline-flex items-center py-1 px-3 rounded-full [font-family:var(--font-outfit)] text-xs font-medium ${BADGE_CLASSES[g.status] ?? ''}`}>{g.status}</span>
+												</td>
+												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle [font-family:var(--font-outfit)] text-sm text-[#44403c]">{g.username ?? '—'}</td>
+												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle">
+													<button className="inline-flex items-center gap-1 [font-family:var(--font-outfit)] text-[13px] font-medium text-[#b35c2a] bg-transparent border-none cursor-pointer p-0 transition-[gap] duration-200 hover:gap-2 hover:underline" onClick={() => navigate(`/guides/${g.id}`)}>
+														View <span aria-hidden>→</span>
+													</button>
+												</td>
+											</tr>
+										)) : (
+											<tr>
+												<td colSpan="5" className="text-center px-6 py-12 [font-family:var(--font-serif)] text-base text-[#a8a29e]">No guides found.</td>
+											</tr>
+										)}
+									</tbody>
+								</table>
+							)}
+						</div>
+					</section>
+
+				</main>
+			</div>
+		</div>
+	)
 }

@@ -1,220 +1,279 @@
-import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import Navbar from '../../../components/navbar/navbar'
-import './guidedetail.css'
+import { useQuery } from '@tanstack/react-query'
+import Navbar from '../../../components/Navbar/Navbar'
+import * as usersApi from '../../../api/users.js'
 
-// --- Icons ---
-const BellIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-  </svg>
-)
 
-const SearchIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-)
+const STATUS_BADGE = {
+	ACTIVE:    'bg-[#e8f5ee] text-[#266841]',
+	INACTIVE:  'bg-[#f5f5f4] text-[#78716c]',
+	SUSPENDED: 'bg-[#fdf0e6] text-[#b35c2a]',
+}
 
-const BookIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-  </svg>
-)
+function BookIcon() {
+	return (
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+			<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+		</svg>
+	)
+}
 
-const CheckIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"></polyline>
-  </svg>
-)
+function CheckIcon() {
+	return (
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+			<polyline points="20 6 9 17 4 12"/>
+		</svg>
+	)
+}
 
-const CertIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="8" r="7"></circle>
-    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-  </svg>
-)
+function CertIcon() {
+	return (
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+			<circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+		</svg>
+	)
+}
 
-const QuizIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-    <polyline points="14 2 14 8 20 8"></polyline>
-    <line x1="16" y1="13" x2="8" y2="13"></line>
-    <line x1="16" y1="17" x2="8" y2="17"></line>
-    <polyline points="10 9 9 9 8 9"></polyline>
-  </svg>
-)
+function QuizIcon() {
+	return (
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+			<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+			<polyline points="14 2 14 8 20 8"/>
+			<line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+		</svg>
+	)
+}
 
-const BadgeIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="8" r="6"></circle>
-    <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
-  </svg>
-)
+function BadgeIcon() {
+	return (
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+			<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+		</svg>
+	)
+}
+
 
 export default function GuideDetailPage() {
-  const navigate = useNavigate()
+	const { id } = useParams()
+	const navigate = useNavigate()
 
-  const stats = [
-    { label: 'Modules Enrolled', value: '5', icon: <BookIcon /> },
-    { label: 'Completed', value: '3', icon: <CheckIcon /> },
-    { label: 'Certifications', value: '3', icon: <CertIcon /> },
-    { label: 'Quiz Attempts', value: '8', icon: <QuizIcon /> },
-    { label: 'Badges', value: '6', icon: <BadgeIcon /> },
-  ]
+	const { data: guide, isLoading: loadingGuide, error: guideError } = useQuery({
+		queryKey: ['users', id],
+		queryFn: async () => {
+			const res = await usersApi.getOne(id)
+			return res.data.data
+		},
+	})
 
-  const activeEnrolments = [
-    { id: 1, title: 'Rainforest Biodiversity', progress: 78 },
-    { id: 2, title: 'Advanced Wildlife First Aid', progress: 45 },
-    { id: 3, title: 'Sustainable Forestry Practices', progress: 20 },
-    { id: 4, title: 'Eco-Tourism Management', progress: 0 },
-  ]
+	const { data: enrolmentsData } = useQuery({
+		queryKey: ['users', id, 'enrolments'],
+		queryFn: async () => {
+			const res = await usersApi.getEnrolments(id)
+			return res.data.data
+		},
+		enabled: !!id,
+	})
 
-  const certifications = [
-    { id: 1, title: 'Wildlife Safety Basic', date: '2024-01-15' },
-    { id: 2, title: 'Emergency Response', date: '2024-02-20' },
-    { id: 3, title: 'Forest Conservation', date: '2024-03-10' },
-  ]
+	const { data: attemptsData } = useQuery({
+		queryKey: ['users', id, 'quiz-attempts'],
+		queryFn: async () => {
+			const res = await usersApi.getQuizAttempts(id)
+			return res.data.data
+		},
+		enabled: !!id,
+	})
 
-  const quizHistory = [
-    { id: 1, title: 'Biodiversity Final', score: 88, date: '2024-04-10' },
-    { id: 2, title: 'First Aid Refresher', score: 92, date: '2024-04-05' },
-    { id: 3, title: 'Sustainability Quiz', score: 75, date: '2024-03-28' },
-    { id: 4, title: 'Safety Regulations', score: 65, date: '2024-03-15' },
-  ]
+	const { data: certsData } = useQuery({
+		queryKey: ['users', id, 'certifications'],
+		queryFn: async () => {
+			const res = await usersApi.getCertifications(id)
+			return res.data.data
+		},
+		enabled: !!id,
+	})
 
-  return (
-    <div className="gd-page-container">
-      <Navbar />
+	const { data: badgesData } = useQuery({
+		queryKey: ['users', id, 'badges'],
+		queryFn: async () => {
+			const res = await usersApi.getBadges(id)
+			return res.data.data
+		},
+		enabled: !!id,
+	})
 
-      <div className="gd-main-wrapper">
-        
-        {/* Topbar */}
-        <header className="gd-topbar">
-          <h1 className="gd-title">Guides</h1>
+	const enrolments = enrolmentsData ?? []
+	const attempts   = attemptsData   ?? []
+	const certs      = certsData      ?? []
+	const badges     = badgesData     ?? []
 
-          <div className="gd-search-box">
-            <SearchIcon />
-            <input type="text" placeholder="Search..." />
-          </div>
+	const completedCount = enrolments.filter(e => e.completedAt).length
 
-          <div className="gd-user-actions">
-            <button className="gd-icon-btn">
-              <BellIcon />
-              <span className="gd-notification-dot"></span>
-            </button>
-            <div className="gd-avatar">AM</div>
-          </div>
-        </header>
+	if (loadingGuide) {
+		return (
+			<div className="flex min-h-screen bg-[#fdfbf7]">
+				<Navbar />
+				<div className="flex-1 flex items-center justify-center">
+					<p className="[font-family:var(--font-outfit)] text-sm text-[#a8a29e]">Loading…</p>
+				</div>
+			</div>
+		)
+	}
 
-        {/* Main Content */}
-        <main className="gd-content-area">
-          
-          {/* Profile Header */}
-          <div className="gd-profile-header">
-            <div className="gd-avatar-large">SN</div>
-            <div className="gd-profile-info">
-              <h2 className="gd-profile-name">Siti Nurhaliza binti Tarudin</h2>
-              <span className="gd-status-badge gd-status-active">Active</span>
-            </div>
-          </div>
+	if (guideError || !guide) {
+		return (
+			<div className="flex min-h-screen bg-[#fdfbf7]">
+				<Navbar />
+				<div className="flex-1 flex items-center justify-center">
+					<p className="[font-family:var(--font-outfit)] text-sm text-red-500">Failed to load guide.</p>
+				</div>
+			</div>
+		)
+	}
 
-          {/* Statistics Row */}
-          <div className="gd-stats-grid">
-            {stats.map((stat, index) => (
-              <div key={index} className="gd-stat-card">
-                <div className="gd-stat-icon">{stat.icon}</div>
-                <div className="gd-stat-info">
-                  <span className="gd-stat-value">{stat.value}</span>
-                  <span className="gd-stat-label">{stat.label}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+	const initials = `${guide.firstName?.[0] ?? ''}${guide.lastName?.[0] ?? ''}`.toUpperCase()
 
-          <div className="gd-dashboard-grid">
-            
-            {/* Left Column: Active Enrolments */}
-            <div className="gd-section gd-section-main">
-              <div className="gd-section-header">
-                <h3>Active Enrolments</h3>
-                <button className="gd-link-btn">View All</button>
-              </div>
-              
-              <div className="gd-card-list">
-                {activeEnrolments.map((course) => (
-                  <div key={course.id} className="gd-course-card">
-                    <div className="gd-course-info">
-                      <h4 className="gd-course-title">{course.title}</h4>
-                      <div className="gd-progress-container">
-                        <div className="gd-progress-bar-bg">
-                          <div 
-                            className="gd-progress-bar-fill" 
-                            style={{ width: `${course.progress}%` }}
-                          ></div>
-                        </div>
-                        <span className="gd-progress-text">{course.progress}%</span>
-                      </div>
-                    </div>
-                    <button className="gd-btn-continue">Continue</button>
-                  </div>
-                ))}
-              </div>
-            </div>
+	const stats = [
+		{ label: 'Modules Enrolled', value: enrolments.length, icon: <BookIcon /> },
+		{ label: 'Completed',        value: completedCount,    icon: <CheckIcon /> },
+		{ label: 'Certifications',   value: certs.length,      icon: <CertIcon /> },
+		{ label: 'Quiz Attempts',    value: attempts.length,   icon: <QuizIcon /> },
+		{ label: 'Badges',           value: badges.length,     icon: <BadgeIcon /> },
+	]
 
-            {/* Right Column */}
-            <div className="gd-right-column">
-              
-              {/* Certifications */}
-              <div className="gd-section gd-section-side">
-                <div className="gd-section-header">
-                  <h3>Certifications</h3>
-                </div>
-                <div className="gd-card-simple">
-                  {certifications.map((cert) => (
-                    <div key={cert.id} className="gd-list-item-simple">
-                      <CertIcon className="gd-list-icon" />
-                      <div className="gd-list-content">
-                        <span className="gd-list-title">{cert.title}</span>
-                        <span className="gd-list-date">{cert.date}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+	return (
+		<div className="flex min-h-screen bg-[#fdfbf7]">
+			<Navbar />
 
-              {/* Quiz Attempt History */}
-              <div className="gd-section gd-section-side">
-                <div className="gd-section-header">
-                  <h3>Quiz Attempt History</h3>
-                  <button className="gd-link-btn">View All</button>
-                </div>
-                <div className="gd-card-simple">
-                  {quizHistory.map((quiz) => (
-                    <div key={quiz.id} className="gd-list-item-simple">
-                      <QuizIcon className="gd-list-icon" />
-                      <div className="gd-list-content">
-                        <span className="gd-list-title">{quiz.title}</span>
-                        <div className="gd-list-meta">
-                          <span className={`gd-score-badge ${quiz.score >= 80 ? 'high' : 'medium'}`}>
-                            {quiz.score}%
-                          </span>
-                          <span className="gd-list-date">{quiz.date}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+			<div className="flex-1 flex flex-col min-w-0">
+				<header className="flex items-center justify-between px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
+					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">Guides</h1>
+					<div className="flex items-center gap-3">
+						<button className="w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" aria-label="Notifications">
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+								<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+							</svg>
+						</button>
+						<div className="w-9 h-9 rounded-full bg-[#2d7d4e] flex items-center justify-center [font-family:var(--font-outfit)] text-xs font-semibold text-white">AM</div>
+					</div>
+				</header>
 
-            </div>
+				<main className="flex-1 p-8 overflow-y-auto">
 
-          </div>
-        </main>
-      </div>
-    </div>
-  )
+					<div className="flex items-center gap-4 mb-8">
+						<button onClick={() => navigate('/guides')} className="[font-family:var(--font-outfit)] text-sm text-[#78716c] hover:text-[#1a3a2a] transition-colors">
+							← Back
+						</button>
+					</div>
+
+					<div className="bg-white border border-[#f0e9db] rounded-xl p-8 flex items-center gap-6 mb-6 border-l-[5px] border-l-[#2d7d4e]">
+						<div className="w-20 h-20 bg-[#2d7d4e] text-white rounded-full flex items-center justify-center text-[28px] font-bold [font-family:var(--font-outfit)] shrink-0">
+							{initials}
+						</div>
+						<div className="flex flex-col gap-2">
+							<h2 className="[font-family:var(--font-outfit)] m-0 text-2xl font-semibold text-[#1c1917]">{guide.firstName} {guide.lastName}</h2>
+							<div className="flex items-center gap-3">
+								<span className={`inline-flex items-center py-1 px-3 rounded-full [font-family:var(--font-outfit)] text-xs font-medium ${STATUS_BADGE[guide.status] ?? ''}`}>{guide.status}</span>
+								<span className="[font-family:var(--font-outfit)] text-sm text-[#78716c]">{guide.email}</span>
+								{guide.username && <span className="[font-family:var(--font-outfit)] text-sm text-[#44403c]">@{guide.username}</span>}
+							</div>
+						</div>
+					</div>
+
+					<div className="grid grid-cols-5 gap-4 mb-6">
+						{stats.map((stat, i) => (
+							<div key={i} className="bg-white border border-[#e7e5e4] rounded-xl px-5 py-4 flex items-center gap-4">
+								<div className="w-10 h-10 bg-[#f3faf6] text-[#2d7d4e] rounded-lg flex items-center justify-center shrink-0">{stat.icon}</div>
+								<div className="flex flex-col">
+									<span className="[font-family:var(--font-outfit)] text-2xl font-bold text-[#1c1917] leading-none">{stat.value}</span>
+									<span className="[font-family:var(--font-outfit)] text-xs text-[#78716c] mt-1">{stat.label}</span>
+								</div>
+							</div>
+						))}
+					</div>
+
+					<div className="grid grid-cols-[2fr_1fr] gap-6">
+
+						<div className="bg-white border border-[#e7e5e4] rounded-xl overflow-hidden">
+							<div className="flex justify-between items-center px-6 py-4 border-b border-[#f5f5f4]">
+								<h3 className="[font-family:var(--font-outfit)] m-0 text-base font-semibold text-[#1c1917]">Enrolments</h3>
+							</div>
+							<div className="p-4 flex flex-col gap-3">
+								{enrolments.length > 0 ? enrolments.map(enrolment => (
+									<div key={enrolment.id} className="flex justify-between items-center p-4 border border-[#f5f5f4] rounded-lg">
+										<div className="flex-1">
+											<h4 className="[font-family:var(--font-outfit)] m-0 mb-2 text-[15px] text-[#1a3a2a] font-medium">{enrolment.module?.title ?? '—'}</h4>
+											<div className="flex items-center gap-[10px]">
+												<div className="flex-1 h-[6px] bg-[#e7e5e4] rounded-[3px] overflow-hidden max-w-[200px]">
+													<div className="h-full bg-[#2d7d4e] rounded-[3px]" style={{ width: `${enrolment.progressPct ?? 0}%` }} />
+												</div>
+												<span className="[font-family:var(--font-outfit)] text-xs text-[#78716c] font-medium min-w-[35px] text-right">{enrolment.progressPct ?? 0}%</span>
+											</div>
+										</div>
+										{enrolment.completedAt && (
+											<span className="ml-4 inline-flex items-center py-1 px-3 rounded-full [font-family:var(--font-outfit)] text-xs font-medium bg-[#e8f5ee] text-[#266841]">Completed</span>
+										)}
+									</div>
+								)) : (
+									<p className="[font-family:var(--font-serif)] text-sm text-[#a8a29e] py-4 text-center">No enrolments yet.</p>
+								)}
+							</div>
+						</div>
+
+						<div className="flex flex-col gap-6">
+
+							<div className="bg-white border border-[#e7e5e4] rounded-xl overflow-hidden">
+								<div className="px-6 py-4 border-b border-[#f5f5f4]">
+									<h3 className="[font-family:var(--font-outfit)] m-0 text-base font-semibold text-[#1c1917]">Certifications</h3>
+								</div>
+								<div className="p-2">
+									{certs.length > 0 ? certs.map(cert => (
+										<div key={cert.id} className="flex items-start gap-3 p-3 border-b border-[#f5f5f4] last:border-b-0">
+											<div className="w-8 h-8 bg-[#f3faf6] text-[#2d7d4e] rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+												<CertIcon />
+											</div>
+											<div className="flex flex-col gap-1 w-full">
+												<span className="[font-family:var(--font-outfit)] text-sm text-[#1a3a2a] font-medium">{cert.enrolment?.module?.title ?? '—'}</span>
+												<span className="[font-family:var(--font-outfit)] text-xs text-[#a8a29e]">{new Date(cert.issuedAt).toLocaleDateString()}</span>
+											</div>
+										</div>
+									)) : (
+										<p className="[font-family:var(--font-serif)] text-sm text-[#a8a29e] py-4 text-center px-3">No certifications yet.</p>
+									)}
+								</div>
+							</div>
+
+							<div className="bg-white border border-[#e7e5e4] rounded-xl overflow-hidden">
+								<div className="px-6 py-4 border-b border-[#f5f5f4]">
+									<h3 className="[font-family:var(--font-outfit)] m-0 text-base font-semibold text-[#1c1917]">Quiz Attempts</h3>
+								</div>
+								<div className="p-2">
+									{attempts.length > 0 ? attempts.slice(0, 5).map(attempt => (
+										<div key={attempt.id} className="flex items-start gap-3 p-3 border-b border-[#f5f5f4] last:border-b-0">
+											<div className="w-8 h-8 bg-[#f3faf6] text-[#2d7d4e] rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+												<QuizIcon />
+											</div>
+											<div className="flex flex-col gap-1 w-full">
+												<span className="[font-family:var(--font-outfit)] text-sm text-[#1a3a2a] font-medium">{attempt.quiz?.title ?? '—'}</span>
+												<div className="flex justify-between items-center">
+													{attempt.totalScore != null && (
+														<span className={`[font-family:var(--font-outfit)] text-xs font-bold py-[2px] px-[6px] rounded-[4px] ${attempt.totalScore >= 70 ? 'bg-[#e8f5ee] text-[#266841]' : 'bg-[#fdf0e6] text-[#b35c2a]'}`}>
+															{attempt.totalScore}%
+														</span>
+													)}
+													<span className="[font-family:var(--font-outfit)] text-xs text-[#a8a29e]">{new Date(attempt.submittedAt).toLocaleDateString()}</span>
+												</div>
+											</div>
+										</div>
+									)) : (
+										<p className="[font-family:var(--font-serif)] text-sm text-[#a8a29e] py-4 text-center px-3">No quiz attempts yet.</p>
+									)}
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</main>
+			</div>
+		</div>
+	)
 }

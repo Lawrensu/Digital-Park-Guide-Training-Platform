@@ -1,247 +1,199 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import Navbar from '../../../components/navbar/navbar'
-import './quizgrading.css'
+import { useQuery, useMutation } from '@tanstack/react-query'
+import Navbar from '../../../components/Navbar/Navbar'
+import * as quizAttemptsApi from '../../../api/quizAttempts.js'
 
-// --- Icons ---
-const BellIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-  </svg>
-)
-
-const SearchIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-)
-
-const CheckCircleIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-  </svg>
-)
 
 export default function QuizGradingPage() {
-  const navigate = useNavigate()
-  const { id } = useParams()
+	const { attemptId } = useParams()
+	const navigate = useNavigate()
 
-  // Initial state to sum up to 34/50
-  const [grades, setGrades] = useState({
-    q1: 8,  // MCQ (Max 10)
-    q2: 10, // Long Answer (Max 15)
-    q3: 5,  // True/False (Max 5)
-    q4: 11  // Short Answer (Max 20)
-  })
+	const [scores, setScores]           = useState({})
+	const [submitError, setSubmitError] = useState('')
 
-  const questions = [
-    {
-      id: 'q1',
-      type: 'Multiple Choice',
-      text: 'Which of the following are common signs of shock in a victim?',
-      userAnswer: ['Rapid pulse', 'Pale, cold, clammy skin', 'Confusion or anxiety'],
-      maxPoints: 10
-    },
-    {
-      id: 'q2',
-      type: 'Long Answer',
-      text: 'Describe the immediate steps you should take when encountering a venomous snake bite in the field.',
-      userAnswer: '1. Keep the victim calm and immobilized. 2. Apply a pressure bandage above the bite site. 3. Do not wash the bite area. 4. Seek medical evacuation immediately.',
-      maxPoints: 15
-    },
-    {
-      id: 'q3',
-      type: 'True/False',
-      text: 'You should apply a tourniquet immediately to any bleeding limb to stop blood flow completely.',
-      userAnswer: 'False',
-      maxPoints: 5
-    },
-    {
-      id: 'q4',
-      type: 'Short Answer',
-      text: 'What is the universal emergency contact number in this region?',
-      userAnswer: '999',
-      maxPoints: 20
-    }
-  ]
+	const { data: attempt, isLoading, error } = useQuery({
+		queryKey: ['quiz-attempts', attemptId],
+		queryFn: async () => {
+			const res = await quizAttemptsApi.getOne(attemptId)
+			return res.data.data
+		},
+	})
 
-  const totalScore = Object.values(grades).reduce((a, b) => a + Number(b), 0)
-  const maxTotalScore = questions.reduce((a, b) => a + b.maxPoints, 0)
-  const passMark = 35
-  const isPass = totalScore >= passMark
+	useEffect(() => {
+		if (!attempt?.answers) return
+		const initial = {}
+		attempt.answers.forEach(a => { initial[a.questionId] = a.awardedScore ?? 0 })
+		setScores(initial)
+	}, [attempt])
 
-  const handleGradeChange = (id, value) => {
-    setGrades(prev => ({ ...prev, [id]: parseInt(value) || 0 }))
-  }
+	const gradeMutation = useMutation({
+		mutationFn: () => quizAttemptsApi.grade(attemptId, scores),
+		onSuccess: () => navigate('/quiz-reviews'),
+		onError: () => setSubmitError('Failed to submit grades. Please try again.'),
+	})
 
-  return (
-    <div className="qg-page-container">
-      <Navbar />
+	if (isLoading) {
+		return (
+			<div className="flex min-h-screen bg-[#fdfbf7]">
+				<Navbar />
+				<div className="flex-1 flex items-center justify-center">
+					<p className="[font-family:var(--font-outfit)] text-sm text-[#a8a29e]">Loading…</p>
+				</div>
+			</div>
+		)
+	}
 
-      <div className="qg-main-wrapper">
-        
-        {/* Topbar */}
-        <header className="qg-topbar">
-          <h1 className="qg-title">Quizzes</h1>
+	if (error || !attempt) {
+		return (
+			<div className="flex min-h-screen bg-[#fdfbf7]">
+				<Navbar />
+				<div className="flex-1 flex items-center justify-center">
+					<p className="[font-family:var(--font-outfit)] text-sm text-red-500">Failed to load quiz attempt.</p>
+				</div>
+			</div>
+		)
+	}
 
-          <div className="qg-search-box">
-            <SearchIcon />
-            <input type="text" placeholder="Search..." />
-          </div>
+	const answers     = attempt.answers ?? []
+	const totalScore  = Object.values(scores).reduce((sum, v) => sum + (Number(v) || 0), 0)
+	const maxTotal    = answers.reduce((sum, a) => sum + (a.question?.points ?? 0), 0)
+	const passMark    = attempt.quiz?.passMark ?? Math.round(maxTotal * 0.7)
+	const isPass      = totalScore >= passMark
 
-          <div className="qg-user-actions">
-            <button className="qg-icon-btn">
-              <BellIcon />
-              <span className="qg-notification-dot"></span>
-            </button>
-            <div className="qg-avatar">AM</div>
-          </div>
-        </header>
+	const guideName   = `${attempt.guide?.firstName ?? ''} ${attempt.guide?.lastName ?? ''}`
 
-        {/* Main Content */}
-        <main className="qg-content-area">
-          
-          <button className="qg-back-btn" onClick={() => navigate('/quizzes')}>
-            ← Back to Quizzes
-          </button>
+	return (
+		<div className="flex min-h-screen bg-[#fdfbf7]">
+			<Navbar />
 
-          <div className="qg-layout-grid">
+			<div className="flex-1 flex flex-col min-w-0">
+				<header className="flex items-center justify-between px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
+					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">Quiz Reviews</h1>
+					<div className="flex items-center gap-3">
+						<button className="w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" aria-label="Notifications">
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+								<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+							</svg>
+						</button>
+						<div className="w-9 h-9 rounded-full bg-[#2d7d4e] flex items-center justify-center [font-family:var(--font-outfit)] text-xs font-semibold text-white">AM</div>
+					</div>
+				</header>
 
-            {/* Left Column: Grading Area */}
-            <div className="qg-grading-column">
-              
-              <div className="qg-header-section">
-                <div>
-                  <h2 className="qg-page-heading">Grading: Wildlife First Aid Assessment</h2>
-                  <div className="qg-meta-row">
-                    <span className="qg-attempt-badge">Attempt #2</span>
-                    <span className="qg-text-muted">Submitted on Oct 24, 2023</span>
-                  </div>
-                </div>
-                
-                {/* Score Summary */}
-                <div className={`qg-score-card ${isPass ? 'qg-pass' : 'qg-fail'}`}>
-                  <div className="qg-score-header">
-                    <span className="qg-score-label">Total Score</span>
-                    <span className={`qg-status-badge ${isPass ? 'qg-status-pass' : 'qg-status-fail'}`}>
-                      {isPass ? 'PASSED' : 'FAILED'}
-                    </span>
-                  </div>
-                  <div className="qg-score-big">
-                    {totalScore} <span className="qg-score-divider">/</span> {maxTotalScore}
-                  </div>
-                  <div className="qg-pass-mark">
-                    Pass Mark: {passMark} (70%)
-                  </div>
-                </div>
-              </div>
+				<main className="flex-1 p-8 overflow-y-auto">
 
-              {/* Questions List */}
-              <div className="qg-questions-container">
-                {questions.map((q, index) => (
-                  <div key={q.id} className="qg-question-card">
-                    <div className="qg-q-header">
-                      <span className="qg-q-number">Question {index + 1}</span>
-                      <span className="qg-q-type">{q.type}</span>
-                    </div>
-                    
-                    <h4 className="qg-q-text">{q.text}</h4>
-                    
-                    <div className="qg-user-answer">
-                      <label className="qg-label-small">Student Answer:</label>
-                      {Array.isArray(q.userAnswer) ? (
-                        <ul className="qg-answer-list">
-                          {q.userAnswer.map((ans, i) => (
-                            <li key={i} className="qg-answer-item">
-                              <CheckCircleIcon /> {ans}
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="qg-answer-text">{q.userAnswer}</p>
-                      )}
-                    </div>
+					<div className="flex items-center gap-4 mb-8">
+						<button onClick={() => navigate('/quiz-reviews')} className="[font-family:var(--font-outfit)] text-sm text-[#78716c] hover:text-[#1a3a2a] transition-colors">
+							← Back
+						</button>
+					</div>
 
-                    <div className="qg-grading-row">
-                      <div className="qg-input-group">
-                        <label className="qg-label-small">Points Awarded:</label>
-                        <input 
-                          type="number" 
-                          className="qg-grade-input"
-                          value={grades[q.id]}
-                          onChange={(e) => handleGradeChange(q.id, e.target.value)}
-                          min="0"
-                          max={q.maxPoints}
-                        />
-                      </div>
-                      <div className="qg-max-points">
-                        / {q.maxPoints} pts
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+					<div className="grid grid-cols-[2.5fr_1fr] gap-8 items-start">
 
-              <div className="qg-action-bar">
-                <button className="qg-btn-primary">Submit Grades</button>
-                <button className="qg-btn-secondary">Cancel</button>
-              </div>
+						<div className="flex flex-col gap-6">
 
-            </div>
+							<div className="flex justify-between items-start gap-8">
+								<div>
+									<h2 className="[font-family:var(--font-outfit)] m-0 mb-2 text-2xl font-semibold text-[#1a3a2a]">Grading: {attempt.quiz?.title ?? '—'}</h2>
+									<div className="flex items-center gap-4">
+										<span className="[font-family:var(--font-outfit)] bg-[#e8f5ee] text-[#266841] py-[2px] px-2 rounded text-xs font-semibold">Attempt #{attempt.attemptNumber ?? 1}</span>
+										<span className="[font-family:var(--font-outfit)] text-[#78716c] text-[13px]">Submitted {new Date(attempt.submittedAt).toLocaleDateString()}</span>
+									</div>
+								</div>
 
-            {/* Right Column: Attempt Summary */}
-            <div className="qg-summary-column">
-              <div className="qg-card qg-card-summary">
-                <h3 className="qg-card-title">Attempt Summary</h3>
-                
-                <div className="qg-summary-row">
-                  <span className="qg-sum-label">Trainee</span>
-                  <span className="qg-sum-value">Siti Nurhaliza</span>
-                </div>
-                
-                <div className="qg-summary-row">
-                  <span className="qg-sum-label">Module</span>
-                  <span className="qg-sum-value">Wildlife First Aid</span>
-                </div>
+								<div className={`bg-white border border-[#e7e5e4] rounded-xl p-6 min-w-[220px] text-center border-l-[5px] ${isPass ? 'border-l-[#2d7d4e]' : 'border-l-[#d32f2f]'}`}>
+									<div className="flex justify-between items-center mb-2">
+										<span className="[font-family:var(--font-outfit)] text-xs text-[#78716c] font-semibold uppercase">Total Score</span>
+										<span className={`[font-family:var(--font-outfit)] text-[11px] py-[2px] px-2 rounded-full font-bold ${isPass ? 'bg-[#e8f5ee] text-[#266841]' : 'bg-[#ffebee] text-[#d32f2f]'}`}>
+											{isPass ? 'PASS' : 'FAIL'}
+										</span>
+									</div>
+									<div className="[font-family:var(--font-outfit)] text-[40px] font-bold text-[#1c1917] leading-none mb-1">
+										{totalScore} <span className="text-2xl text-[#a8a29e] font-normal">/ {maxTotal}</span>
+									</div>
+									<div className="[font-family:var(--font-outfit)] text-[13px] text-[#78716c]">Pass Mark: {passMark}</div>
+								</div>
+							</div>
 
-                <div className="qg-summary-row">
-                  <span className="qg-sum-label">Assessment</span>
-                  <span className="qg-sum-value">Final Quiz</span>
-                </div>
+							<div className="flex flex-col gap-4">
+								{answers.length > 0 ? answers.map((answer, index) => (
+									<div key={answer.questionId} className="bg-white border border-[#e7e5e4] rounded-xl p-6">
+										<div className="flex justify-between mb-4 pb-2 border-b border-[#f5f5f4]">
+											<span className="[font-family:var(--font-outfit)] font-semibold text-[#1c1917]">Question {index + 1}</span>
+											<span className="[font-family:var(--font-outfit)] bg-[#f5f5f4] text-[#44403c] py-[2px] px-2 rounded text-xs font-medium">{answer.question?.type ?? '—'}</span>
+										</div>
 
-                <div className="qg-summary-row">
-                  <span className="qg-sum-label">Attempts</span>
-                  <span className="qg-sum-value">2 of 3</span>
-                </div>
+										<h4 className="[font-family:var(--font-serif)] m-0 mb-4 text-base text-[#1a3a2a] leading-[1.5]">{answer.question?.text ?? '—'}</h4>
 
-                <div className="qg-summary-row">
-                  <span className="qg-sum-label">Time Taken</span>
-                  <span className="qg-sum-value">45m 12s</span>
-                </div>
+										<div className="bg-[#fafaf9] border border-[#f0e9db] p-4 rounded-lg mb-5">
+											<label className="[font-family:var(--font-outfit)] block text-xs font-semibold text-[#78716c] mb-2 uppercase tracking-[0.3px]">Guide Answer:</label>
+											<p className="[font-family:var(--font-serif)] m-0 text-[15px] text-[#1a3a2a] leading-[1.6]">{Array.isArray(answer.value) ? answer.value.join(', ') : (answer.value ?? '—')}</p>
+										</div>
 
-                <div className="qg-summary-row">
-                  <span className="qg-sum-label">Submitted</span>
-                  <span className="qg-sum-value">Oct 24, 2023</span>
-                </div>
+										<div className="flex items-center justify-end gap-3">
+											<label className="[font-family:var(--font-outfit)] text-xs font-semibold text-[#78716c] uppercase">Points:</label>
+											<input
+												type="number"
+												className="w-[80px] py-[6px] px-2 border border-[#d6d3d1] rounded text-base font-semibold text-center text-[#1c1917] focus:outline-none focus:border-[#1a3a2a]"
+												value={scores[answer.questionId] ?? 0}
+												onChange={e => setScores(prev => ({ ...prev, [answer.questionId]: parseInt(e.target.value) || 0 }))}
+												min="0"
+												max={answer.question?.points ?? 100}
+											/>
+											<span className="[font-family:var(--font-outfit)] text-sm text-[#78716c]">/ {answer.question?.points ?? '?'} pts</span>
+										</div>
+									</div>
+								)) : (
+									<p className="[font-family:var(--font-serif)] text-sm text-[#a8a29e] text-center py-8">No answers to grade.</p>
+								)}
+							</div>
 
-                <div className="qg-divider"></div>
+							{submitError && <p className="[font-family:var(--font-outfit)] text-xs text-red-500">{submitError}</p>}
 
-                <div className="qg-summary-footer">
-                  <p className="qg-footer-note">
-                    Review the answers carefully before finalizing the grade. 
-                    This action will notify the trainee.
-                  </p>
-                </div>
+							<div className="flex justify-end gap-3">
+								<button
+									onClick={() => gradeMutation.mutate()}
+									disabled={gradeMutation.isPending || answers.length === 0}
+									className="py-[10px] px-8 bg-[#1a3a2a] text-white border-none rounded-lg [font-family:var(--font-outfit)] font-medium text-sm cursor-pointer transition-colors duration-200 hover:bg-[#132d20] disabled:opacity-50"
+								>
+									{gradeMutation.isPending ? 'Submitting…' : 'Submit Grades'}
+								</button>
+								<button
+									onClick={() => navigate('/quiz-reviews')}
+									className="py-[10px] px-6 bg-transparent text-[#44403c] border border-[#d6d3d1] rounded-lg [font-family:var(--font-outfit)] font-medium text-sm cursor-pointer transition-colors duration-200 hover:bg-[#f5f5f4]"
+								>
+									Cancel
+								</button>
+							</div>
+						</div>
 
-              </div>
-            </div>
+						<div className="sticky top-8">
+							<div className="bg-white border border-[#e7e5e4] rounded-xl p-6">
+								<h3 className="[font-family:var(--font-outfit)] mt-0 mb-5 text-base font-semibold text-[#1c1917] border-b border-[#f5f5f4] pb-3">Attempt Summary</h3>
 
-          </div>
-        </main>
-      </div>
-    </div>
-  )
+								{[
+									['Guide',     guideName],
+									['Module',    attempt.quiz?.module?.title ?? '—'],
+									['Quiz',      attempt.quiz?.title ?? '—'],
+									['Submitted', new Date(attempt.submittedAt).toLocaleDateString()],
+								].map(([label, value]) => (
+									<div key={label} className="flex justify-between mb-4">
+										<span className="[font-family:var(--font-outfit)] text-sm text-[#78716c] font-medium">{label}</span>
+										<span className="[font-family:var(--font-outfit)] text-sm text-[#1c1917] font-semibold text-right max-w-[140px]">{value}</span>
+									</div>
+								))}
+
+								<div className="h-px bg-[#f5f5f4] my-4" />
+
+								<p className="[font-family:var(--font-outfit)] text-xs text-[#78716c] leading-[1.5] m-0">
+									Review each answer carefully before submitting. Grades will be saved and the guide will be notified.
+								</p>
+							</div>
+						</div>
+
+					</div>
+				</main>
+			</div>
+		</div>
+	)
 }

@@ -1,112 +1,115 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import GuideNavbar from '../../../components/guidenavbar/guidenavbar'
-import './guidecertifications.css';
+import { useQuery } from '@tanstack/react-query'
+import GuideNavbar from '../../../components/GuideNavbar/GuideNavbar'
+import * as certificationsApi from '../../../api/certifications.js'
+
 
 const GuideCertifications = () => {
-  const navigate = useNavigate()
-  // Mock Data for Stats
-  const stats = [
-    { label: 'Total Earned', value: 2, icon: '🏆' },
-    { label: 'Active', value: 2, icon: '✅' },
-    { label: 'Expired', value: 0, icon: '⏳' },
-    { label: 'Under Review', value: 1, icon: '👁️' },
-  ];
+	const navigate = useNavigate()
 
-  // Mock Data for Certificates
-  const certificates = [
-    {
-      id: 1,
-      title: 'Eco - Tourism Fundamentals',
-      status: 'Active',
-      date: 'Issued: Jan 2024',
-      hasActions: true
-    },
-    {
-      id: 2,
-      title: 'Basic Wilderness First Aid',
-      status: 'Active',
-      date: 'Issued: Feb 2024',
-      hasActions: true
-    },
-    {
-      id: 3,
-      title: 'Forest Safety & Hazard Awareness',
-      status: 'Under Review',
-      date: 'Submitted: 2 days ago',
-      hasActions: false
-    }
-  ];
+	const { data, isLoading, error } = useQuery({
+		queryKey: ['certifications', 'me'],
+		queryFn: async () => {
+			const res = await certificationsApi.getMine()
+			return res.data.data
+		},
+	})
 
-  return (
-    <div className="gc-container">
-      <GuideNavbar />
-      
-      <main className="gc-main">
-        <header className="gc-header">
-          <h1>My Certificates</h1>
-        </header>
+	const certs = data ?? []
 
-        {/* Stats Section */}
-        <div className="gc-stats-grid">
-          {stats.map((stat, index) => (
-            <div key={index} className="gc-stat-card">
-              <div className="gc-stat-icon">{stat.icon}</div>
-              <div className="gc-stat-info">
-                <h3>{stat.value}</h3>
-                <p>{stat.label}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+	const now       = new Date()
+	const active    = certs.filter(c => !c.expiresAt || new Date(c.expiresAt) > now)
+	const expired   = certs.filter(c => c.expiresAt && new Date(c.expiresAt) <= now)
 
-        {/* Certifications List */}
-        <div className="gc-section-title">
-          <span>🎓</span> Certifications
-        </div>
+	const handleDownload = async (certId) => {
+		try {
+			const res = await certificationsApi.getDownloadUrl(certId)
+			window.open(res.data.data.url, '_blank')
+		} catch {
+			alert('Could not retrieve certificate download link.')
+		}
+	}
 
-        <div className="gc-list">
-          {certificates.map((cert) => (
-            <div key={cert.id} className="gc-card">
-              <div className="gc-card-left">
-                <div className="gc-cert-icon">🎓</div>
-                <div className="gc-details">
-                  <h4>{cert.title}</h4>
-                  <span>{cert.date}</span>
-                  <div>
-                    {cert.status === 'Active' ? (
-                      <span className="gc-badge active">Active</span>
-                    ) : (
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <span className="gc-badge review">Under Review</span>
-                        <span className="gc-processing-text">Processing</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+	return (
+		<div className="flex min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+			<GuideNavbar />
 
-              {cert.hasActions && (
-                <div className="gc-actions">
-                  <button className="gc-btn gc-btn-pdf">
-                    📄 PDF
-                  </button>
-                  <button className="gc-btn gc-btn-view" onClick={() => navigate('/guideviewcert')}>
-                    View
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+			<main className="flex-1 p-8 box-border">
+				<header>
+					<h1 className="text-[1.75rem] text-[#333333] m-0 mb-8 font-bold">My Certificates</h1>
+				</header>
 
-        {/* Footer Note */}
-        <div className="gc-footer-note">
-          <strong>Note:</strong> Certificates are valid for 2 years. You can download the PDF version at any time.
-        </div>
-      </main>
-    </div>
-  );
-};
+				<div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-6 mb-10">
+					{[
+						{ label: 'Total Earned', value: certs.length,   icon: '🏆' },
+						{ label: 'Active',       value: active.length,  icon: '✅' },
+						{ label: 'Expired',      value: expired.length, icon: '⏳' },
+					].map((stat, i) => (
+						<div key={i} className="bg-white p-6 rounded-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.05)] flex items-center gap-4 border border-transparent transition-transform duration-200 hover:-translate-y-[2px] hover:border-[#E0E0E0]">
+							<div className="w-12 h-12 rounded-[10px] bg-[#F4F7F6] flex items-center justify-center text-[1.5rem]">{stat.icon}</div>
+							<div>
+								<h3 className="m-0 text-[1.5rem] font-bold text-[#333333]">{stat.value}</h3>
+								<p className="m-0 text-[0.875rem] text-[#666666]">{stat.label}</p>
+							</div>
+						</div>
+					))}
+				</div>
 
-export default GuideCertifications;
+				<div className="text-[1.1rem] font-semibold text-[#333333] mb-4 flex items-center gap-2">
+					<span>🎓</span> Certifications
+				</div>
+
+				{isLoading && <p className="text-center py-8 text-[#666666]">Loading certifications…</p>}
+				{error && <p className="text-center py-8 text-red-500">Failed to load certifications.</p>}
+
+				{!isLoading && !error && (
+					<div className="flex flex-col gap-4">
+						{certs.length > 0 ? certs.map(cert => {
+							const isExpired = cert.expiresAt && new Date(cert.expiresAt) <= new Date()
+							return (
+								<div key={cert.id} className="bg-white p-6 rounded-[12px] flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[#E0E0E0]">
+									<div className="flex items-center gap-6">
+										<div className="w-14 h-14 bg-[#FFF8E1] text-[#FBC02D] rounded-full flex items-center justify-center text-[1.75rem]">🎓</div>
+										<div>
+											<h4 className="m-0 mb-1 text-[1.1rem] text-[#333333]">{cert.enrolment?.module?.title ?? '—'}</h4>
+											<span className="text-[0.85rem] text-[#666666]">Issued: {new Date(cert.issuedAt).toLocaleDateString()}</span>
+											<div>
+												{isExpired ? (
+													<span className="inline-block py-1 px-3 rounded-[20px] text-[0.75rem] font-semibold uppercase mt-2 bg-[#FFEBEE] text-[#D32F2F]">Expired</span>
+												) : (
+													<span className="inline-block py-1 px-3 rounded-[20px] text-[0.75rem] font-semibold uppercase mt-2 bg-[#E8F5E9] text-[#2E7D32]">Active</span>
+												)}
+											</div>
+										</div>
+									</div>
+									<div className="flex gap-3">
+										<button
+											className="py-2 px-4 rounded-[6px] text-[0.875rem] font-semibold cursor-pointer transition-all duration-200 border-0 flex items-center gap-2 bg-[#FFEBEE] text-[#D32F2F] hover:bg-[#FFCDD2]"
+											onClick={() => handleDownload(cert.id)}
+										>
+											📄 PDF
+										</button>
+										<button
+											className="py-2 px-4 rounded-[6px] text-[0.875rem] font-semibold cursor-pointer transition-all duration-200 border-0 flex items-center gap-2 bg-[#2E7D32] text-white hover:bg-[#1B5E20]"
+											onClick={() => navigate(`/guide/certifications/${cert.id}`)}
+										>
+											View
+										</button>
+									</div>
+								</div>
+							)
+						}) : (
+							<p className="text-center py-8 text-[#666666]">No certifications yet. Complete a module and pass the quiz to earn one.</p>
+						)}
+					</div>
+				)}
+
+				<div className="mt-8 text-[0.85rem] text-[#666666] bg-[#E8F5E9] p-4 rounded-[8px] border-l-4 border-l-[#2E7D32] leading-[1.5]">
+					<strong>Note:</strong> You can download the PDF version of any certificate at any time.
+				</div>
+			</main>
+		</div>
+	)
+}
+
+export default GuideCertifications

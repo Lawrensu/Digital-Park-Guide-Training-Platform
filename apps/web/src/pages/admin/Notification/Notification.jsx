@@ -1,215 +1,266 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Navbar from '../../../components/navbar/navbar'
-import './notification.css'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import Navbar from '../../../components/Navbar/Navbar'
+import * as notificationsApi from '../../../api/notifications.js'
 
-const initialNotifications = [
-  { id: 1, type: 'registration', title: 'New registration submitted',   desc: 'Ahmad bin Yusof has submitted a registration form.',             time: '10 min ago', read: false },
-  { id: 2, type: 'quiz',         title: 'Quiz attempt ready for review', desc: 'Siti Nurhaliza scored 85% on Rainforest Biodiversity Quiz.',     time: '1 hr ago',   read: false },
-  { id: 3, type: 'module',       title: 'Module content updated',        desc: 'Wildlife Conservation module has been updated by Admin.',        time: '3 hr ago',   read: true  },
-  { id: 4, type: 'registration', title: 'New registration submitted',   desc: 'Lee Wei Ming has submitted a registration form.',                time: '5 hr ago',   read: true  },
-  { id: 5, type: 'custom',       title: 'Custom Notification Sent',     desc: 'Maintenance scheduled for tonight at 10 PM.',                    time: '1 day ago',  read: true, recipient: 'All Active Guides' },
-]
 
 const TYPE_META = {
-  registration: { bg: '#e8f5ee', color: '#266841', label: 'Registration' },
-  quiz:         { bg: '#fdf0e6', color: '#b35c2a', label: 'Quiz'         },
-  module:       { bg: '#f0e9db', color: '#6b5c4a', label: 'Module'       },
-  custom:       { bg: '#e8f5ee', color: '#1a3a2a', label: 'Broadcast'    },
+	REGISTRATION_SUBMITTED: { bg: '#e8f5ee', color: '#266841', label: 'Registration' },
+	QUIZ_ATTEMPT_SUBMITTED: { bg: '#fdf0e6', color: '#b35c2a', label: 'Quiz'         },
+	MODULE_PUBLISHED:       { bg: '#f0e9db', color: '#6b5c4a', label: 'Module'       },
+	CUSTOM:                 { bg: '#e8f5ee', color: '#1a3a2a', label: 'Broadcast'    },
+}
+
+const TYPE_ROUTE = {
+	REGISTRATION_SUBMITTED: '/registrations',
+	QUIZ_ATTEMPT_SUBMITTED: '/quiz-reviews',
+	MODULE_PUBLISHED:       '/modules',
+}
+
+function getTypeMeta(type) {
+	return TYPE_META[type] ?? TYPE_META.CUSTOM
 }
 
 function TypeIcon({ type }) {
-  const meta = TYPE_META[type] || TYPE_META.custom
-  const icons = {
-    registration: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-      </svg>
-    ),
-    quiz: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-      </svg>
-    ),
-    module: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-      </svg>
-    ),
-    custom: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
-      </svg>
-    ),
-  }
-  return (
-    <div className="notif-icon" style={{ backgroundColor: meta.bg, color: meta.color }}>
-      {icons[type] || icons.custom}
-    </div>
-  )
+	const meta = getTypeMeta(type)
+
+	const icons = {
+		REGISTRATION_SUBMITTED: (
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+				<path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+			</svg>
+		),
+		QUIZ_ATTEMPT_SUBMITTED: (
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+				<path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+			</svg>
+		),
+		MODULE_PUBLISHED: (
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+				<path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+			</svg>
+		),
+	}
+
+	const icon = icons[type] ?? (
+		<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+			<path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+		</svg>
+	)
+
+	return (
+		<div className="w-[38px] h-[38px] rounded-full shrink-0 flex items-center justify-center" style={{ backgroundColor: meta.bg, color: meta.color }}>
+			{icon}
+		</div>
+	)
 }
 
+
 export default function NotificationPage() {
-  const navigate = useNavigate()
-  const [notifications, setNotifications] = useState(initialNotifications)
-  const [recipient, setRecipient]         = useState('All Active Guides (48)')
-  const [message, setMessage]             = useState('')
-  const [isModalOpen, setIsModalOpen]     = useState(false)
-  const [selectedNotif, setSelectedNotif] = useState(null)
+	const navigate      = useNavigate()
+	const queryClient   = useQueryClient()
+	const [targetRole, setTargetRole] = useState('GUIDE')
+	const [title, setTitle]           = useState('')
+	const [message, setMessage]       = useState('')
+	const [selectedNotif, setSelectedNotif] = useState(null)
+	const [isModalOpen, setIsModalOpen]     = useState(false)
+	const [sendError, setSendError]         = useState('')
 
-  const unreadCount = notifications.filter(n => !n.read).length
+	const { data, isLoading, error } = useQuery({
+		queryKey: ['notifications'],
+		queryFn: async () => {
+			const res = await notificationsApi.getMine()
+			return res.data.data
+		},
+	})
 
-  const handleSend = () => {
-    if (!message.trim()) return
-    const newNotif = {
-      id: Date.now(), type: 'custom', title: 'Custom Notification Sent',
-      desc: message, time: 'Just now', read: false, recipient,
-    }
-    setNotifications(prev => [newNotif, ...prev])
-    setMessage('')
-  }
+	const notifications = data ?? []
+	const unreadCount   = notifications.filter(n => !n.isRead).length
 
-  const handleClick = (notif) => {
-    setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n))
-    if (notif.type === 'custom') {
-      setSelectedNotif(notif); setIsModalOpen(true)
-    } else {
-      if (notif.type === 'registration') navigate('/registrations')
-      if (notif.type === 'quiz')         navigate('/quizzes')
-      if (notif.type === 'module')       navigate('/modules')
-    }
-  }
+	const markReadMutation = useMutation({
+		mutationFn: (id) => notificationsApi.markRead(id),
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
+	})
 
-  const markAllRead = () => setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+	const markAllReadMutation = useMutation({
+		mutationFn: () => notificationsApi.markAllRead(),
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
+	})
 
-  return (
-    <div className="notif-layout">
-      <Navbar />
+	const sendMutation = useMutation({
+		mutationFn: (payload) => notificationsApi.sendCustom(payload),
+		onSuccess: () => {
+			setTitle('')
+			setMessage('')
+			setSendError('')
+			queryClient.invalidateQueries({ queryKey: ['notifications'] })
+		},
+		onError: () => setSendError('Failed to send. Please try again.'),
+	})
 
-      <div className="notif-main">
-        {/* ── Topbar ── */}
-        <header className="notif-topbar">
-          <h1 className="notif-topbar-title">Notifications</h1>
-          <div className="notif-topbar-right">
-            <button className="notif-icon-btn" aria-label="Notifications">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
-            </button>
-            <div className="notif-avatar">AM</div>
-          </div>
-        </header>
+	const handleSend = () => {
+		if (!message.trim()) return
+		setSendError('')
+		sendMutation.mutate({ title: title.trim() || 'Announcement', body: message.trim(), targetRole })
+	}
 
-        {/* ── Content ── */}
-        <main className="notif-content">
+	const handleClick = (notif) => {
+		if (!notif.isRead) markReadMutation.mutate(notif.id)
+		const route = TYPE_ROUTE[notif.type]
+		if (route) {
+			navigate(route)
+		} else {
+			setSelectedNotif(notif)
+			setIsModalOpen(true)
+		}
+	}
 
-          {/* Send card */}
-          <div className="notif-send-card">
-            <h2 className="notif-send-title">Send Custom Notification</h2>
-            <div className="notif-send-fields">
-              <div className="notif-field">
-                <label className="notif-label">Recipient</label>
-                <select
-                  className="notif-select"
-                  value={recipient}
-                  onChange={e => setRecipient(e.target.value)}
-                >
-                  <option>All Active Guides (48)</option>
-                  <option>All Admins</option>
-                  <option>Specific User</option>
-                </select>
-              </div>
-              <div className="notif-field notif-field--grow">
-                <label className="notif-label">Message</label>
-                <textarea
-                  className="notif-textarea"
-                  rows="3"
-                  placeholder="Type your notification message here…"
-                  value={message}
-                  onChange={e => setMessage(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="notif-send-footer">
-              <button className="notif-btn-send" onClick={handleSend}>
-                Send Notification
-              </button>
-            </div>
-          </div>
+	return (
+		<div className="flex min-h-screen bg-[#fdfbf7]">
+			<Navbar />
 
-          {/* Inbox */}
-          <div className="notif-inbox-section">
-            <div className="notif-inbox-header">
-              <div className="notif-inbox-title-row">
-                <h2 className="notif-inbox-title">Inbox</h2>
-                {unreadCount > 0 && (
-                  <span className="notif-unread-chip">{unreadCount} unread</span>
-                )}
-              </div>
-              {unreadCount > 0 && (
-                <button className="notif-mark-all" onClick={markAllRead}>
-                  Mark all as read
-                </button>
-              )}
-            </div>
+			<div className="flex-1 flex flex-col min-w-0">
+				<header className="flex items-center justify-between px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
+					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">Notifications</h1>
+					<div className="flex items-center gap-3">
+						<button className="w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" aria-label="Notifications">
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+								<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+							</svg>
+						</button>
+						<div className="w-9 h-9 rounded-full bg-[#2d7d4e] flex items-center justify-center [font-family:var(--font-outfit)] text-xs font-semibold text-white">AM</div>
+					</div>
+				</header>
 
-            <div className="notif-list">
-              {notifications.map(notif => (
-                <div
-                  key={notif.id}
-                  className={`notif-item ${!notif.read ? 'notif-item--unread' : ''}`}
-                  onClick={() => handleClick(notif)}
-                >
-                  <TypeIcon type={notif.type} />
-                  <div className="notif-item-body">
-                    <div className="notif-item-top">
-                      <div className="notif-item-left">
-                        <span className="notif-item-title">{notif.title}</span>
-                        {!notif.read && <span className="notif-dot" aria-hidden />}
-                      </div>
-                      <span className="notif-item-time">{notif.time}</span>
-                    </div>
-                    <p className="notif-item-desc">{notif.desc}</p>
-                    {notif.type === 'custom' && notif.recipient && (
-                      <p className="notif-item-recipient">Sent to: {notif.recipient}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+				<main className="flex-1 p-8 flex flex-col gap-6 overflow-y-auto">
 
-        </main>
-      </div>
+					<div className="bg-white border border-[#e7e5e4] rounded-xl p-6 flex flex-col gap-5">
+						<h2 className="[font-family:var(--font-outfit)] text-[18px] font-semibold text-[#1a3a2a]">Send Custom Notification</h2>
+						<div className="grid grid-cols-[auto_1fr] gap-6 items-start">
+							<div className="flex flex-col gap-[6px]">
+								<label className="[font-family:var(--font-outfit)] text-[13px] font-medium text-[#44403c]">Recipient</label>
+								<select
+									className="py-[10px] px-[14px] min-w-[200px] border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] cursor-pointer transition-[border-color] duration-150 focus:outline-none focus:border-[#1a3a2a]"
+									value={targetRole}
+									onChange={e => setTargetRole(e.target.value)}
+								>
+									<option value="GUIDE">All Active Guides</option>
+									<option value="ADMIN">All Admins</option>
+								</select>
+							</div>
+							<div className="flex flex-col gap-[6px]">
+								<label className="[font-family:var(--font-outfit)] text-[13px] font-medium text-[#44403c]">Title</label>
+								<input
+									type="text"
+									className="w-full py-[10px] px-[14px] border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] transition-[border-color] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
+									placeholder="Notification title…"
+									value={title}
+									onChange={e => setTitle(e.target.value)}
+								/>
+							</div>
+						</div>
+						<div className="flex flex-col gap-[6px]">
+							<label className="[font-family:var(--font-outfit)] text-[13px] font-medium text-[#44403c]">Message</label>
+							<textarea
+								className="w-full py-3 px-[14px] border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] resize-y transition-[border-color] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
+								rows="3"
+								placeholder="Type your notification message here…"
+								value={message}
+								onChange={e => setMessage(e.target.value)}
+							/>
+						</div>
+						{sendError && <p className="[font-family:var(--font-outfit)] text-xs text-red-500">{sendError}</p>}
+						<div className="flex justify-end">
+							<button
+								className="bg-[#b35c2a] text-white [font-family:var(--font-outfit)] text-sm font-medium py-[10px] px-6 rounded-lg border-none cursor-pointer transition-colors duration-200 hover:bg-[#9c4f24] disabled:opacity-50"
+								onClick={handleSend}
+								disabled={sendMutation.isPending || !message.trim()}
+							>
+								{sendMutation.isPending ? 'Sending…' : 'Send Notification'}
+							</button>
+						</div>
+					</div>
 
-      {/* Modal */}
-      {isModalOpen && selectedNotif && (
-        <div className="notif-modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div className="notif-modal" onClick={e => e.stopPropagation()}>
-            <div className="notif-modal-header">
-              <h3 className="notif-modal-title">Notification Details</h3>
-              <button className="notif-modal-close" onClick={() => setIsModalOpen(false)} aria-label="Close">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
-            </div>
-            <div className="notif-modal-body">
-              <div className="notif-modal-field">
-                <p className="notif-modal-field-label">Recipient</p>
-                <p className="notif-modal-field-value">{selectedNotif.recipient}</p>
-              </div>
-              <div className="notif-modal-field">
-                <p className="notif-modal-field-label">Message</p>
-                <p className="notif-modal-field-value">{selectedNotif.desc}</p>
-              </div>
-            </div>
-            <div className="notif-modal-footer">
-              <button className="notif-btn-send" onClick={() => setIsModalOpen(false)}>Close</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  )
+					<div className="flex flex-col gap-4">
+						<div className="flex items-center justify-between">
+							<div className="flex items-center gap-[10px]">
+								<h2 className="[font-family:var(--font-outfit)] text-[18px] font-semibold text-[#1a3a2a]">Inbox</h2>
+								{unreadCount > 0 && (
+									<span className="py-[3px] px-[10px] rounded-full bg-[#fdf0e6] text-[#b35c2a] [font-family:var(--font-outfit)] text-xs font-medium">{unreadCount} unread</span>
+								)}
+							</div>
+							{unreadCount > 0 && (
+								<button
+									className="[font-family:var(--font-outfit)] text-[13px] font-medium text-[#78716c] bg-transparent border-none cursor-pointer p-0 transition-colors duration-150 hover:text-[#1a3a2a] hover:underline disabled:opacity-50"
+									onClick={() => markAllReadMutation.mutate()}
+									disabled={markAllReadMutation.isPending}
+								>
+									Mark all as read
+								</button>
+							)}
+						</div>
+
+						{isLoading && <p className="text-center py-8 [font-family:var(--font-outfit)] text-sm text-[#a8a29e]">Loading notifications…</p>}
+						{error && <p className="text-center py-8 [font-family:var(--font-outfit)] text-sm text-red-500">Failed to load notifications.</p>}
+
+						{!isLoading && !error && (
+							<div className="flex flex-col gap-2">
+								{notifications.length > 0 ? notifications.map(notif => (
+									<div
+										key={notif.id}
+										className={`bg-white border border-[#e7e5e4] rounded-xl py-4 px-5 flex items-start gap-[14px] cursor-pointer transition-[box-shadow,border-color] duration-200 hover:shadow-[0_2px_12px_rgba(26,58,42,0.08)] hover:border-[#d6d3d1] ${!notif.isRead ? 'border-l-[3px] border-l-[#b35c2a] bg-[#fef7f0]' : ''}`}
+										onClick={() => handleClick(notif)}
+									>
+										<TypeIcon type={notif.type} />
+										<div className="flex-1 flex flex-col gap-1">
+											<div className="flex items-center justify-between gap-2">
+												<div className="flex items-center gap-2">
+													<span className="[font-family:var(--font-outfit)] text-sm font-semibold text-[#1a3a2a]">{notif.title}</span>
+													{!notif.isRead && <span className="w-2 h-2 rounded-full bg-[#b35c2a] shrink-0" aria-hidden />}
+												</div>
+												<span className="[font-family:var(--font-outfit)] text-xs text-[#a8a29e] whitespace-nowrap shrink-0">{new Date(notif.createdAt).toLocaleString()}</span>
+											</div>
+											<p className="[font-family:var(--font-serif)] text-sm text-[#78716c] leading-[1.5]">{notif.body}</p>
+										</div>
+									</div>
+								)) : (
+									<div className="text-center py-12 [font-family:var(--font-serif)] text-base text-[#a8a29e]">No notifications yet.</div>
+								)}
+							</div>
+						)}
+					</div>
+
+				</main>
+			</div>
+
+			{isModalOpen && selectedNotif && (
+				<div className="fixed inset-0 bg-black/45 backdrop-blur-[2px] flex items-center justify-center z-50" onClick={() => setIsModalOpen(false)}>
+					<div className="bg-white rounded-2xl w-[90%] max-w-[480px] shadow-[0_20px_60px_rgba(0,0,0,0.2)] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+						<div className="flex items-center justify-between px-6 py-5 border-b border-[#f5f5f4]">
+							<h3 className="[font-family:var(--font-outfit)] text-[18px] font-semibold text-[#1a3a2a]">Notification Details</h3>
+							<button className="w-8 h-8 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" onClick={() => setIsModalOpen(false)} aria-label="Close">
+								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+									<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+								</svg>
+							</button>
+						</div>
+						<div className="p-6 flex flex-col gap-4">
+							<div className="flex flex-col gap-1">
+								<p className="[font-family:var(--font-outfit)] text-xs font-medium text-[#a8a29e] uppercase tracking-[0.5px]">Title</p>
+								<p className="[font-family:var(--font-serif)] text-[15px] text-[#1a3a2a] leading-[1.5]">{selectedNotif.title}</p>
+							</div>
+							<div className="flex flex-col gap-1">
+								<p className="[font-family:var(--font-outfit)] text-xs font-medium text-[#a8a29e] uppercase tracking-[0.5px]">Message</p>
+								<p className="[font-family:var(--font-serif)] text-[15px] text-[#1a3a2a] leading-[1.5]">{selectedNotif.body}</p>
+							</div>
+						</div>
+						<div className="px-6 py-4 border-t border-[#f5f5f4] flex justify-end">
+							<button className="bg-[#b35c2a] text-white [font-family:var(--font-outfit)] text-sm font-medium py-[10px] px-6 rounded-lg border-none cursor-pointer transition-colors duration-200 hover:bg-[#9c4f24]" onClick={() => setIsModalOpen(false)}>Close</button>
+						</div>
+					</div>
+				</div>
+			)}
+		</div>
+	)
 }
