@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../rbac/AuthProvider'
+import * as authApi from '../../api/auth.js'
 
 function Login() {
     const [showPassword, setShowPassword] = useState(false)
@@ -8,6 +9,9 @@ function Login() {
     const [username, setUsername]         = useState('')
     const [password, setPassword]         = useState('')
     const [error, setError]               = useState('')
+    const [showResend, setShowResend]     = useState(false)
+    const [resendEmail, setResendEmail]   = useState('')
+    const [resendStatus, setResendStatus] = useState('idle')
 
     const { login, loading } = useAuth()
 
@@ -20,16 +24,27 @@ function Login() {
         }
     }
 
+    const handleResendActivation = async (e) => {
+        e.preventDefault()
+        setResendStatus('loading')
+        try {
+            await authApi.resendActivation(resendEmail)
+            setResendStatus('sent')
+        } catch {
+            setResendStatus('error')
+        }
+    }
+
     return (
         <div className="flex min-h-screen [font-family:'Segoe_UI',system-ui,sans-serif]">
 
             {/* ── LEFT PANEL ── */}
-            <div className="relative [flex:0_0_48%] bg-[#1b3a2d] flex flex-col justify-between py-[40px] px-[48px] overflow-hidden text-white">
+            <div className="relative [flex:0_0_48%] bg-[#1b3a2d] flex flex-col justify-between py-10 px-12 overflow-hidden text-white">
 
                 {/* Decorative circles */}
-                <div className="absolute rounded-full pointer-events-none w-[380px] h-[380px] -top-[120px] -right-[60px] bg-[radial-gradient(circle_at_42%_40%,rgba(120,180,140,0.35)_0%,rgba(80,140,100,0.18)_40%,rgba(50,100,70,0.08)_65%,transparent_85%)]" />
-                <div className="absolute rounded-full pointer-events-none w-[380px] h-[380px] -bottom-[120px] -left-[80px] bg-[radial-gradient(circle_at_55%_42%,rgba(120,180,140,0.30)_0%,rgba(80,140,100,0.14)_40%,rgba(50,100,70,0.06)_65%,transparent_85%)]" />
-                <div className="absolute rounded-full pointer-events-none w-[260px] h-[260px] bottom-[60px] -right-[30px] bg-[radial-gradient(circle_at_40%_38%,rgba(120,180,140,0.28)_0%,rgba(80,140,100,0.12)_45%,rgba(50,100,70,0.05)_65%,transparent_85%)]" />
+                <div className="absolute rounded-full pointer-events-none w-95 h-95 -top-30 -right-15 bg-[radial-gradient(circle_at_42%_40%,rgba(120,180,140,0.35)_0%,rgba(80,140,100,0.18)_40%,rgba(50,100,70,0.08)_65%,transparent_85%)]" />
+                <div className="absolute rounded-full pointer-events-none w-95 h-95 -bottom-30 -left-20 bg-[radial-gradient(circle_at_55%_42%,rgba(120,180,140,0.30)_0%,rgba(80,140,100,0.14)_40%,rgba(50,100,70,0.06)_65%,transparent_85%)]" />
+                <div className="absolute rounded-full pointer-events-none w-65 h-65 bottom-15 -right-7.5 bg-[radial-gradient(circle_at_40%_38%,rgba(120,180,140,0.28)_0%,rgba(80,140,100,0.12)_45%,rgba(50,100,70,0.05)_65%,transparent_85%)]" />
 
                 <div className="relative z-[1] flex-1 flex flex-col justify-center gap-7">
 
@@ -49,7 +64,7 @@ function Login() {
                             Empowering Park Guides Through{' '}
                             <span className="text-[#6fcf97]">Digital Training.</span>
                         </h1>
-                        <p className="mt-4 text-[14px] leading-[1.65] text-white/65 max-w-[380px]">
+                        <p className="mt-4 text-[14px] leading-[1.65] text-white/65 max-w-95">
                             Structured e-learning, IoT wildlife monitoring, and digital
                             certification management — purpose-built for Sarawak park guides.
                         </p>
@@ -79,17 +94,17 @@ function Login() {
             </div>
 
             {/* ── RIGHT PANEL ── */}
-            <div className="flex-1 bg-[#f0efe9] flex flex-col items-center justify-center py-[48px] px-8 gap-5">
-                <div className="bg-white rounded-[16px] shadow-[0_4px_24px_rgba(0,0,0,0.08)] pt-[40px] px-[40px] pb-7 w-full max-w-[420px]">
+            <div className="flex-1 bg-[#f0efe9] flex flex-col items-center justify-center py-12 px-8 gap-5">
+                <div className="bg-white rounded-[16px] shadow-[0_4px_24px_rgba(0,0,0,0.08)] pt-10 px-10 pb-7 w-full max-w-105">
 
                     <div className="mb-7">
                         <h2 className="text-[24px] font-bold text-[#1a1a1a] mb-1">Welcome back</h2>
                         <p className="text-[14px] text-[#6b7280]">Sign in to your account</p>
                     </div>
 
-                    <form className="flex flex-col gap-[18px]" onSubmit={handleLogin}>
+                    <form className="flex flex-col gap-4.5" onSubmit={handleLogin}>
 
-                        <div className="flex flex-col gap-[6px]">
+                        <div className="flex flex-col gap-1.5">
                             <label htmlFor="username" className="text-[13px] font-medium text-[#1a1a1a]">
                                 Username
                             </label>
@@ -106,12 +121,12 @@ function Login() {
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                     autoComplete="username"
-                                    className="w-full py-[10px] pr-[40px] pl-[36px] border border-[#e2e2dc] rounded-[8px] bg-[#f9f9f7] text-[14px] text-[#1a1a1a] outline-none transition-[border-color] duration-200 focus:border-[#2d6a4f]"
+                                    className="w-full py-2.5 pr-10 pl-9 border border-[#e2e2dc] rounded-[8px] bg-[#f9f9f7] text-[14px] text-[#1a1a1a] outline-none transition-[border-color] duration-200 focus:border-[#2d6a4f]"
                                 />
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-[6px]">
+                        <div className="flex flex-col gap-1.5">
                             <label htmlFor="password" className="text-[13px] font-medium text-[#1a1a1a]">
                                 Password
                             </label>
@@ -128,11 +143,11 @@ function Login() {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     autoComplete="current-password"
-                                    className="w-full py-[10px] pr-[40px] pl-[36px] border border-[#e2e2dc] rounded-[8px] bg-[#f9f9f7] text-[14px] text-[#1a1a1a] outline-none transition-[border-color] duration-200 focus:border-[#2d6a4f]"
+                                    className="w-full py-2.5 pr-10 pl-9 border border-[#e2e2dc] rounded-[8px] bg-[#f9f9f7] text-[14px] text-[#1a1a1a] outline-none transition-[border-color] duration-200 focus:border-[#2d6a4f]"
                                 />
                                 <button
                                     type="button"
-                                    className="absolute right-[10px] bg-transparent border-0 cursor-pointer text-[#9ca3af] flex items-center p-1 hover:text-[#6b7280]"
+                                    className="absolute right-2.5 bg-transparent border-0 cursor-pointer text-[#9ca3af] flex items-center p-1 hover:text-[#6b7280]"
                                     onClick={() => setShowPassword((v) => !v)}
                                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                                 >
@@ -183,6 +198,12 @@ function Login() {
                             )}
                         </button>
 
+                        <div className="flex justify-center">
+                            <Link to="/forgot-password" className="text-[13px] text-[#2d6a4f] no-underline hover:underline">
+                                Forgot your password?
+                            </Link>
+                        </div>
+
                         <p className="text-[12px] text-[#9ca3af] leading-[1.6] text-center">
                             This platform is restricted to authorised SFC staff and park guides.
                             For access requests, contact your system administrator.
@@ -211,6 +232,46 @@ function Login() {
                         itsupport@sfctraining.my
                     </a>
                 </p>
+
+                {!showResend ? (
+                    <button
+                        type="button"
+                        onClick={() => setShowResend(true)}
+                        className="text-[12px] text-[#9ca3af] bg-transparent border-0 cursor-pointer hover:text-[#6b7280] underline"
+                    >
+                        Haven't received your activation email?
+                    </button>
+                ) : (
+                    <div className="bg-white rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5 w-full max-w-105">
+                        {resendStatus === 'sent' ? (
+                            <p className="text-[13px] text-[#2d6a4f] text-center">
+                                ✅ If that email has a pending account, a new activation link has been sent.
+                            </p>
+                        ) : (
+                            <form onSubmit={handleResendActivation} className="flex flex-col gap-3">
+                                <p className="text-[13px] text-[#6b7280] text-center m-0">Resend activation link</p>
+                                <input
+                                    type="email"
+                                    required
+                                    value={resendEmail}
+                                    onChange={e => setResendEmail(e.target.value)}
+                                    placeholder="Your email address"
+                                    className="w-full py-2 px-3 border border-[#e2e2dc] rounded-[8px] bg-[#f9f9f7] text-[13px] outline-none focus:border-[#2d6a4f]"
+                                />
+                                {resendStatus === 'error' && (
+                                    <p className="text-[12px] text-red-500 m-0">Something went wrong. Try again.</p>
+                                )}
+                                <button
+                                    type="submit"
+                                    disabled={resendStatus === 'loading'}
+                                    className="w-full py-2 bg-[#1b3a2d] text-white border-0 rounded-[8px] text-[13px] font-semibold cursor-pointer hover:bg-[#2d6a4f] disabled:opacity-60"
+                                >
+                                    {resendStatus === 'loading' ? 'Sending…' : 'Resend link'}
+                                </button>
+                            </form>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     )

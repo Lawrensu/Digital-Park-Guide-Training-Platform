@@ -102,7 +102,7 @@ const GuideNotification = () => {
 										<span>🕒</span> {new Date(notif.createdAt).toLocaleString()}
 									</div>
 								</div>
-								{!notif.isRead && <div className="w-[10px] h-[10px] bg-[#2E7D32] rounded-full absolute top-5 right-5" />}
+								{!notif.isRead && <div className="w-2.5 h-2.5 bg-[#2E7D32] rounded-full absolute top-5 right-5" />}
 							</div>
 						)) : (
 							<p className="text-center mt-8 text-[#666666]">No notifications found.</p>

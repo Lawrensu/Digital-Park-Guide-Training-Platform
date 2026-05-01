@@ -202,8 +202,8 @@ export default function GuideDetailPage() {
 									<div key={enrolment.id} className="flex justify-between items-center p-4 border border-[#f5f5f4] rounded-lg">
 										<div className="flex-1">
 											<h4 className="[font-family:var(--font-outfit)] m-0 mb-2 text-[15px] text-[#1a3a2a] font-medium">{enrolment.module?.title ?? '—'}</h4>
-											<div className="flex items-center gap-[10px]">
-												<div className="flex-1 h-[6px] bg-[#e7e5e4] rounded-[3px] overflow-hidden max-w-[200px]">
+											<div className="flex items-center gap-2.5">
+												<div className="flex-1 h-1.5 bg-[#e7e5e4] rounded-[3px] overflow-hidden max-w-50">
 													<div className="h-full bg-[#2d7d4e] rounded-[3px]" style={{ width: `${enrolment.progressPct ?? 0}%` }} />
 												</div>
 												<span className="[font-family:var(--font-outfit)] text-xs text-[#78716c] font-medium min-w-[35px] text-right">{enrolment.progressPct ?? 0}%</span>
@@ -256,7 +256,7 @@ export default function GuideDetailPage() {
 												<span className="[font-family:var(--font-outfit)] text-sm text-[#1a3a2a] font-medium">{attempt.quiz?.title ?? '—'}</span>
 												<div className="flex justify-between items-center">
 													{attempt.totalScore != null && (
-														<span className={`[font-family:var(--font-outfit)] text-xs font-bold py-[2px] px-[6px] rounded-[4px] ${attempt.totalScore >= 70 ? 'bg-[#e8f5ee] text-[#266841]' : 'bg-[#fdf0e6] text-[#b35c2a]'}`}>
+														<span className={`[font-family:var(--font-outfit)] text-xs font-bold py-0.5 px-1.5 rounded-[4px] ${attempt.totalScore >= 70 ? 'bg-[#e8f5ee] text-[#266841]' : 'bg-[#fdf0e6] text-[#b35c2a]'}`}>
 															{attempt.totalScore}%
 														</span>
 													)}

@@ -83,39 +83,39 @@ const GuideViewCert = () => {
 						<div className="bg-white p-8 rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
 
 							<div className="flex border-b border-[#f0f0f0] py-4 last:border-b-0">
-								<div className="w-[180px] text-[0.9rem] text-[#666666] font-semibold shrink-0">Certificate Number</div>
+								<div className="w-45 text-[0.9rem] text-[#666666] font-semibold shrink-0">Certificate Number</div>
 								<div className="text-[0.95rem] text-[#333333] font-medium">{cert.certificateNumber ?? '—'}</div>
 							</div>
 
 							<div className="flex border-b border-[#f0f0f0] py-4 last:border-b-0">
-								<div className="w-[180px] text-[0.9rem] text-[#666666] font-semibold shrink-0">Holder Name</div>
+								<div className="w-45 text-[0.9rem] text-[#666666] font-semibold shrink-0">Holder Name</div>
 								<div className="text-[0.95rem] text-[#333333] font-medium">{holderName}</div>
 							</div>
 
 							<div className="flex border-b border-[#f0f0f0] py-4 last:border-b-0">
-								<div className="w-[180px] text-[0.9rem] text-[#666666] font-semibold shrink-0">Module</div>
+								<div className="w-45 text-[0.9rem] text-[#666666] font-semibold shrink-0">Module</div>
 								<div className="text-[0.95rem] text-[#333333] font-medium">{moduleTitle}</div>
 							</div>
 
 							<div className="flex border-b border-[#f0f0f0] py-4 last:border-b-0">
-								<div className="w-[180px] text-[0.9rem] text-[#666666] font-semibold shrink-0">Organization</div>
+								<div className="w-45 text-[0.9rem] text-[#666666] font-semibold shrink-0">Organization</div>
 								<div className="text-[0.95rem] text-[#333333] font-medium">Sarawak Forestry Corporation</div>
 							</div>
 
 							<div className="flex border-b border-[#f0f0f0] py-4 last:border-b-0">
-								<div className="w-[180px] text-[0.9rem] text-[#666666] font-semibold shrink-0">Issue Date</div>
+								<div className="w-45 text-[0.9rem] text-[#666666] font-semibold shrink-0">Issue Date</div>
 								<div className="text-[0.95rem] text-[#333333] font-medium">{new Date(cert.issuedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
 							</div>
 
 							<div className="flex border-b border-[#f0f0f0] py-4 last:border-b-0">
-								<div className="w-[180px] text-[0.9rem] text-[#666666] font-semibold shrink-0">Expiry Date</div>
+								<div className="w-45 text-[0.9rem] text-[#666666] font-semibold shrink-0">Expiry Date</div>
 								<div className="text-[0.95rem] text-[#333333] font-medium">
 									{cert.expiresAt ? new Date(cert.expiresAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'No expiry'}
 								</div>
 							</div>
 
 							<div className="flex border-b border-[#f0f0f0] py-4 last:border-b-0">
-								<div className="w-[180px] text-[0.9rem] text-[#666666] font-semibold shrink-0">Status</div>
+								<div className="w-45 text-[0.9rem] text-[#666666] font-semibold shrink-0">Status</div>
 								<div className="text-[0.95rem] text-[#333333] font-medium">
 									<span className={`inline-block py-1 px-3 rounded-[20px] text-[0.8rem] font-bold uppercase ${isExpired ? 'bg-[#FFEBEE] text-[#D32F2F]' : 'bg-[#E8F5E9] text-[#2E7D32]'}`}>
 										{isExpired ? 'Expired' : 'Active'}
@@ -145,7 +145,7 @@ const GuideViewCert = () => {
 
 						<div className="bg-white rounded-[12px] p-6 shadow-[0_2px_8px_rgba(0,0,0,0.05)] flex flex-col items-center text-center">
 							<h4 className="mb-4 text-[#666666] m-0 text-[0.95rem] font-semibold">Certificate Preview</h4>
-							<div className="border-2 border-[#C5A059] p-8 w-full h-[300px] bg-[radial-gradient(#fff_20%,#fcfcfc_20%)] [background-size:10px_10px] relative flex flex-col justify-center items-center text-[#333333] before:content-[''] before:absolute before:top-[5px] before:left-[5px] before:right-[5px] before:bottom-[5px] before:border before:border-[#C5A059] before:pointer-events-none">
+							<div className="border-2 border-[#C5A059] p-8 w-full h-75 bg-[radial-gradient(#fff_20%,#fcfcfc_20%)] [background-size:10px_10px] relative flex flex-col justify-center items-center text-[#333333] before:content-[''] before:absolute before:top-[5px] before:left-[5px] before:right-[5px] before:bottom-[5px] before:border before:border-[#C5A059] before:pointer-events-none">
 								<h3 className="m-0 mb-4 text-[#2E7D32] uppercase tracking-[2px] text-[1rem]">Certificate of Completion</h3>
 								<div className="text-[3rem] my-4 text-[#C5A059]">🏆</div>
 								<h2 className="m-0 mb-2 font-serif text-[1.3rem] text-[#333333] leading-[1.3]">{moduleTitle}</h2>

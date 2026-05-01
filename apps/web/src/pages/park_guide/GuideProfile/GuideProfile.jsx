@@ -66,8 +66,8 @@ const GuideProfile = () => {
 
 			<main className="flex-1 p-8 box-border flex flex-col">
 
-				<div className="bg-white rounded-[12px] p-10 text-center shadow-[0_2px_8px_rgba(0,0,0,0.05)] mb-8 relative overflow-hidden before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-[80px] before:bg-[#2E7D32] before:z-0">
-					<div className="w-[100px] h-[100px] bg-white text-[#2E7D32] rounded-full flex items-center justify-center text-[2.5rem] font-bold mx-auto mb-4 relative z-[1] border-4 border-white shadow-[0_4px_6px_rgba(0,0,0,0.1)]">
+				<div className="bg-white rounded-[12px] p-10 text-center shadow-[0_2px_8px_rgba(0,0,0,0.05)] mb-8 relative overflow-hidden before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-20 before:bg-[#2E7D32] before:z-0">
+					<div className="w-25 h-25 bg-white text-[#2E7D32] rounded-full flex items-center justify-center text-[2.5rem] font-bold mx-auto mb-4 relative z-[1] border-4 border-white shadow-[0_4px_6px_rgba(0,0,0,0.1)]">
 						{initials}
 					</div>
 					<h1 className="text-[1.5rem] font-bold text-[#333333] m-0 mb-2 relative z-[1]">

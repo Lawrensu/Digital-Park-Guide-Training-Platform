@@ -39,7 +39,16 @@ export default function BadgePage() {
 		},
 	})
 
-	const earned = earnedData ?? []
+	const { data: allBadgesData } = useQuery({
+		queryKey: ['badges', 'all'],
+		queryFn: async () => {
+			const res = await badgesApi.getAll()
+			return res.data.data
+		},
+	})
+
+	const earned     = earnedData    ?? []
+	const totalCount = allBadgesData?.length ?? 0
 
 	return (
 		<div className="flex min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
@@ -57,7 +66,7 @@ export default function BadgePage() {
 							<div className="text-[0.9rem] text-[#6b7280] font-medium uppercase tracking-[0.05em]">Badges Earned</div>
 						</div>
 						<div className="bg-white p-6 rounded-[8px] shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] flex flex-col justify-center items-center border-t-4 border-t-[#2E7D32]">
-							<div className="text-[2.5rem] font-bold text-[#111827] leading-none mb-2">{earned.length > 0 ? Math.round((earned.length / (earned.length + 4)) * 100) : 0}%</div>
+							<div className="text-[2.5rem] font-bold text-[#111827] leading-none mb-2">{totalCount > 0 ? Math.round((earned.length / totalCount) * 100) : 0}%</div>
 							<div className="text-[0.9rem] text-[#6b7280] font-medium uppercase tracking-[0.05em]">Collection Complete</div>
 						</div>
 					</div>

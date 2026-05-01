@@ -74,7 +74,7 @@ export default function IoTAlert() {
 							{filtered.length > 0 ? filtered.map(alert => {
 								const style = SEVERITY_STYLE[alert.severity] ?? SEVERITY_STYLE.INFO
 								return (
-									<div key={alert.id} className="bg-white border border-[#e5e7eb] border-l-4 rounded-xl py-4 px-5 flex flex-col gap-[6px] transition-shadow duration-200 hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)]" style={{ borderLeftColor: style.border }}>
+									<div key={alert.id} className="bg-white border border-[#e5e7eb] border-l-4 rounded-xl py-4 px-5 flex flex-col gap-1.5 transition-shadow duration-200 hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)]" style={{ borderLeftColor: style.border }}>
 										<div className="flex items-start justify-between gap-3">
 											<h3 className="[font-family:var(--font-outfit)] text-[16px] font-semibold text-[#1c1917] leading-[1.3]">{alert.alertType}</h3>
 											<div className="flex items-center gap-3 shrink-0">
@@ -88,7 +88,7 @@ export default function IoTAlert() {
 											</div>
 										</div>
 										<p className="[font-family:var(--font-outfit)] text-[13px] font-medium text-[#78716c]">{alert.device?.station?.name ?? alert.device?.serialNumber ?? '—'}</p>
-										<div className="flex items-end justify-between gap-3 mt-[2px]">
+										<div className="flex items-end justify-between gap-3 mt-0.5">
 											<p className="[font-family:var(--font-serif)] text-[13px] text-[#44403c] leading-[1.5]">{alert.payload ?? ''}</p>
 											<button
 												className="shrink-0 [font-family:var(--font-outfit)] text-sm font-medium text-[#2d7d4e] bg-transparent border-none cursor-pointer p-0 transition-colors duration-150 hover:text-[#1a3a2a] hover:underline"

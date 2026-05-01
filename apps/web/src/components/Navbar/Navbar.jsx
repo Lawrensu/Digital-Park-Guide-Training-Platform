@@ -62,10 +62,10 @@ export default function Navbar() {
     const initials    = displayName.slice(0, 2).toUpperCase()
 
     return (
-        <aside className="w-[220px] h-screen bg-[#1a3a2a] flex flex-col px-[14px] py-6 shrink-0 sticky top-0 overflow-y-auto">
+        <aside className="w-55 h-screen bg-[#1a3a2a] flex flex-col px-3.5 py-6 shrink-0 sticky top-0 overflow-y-auto">
 
             {/* SFC logo slot: replace the inner div with <img src={sfcLogo} alt="SFC" className="w-9 h-9 object-contain" /> once the asset is available */}
-            <div className="flex items-center gap-[10px] px-[6px] pb-5">
+            <div className="flex items-center gap-2.5 px-1.5 pb-5">
                 <div className="w-9 h-9 bg-[#266841] rounded-lg flex items-center justify-center text-lg shrink-0">
                     🌿
                 </div>
@@ -79,17 +79,17 @@ export default function Navbar() {
                 </div>
             </div>
 
-            <div className="h-px bg-white/10 mx-[6px] my-1" />
+            <div className="h-px bg-white/10 mx-1.5 my-1" />
 
-            <nav className="flex flex-col gap-0.5 py-[14px]">
+            <nav className="flex flex-col gap-0.5 py-3.5">
                 {NAV_ITEMS.map(({ icon, label, to, badge }) => (
                     <NavLink
                         key={to}
                         to={to}
                         className={({ isActive }) =>
-                            `flex items-center gap-[10px] px-3 py-[10px] rounded-lg [font-family:var(--font-outfit)] text-[13.5px] font-medium no-underline relative transition-[background-color,color] duration-150 hover:bg-white/[0.07] ${
+                            `flex items-center gap-2.5 px-3 py-2.5 rounded-lg [font-family:var(--font-outfit)] text-[13.5px] font-medium no-underline relative transition-[background-color,color] duration-150 hover:bg-white/[0.07] ${
                                 isActive
-                                    ? 'bg-[#1f4d35] text-white font-semibold before:content-[""] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3px] before:h-[22px] before:bg-[#38945e] before:rounded-[0_3px_3px_0]'
+                                    ? 'bg-[#1f4d35] text-white font-semibold before:content-[""] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3px] before:h-5.5 before:bg-[#38945e] before:rounded-[0_3px_3px_0]'
                                     : 'text-white/60 hover:text-white/90'
                             }`
                         }
@@ -97,7 +97,7 @@ export default function Navbar() {
                         <span className="text-[15px] w-5 text-center shrink-0">{icon}</span>
                         <span className="flex-1">{label}</span>
                         {badge !== null && (
-                            <span className="min-w-[18px] h-[18px] px-[5px] bg-[#c96d38] text-white [font-family:var(--font-outfit)] text-[11px] font-semibold rounded-[9px] flex items-center justify-center">
+                            <span className="min-w-4.5 h-4.5 px-[5px] bg-[#c96d38] text-white [font-family:var(--font-outfit)] text-[11px] font-semibold rounded-[9px] flex items-center justify-center">
                                 {badge}
                             </span>
                         )}
@@ -106,9 +106,9 @@ export default function Navbar() {
             </nav>
 
             <div className="flex-1" />
-            <div className="h-px bg-white/10 mx-[6px] my-1" />
+            <div className="h-px bg-white/10 mx-1.5 my-1" />
 
-            <div className="flex items-center gap-[10px] pt-4 px-[6px] pb-1">
+            <div className="flex items-center gap-2.5 pt-4 px-1.5 pb-1">
                 <div className="w-9 h-9 bg-[#2d7d4e] rounded-full flex items-center justify-center [font-family:var(--font-outfit)] text-xs font-semibold text-white shrink-0">
                     {initials}
                 </div>
@@ -123,7 +123,7 @@ export default function Navbar() {
             </div>
 
             <button
-                className="w-full mt-3 p-[10px] bg-white/[0.08] border border-white/[0.15] rounded-lg text-white/75 [font-family:var(--font-outfit)] text-[13px] cursor-pointer transition-[background,color] duration-200 hover:bg-red-500/25 hover:text-white hover:border-red-500/50"
+                className="w-full mt-3 p-2.5 bg-white/[0.08] border border-white/[0.15] rounded-lg text-white/75 [font-family:var(--font-outfit)] text-[13px] cursor-pointer transition-[background,color] duration-200 hover:bg-red-500/25 hover:text-white hover:border-red-500/50"
                 onClick={logout}
             >
                 🚪 Logout

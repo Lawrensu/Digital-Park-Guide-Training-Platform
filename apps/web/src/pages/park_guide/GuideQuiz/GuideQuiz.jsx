@@ -76,8 +76,9 @@ export default function GuideQuizPage() {
 			}))
 			return quizAttemptsApi.submit({ quizId, answers: answersPayload })
 		},
-		onSuccess: () => {
-			navigate(`/guide/quiz/${quizId}/result`)
+		onSuccess: (res) => {
+			const attemptId = res.data.data?.id
+			navigate(`/guide/quiz/${quizId}/result`, { state: { attemptId } })
 		},
 	})
 
@@ -122,12 +123,12 @@ export default function GuideQuizPage() {
 
 						<div className="flex gap-6">
 							{quiz.timeLimitMinutes && (
-								<div className="flex flex-row items-center justify-center gap-2 py-3 px-6 bg-[#fef2f2] rounded-[8px] min-w-[100px] border border-[#fee2e2]">
+								<div className="flex flex-row items-center justify-center gap-2 py-3 px-6 bg-[#fef2f2] rounded-[8px] min-w-25 border border-[#fee2e2]">
 									<TimerIcon />
 									<span className={`font-mono text-[1.5rem] font-bold ${timeLeft < 60 ? 'text-[#dc2626]' : 'text-[#374151]'}`}>{formatTime(timeLeft)}</span>
 								</div>
 							)}
-							<div className="flex flex-col items-center justify-center py-3 px-6 bg-[#f9fafb] rounded-[8px] min-w-[100px] border border-[#e5e7eb]">
+							<div className="flex flex-col items-center justify-center py-3 px-6 bg-[#f9fafb] rounded-[8px] min-w-25 border border-[#e5e7eb]">
 								<span className="text-[0.75rem] text-[#6b7280] uppercase tracking-[0.05em] mb-1">Progress</span>
 								<span className="text-[1.25rem] font-bold text-[#111827]">{answeredCount} / {questions.length}</span>
 							</div>
@@ -154,7 +155,7 @@ export default function GuideQuizPage() {
 									<div className="flex justify-between items-center mb-4 pb-3 border-b border-[#f3f4f6]">
 										<div className="text-[0.9rem] font-bold text-[#6b7280]">Question {index + 1}</div>
 										<div className="flex items-center gap-3">
-											<div className="text-[0.75rem] bg-[#e5e7eb] text-[#374151] py-[2px] px-2 rounded-[4px] font-semibold">{q.type}</div>
+											<div className="text-[0.75rem] bg-[#e5e7eb] text-[#374151] py-0.5 px-2 rounded-[4px] font-semibold">{q.type}</div>
 											{q.points != null && <div className="text-[0.75rem] text-[#6b7280]">{q.points} pts</div>}
 											{answered && <CheckCircleIcon />}
 										</div>
@@ -164,7 +165,7 @@ export default function GuideQuizPage() {
 
 									<div className="mt-4">
 										{(q.type === 'MCQ' || q.type === 'TRUE_FALSE') && (
-											<div className={q.type === 'TRUE_FALSE' ? 'flex gap-4' : 'grid grid-cols-1 gap-[10px]'}>
+											<div className={q.type === 'TRUE_FALSE' ? 'flex gap-4' : 'grid grid-cols-1 gap-2.5'}>
 												{options.map((opt, i) => (
 													<label
 														key={i}
@@ -180,7 +181,7 @@ export default function GuideQuizPage() {
 															name={`q-${q.id}`}
 															checked={answer === opt}
 															onChange={() => setAnswer(q.id, opt)}
-															className="accent-[#2E7D32] w-[18px] h-[18px]"
+															className="accent-[#2E7D32] w-4.5 h-4.5"
 														/>
 														<span>{opt}</span>
 													</label>

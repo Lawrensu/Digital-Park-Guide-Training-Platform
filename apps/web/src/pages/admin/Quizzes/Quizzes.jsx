@@ -93,7 +93,7 @@ export default function QuizPage() {
 								</svg>
 								<input
 									type="text"
-									className="py-[9px] pr-[14px] pl-9 w-[300px] border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] transition-[border-color,background] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
+									className="py-[9px] pr-3.5 pl-9 w-75 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] transition-[border-color,background] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
 									placeholder="Search guide, module or quiz…"
 									value={searchQuery}
 									onChange={e => setSearchQuery(e.target.value)}
@@ -128,7 +128,7 @@ export default function QuizPage() {
 												<td className="px-6 py-4 border-b border-[#f5f5f4] align-middle [font-family:var(--font-serif)] text-sm text-[#78716c]">{a.quiz?.title ?? '—'}</td>
 												<td className="px-6 py-4 border-b border-[#f5f5f4] align-middle">
 													{a.totalScore != null ? (
-														<span className={`[font-family:var(--font-outfit)] text-[13px] font-semibold py-[3px] px-[10px] rounded-[6px] ${a.totalScore >= 70 ? 'bg-[#e8f5ee] text-[#266841]' : 'bg-[#fdf0e6] text-[#b35c2a]'}`}>
+														<span className={`[font-family:var(--font-outfit)] text-[13px] font-semibold py-[3px] px-2.5 rounded-[6px] ${a.totalScore >= 70 ? 'bg-[#e8f5ee] text-[#266841]' : 'bg-[#fdf0e6] text-[#b35c2a]'}`}>
 															{a.totalScore}%
 														</span>
 													) : (

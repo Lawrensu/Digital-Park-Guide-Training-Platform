@@ -126,7 +126,7 @@ const GuideModule = () => {
 												<span>Progress</span>
 												<span>{progress}%</span>
 											</div>
-											<div className="w-full h-[6px] bg-[#E0E0E0] rounded-[3px] overflow-hidden">
+											<div className="w-full h-1.5 bg-[#E0E0E0] rounded-[3px] overflow-hidden">
 												<div className="h-full bg-[#2E7D32] rounded-[3px]" style={{ width: `${progress}%` }}></div>
 											</div>
 										</div>

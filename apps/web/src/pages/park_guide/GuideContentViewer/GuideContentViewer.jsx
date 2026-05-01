@@ -7,9 +7,16 @@ import * as contentItemsApi from '../../../api/contentItems.js'
 const ITEM_TYPE_ICON = {
 	VIDEO:       '🎥',
 	TEXT:        '📖',
-	DOCUMENT:    '📄',
+	IMAGE:       '🖼️',
 	INFOGRAPHIC: '🖼️',
 	QUIZ:        '❓',
+}
+
+
+function extractYoutubeId(url) {
+	if (!url) return null
+	const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/)
+	return match ? match[1] : null
 }
 
 
@@ -60,47 +67,81 @@ export default function GuideContentViewer() {
 
 	const renderContent = () => {
 		switch (item.type) {
+
 			case 'TEXT':
 				return (
-					<div className="prose max-w-none text-[#1a3a2a] [font-family:var(--font-outfit)] leading-relaxed whitespace-pre-wrap">
-						{item.body ?? 'No content available.'}
+					<div className="[font-family:var(--font-outfit)] text-[15px] leading-[1.8] text-[#1a3a2a] whitespace-pre-wrap">
+						{item.textContent ?? 'No content available.'}
 					</div>
 				)
-			case 'VIDEO':
-				return item.mediaUrl ? (
-					<video
-						controls
-						className="w-full rounded-lg"
-						src={item.mediaUrl}
-					>
-						Your browser does not support the video tag.
-					</video>
-				) : (
-					<p className="text-[#5a7a6a] [font-family:var(--font-outfit)] text-sm">No video available.</p>
+
+			case 'VIDEO': {
+				if (item.videoSource === 'YOUTUBE') {
+					const ytId = extractYoutubeId(item.videoUrl)
+					if (ytId) {
+						return (
+							<div className="relative w-full" style={{ paddingTop: '56.25%' }}>
+								<iframe
+									className="absolute inset-0 w-full h-full rounded-lg"
+									src={`https://www.youtube.com/embed/${ytId}`}
+									title={item.title ?? 'Video'}
+									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+									allowFullScreen
+								/>
+							</div>
+						)
+					}
+				}
+				if (item.videoUrl) {
+					return (
+						<video controls className="w-full rounded-lg" src={item.videoUrl}>
+							Your browser does not support the video tag.
+						</video>
+					)
+				}
+				return (
+					<div className="text-center py-10 bg-[#f5f5f4] rounded-lg">
+						<div className="text-4xl mb-3">🎥</div>
+						<p className="[font-family:var(--font-outfit)] text-sm text-[#78716c]">Video not yet available.</p>
+					</div>
 				)
+			}
+
 			case 'IMAGE':
 			case 'INFOGRAPHIC':
-				return item.mediaUrl ? (
-					<img
-						src={item.mediaUrl}
-						alt={item.title}
-						className="w-full rounded-lg"
-					/>
-				) : (
-					<p className="text-[#5a7a6a] [font-family:var(--font-outfit)] text-sm">No image available.</p>
+				if (item.imageS3Key) {
+					return (
+						<div className="text-center py-10 bg-[#f5f5f4] rounded-lg">
+							<div className="text-4xl mb-3">🖼️</div>
+							<p className="[font-family:var(--font-outfit)] text-sm text-[#78716c]">
+								Image stored in cloud storage. Available once the storage service is connected.
+							</p>
+						</div>
+					)
+				}
+				return (
+					<div className="text-center py-10 bg-[#f5f5f4] rounded-lg">
+						<p className="[font-family:var(--font-outfit)] text-sm text-[#78716c]">No image available.</p>
+					</div>
 				)
+
 			case 'QUIZ':
 				if (item.quizId) {
 					navigate(`/guide/quiz/${item.quizId}`)
 					return null
 				}
-				return <p className="text-[#5a7a6a] [font-family:var(--font-outfit)] text-sm">Quiz not available.</p>
+				return (
+					<p className="[font-family:var(--font-outfit)] text-sm text-[#5a7a6a]">
+						Quiz not linked to this content item.
+					</p>
+				)
+
 			default:
 				return (
 					<div className="text-center py-8">
 						<div className="text-4xl mb-4">{ITEM_TYPE_ICON[item.type] ?? '📄'}</div>
-						<p className="text-[#5a7a6a] [font-family:var(--font-outfit)] text-sm">
-							{item.body ?? 'Content will appear here.'}
+						<p className="[font-family:var(--font-outfit)] text-sm text-[#5a7a6a]">
+							{item.textContent ?? 'Content will appear here.'}
 						</p>
 					</div>
 				)

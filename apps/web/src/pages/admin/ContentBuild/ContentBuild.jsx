@@ -454,7 +454,7 @@ function EditQuizModal({ item, onClose, onSaved }) {
 							<div className="flex-1">
 								<div className="flex items-center gap-2 mb-1">
 									<span className="text-xs font-bold text-[#6b7280]">Q{qi + 1}</span>
-									<span className="text-[0.7rem] bg-[#e5e7eb] text-[#374151] px-2 py-[2px] rounded font-semibold">{q.type}</span>
+									<span className="text-[0.7rem] bg-[#e5e7eb] text-[#374151] px-2 py-0.5 rounded font-semibold">{q.type}</span>
 									{q.points != null && <span className="text-[0.7rem] text-[#6b7280]">{q.points} pts</span>}
 								</div>
 								<p className="text-sm text-[#1f2937] leading-[1.5] m-0">{q.text}</p>
@@ -716,7 +716,7 @@ export default function ContentBuilderPage() {
 													</div>
 												)}
 												<span className="text-[#9ca3af] text-[0.9rem] mt-0.5 min-w-5">{index + 1}.</span>
-												<div className="flex flex-col gap-[6px]">
+												<div className="flex flex-col gap-1.5">
 													<h4 className="m-0 text-[0.95rem] text-[#111827] font-medium leading-[1.4]">{item.title}</h4>
 													<span className={`inline-block text-[0.7rem] font-bold py-[3px] px-2 rounded w-fit text-white tracking-[0.3px] uppercase ${TYPE_BADGE[item.type] ?? 'bg-[#607D8B]'}`}>
 														{item.type}
@@ -725,17 +725,17 @@ export default function ContentBuilderPage() {
 											</div>
 
 											{!reordering && (
-												<div className="flex gap-[6px] opacity-50 group-hover:opacity-100 transition-opacity duration-200">
+												<div className="flex gap-1.5 opacity-50 group-hover:opacity-100 transition-opacity duration-200">
 													<button
 														onClick={() => setEditItem(item)}
-														className="border-none bg-transparent p-[6px] rounded cursor-pointer transition-colors duration-200 hover:bg-[#eff6ff] hover:text-[#2563eb] text-[#374151]"
+														className="border-none bg-transparent p-1.5 rounded cursor-pointer transition-colors duration-200 hover:bg-[#eff6ff] hover:text-[#2563eb] text-[#374151]"
 														title="Edit"
 													>
 														✏️
 													</button>
 													<button
 														onClick={() => setDeleteConfirm(item)}
-														className="border-none bg-transparent p-[6px] rounded cursor-pointer transition-colors duration-200 hover:bg-[#fef2f2] hover:text-[#dc2626] text-[#374151]"
+														className="border-none bg-transparent p-1.5 rounded cursor-pointer transition-colors duration-200 hover:bg-[#fef2f2] hover:text-[#dc2626] text-[#374151]"
 														title="Delete"
 													>
 														🗑️
@@ -748,7 +748,7 @@ export default function ContentBuilderPage() {
 							</div>
 						</div>
 
-						<div className="w-[280px] shrink-0 sticky top-0">
+						<div className="w-70 shrink-0 sticky top-0">
 							<div className="bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] border-l-[5px] border-l-[#2E7D32] p-6">
 								<h3 className="mt-0 mb-2 text-[1rem] text-[#111827] font-semibold">Add Content</h3>
 								<p className="mt-0 mb-5 text-[0.85rem] text-[#6b7280] leading-[1.5]">

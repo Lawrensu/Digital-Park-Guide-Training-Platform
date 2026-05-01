@@ -1,16 +1,23 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import Navbar from '../../../components/Navbar/Navbar'
+import { useAuth } from '../../../rbac/AuthProvider'
 import * as quizAttemptsApi from '../../../api/quizAttempts.js'
 
 
 export default function QuizGradingPage() {
 	const { attemptId } = useParams()
-	const navigate = useNavigate()
+	const navigate      = useNavigate()
+	const { user }      = useAuth()
 
 	const [scores, setScores]           = useState({})
 	const [submitError, setSubmitError] = useState('')
+	const [isSubmitting, setIsSubmitting] = useState(false)
+	const [failToast, setFailToast]     = useState(false)
+
+	const displayName = user?.email?.split('@')[0] ?? 'admin'
+	const initials    = displayName.slice(0, 2).toUpperCase()
 
 	const { data: attempt, isLoading, error } = useQuery({
 		queryKey: ['quiz-attempts', attemptId],
@@ -27,11 +34,26 @@ export default function QuizGradingPage() {
 		setScores(initial)
 	}, [attempt])
 
-	const gradeMutation = useMutation({
-		mutationFn: () => quizAttemptsApi.grade(attemptId, scores),
-		onSuccess: () => navigate('/quiz-reviews'),
-		onError: () => setSubmitError('Failed to submit grades. Please try again.'),
-	})
+	const handleSubmitGrades = async () => {
+		setSubmitError('')
+		setIsSubmitting(true)
+		try {
+			await quizAttemptsApi.grade(attemptId, scores)
+			if (isPass) {
+				navigate(`/certifications/issue/${attemptId}`)
+			} else {
+				setFailToast(true)
+				setTimeout(() => {
+					setFailToast(false)
+					navigate('/quiz-reviews')
+				}, 3000)
+			}
+		} catch {
+			setSubmitError('Failed to submit grades. Please try again.')
+		} finally {
+			setIsSubmitting(false)
+		}
+	}
 
 	if (isLoading) {
 		return (
@@ -67,6 +89,12 @@ export default function QuizGradingPage() {
 		<div className="flex min-h-screen bg-[#fdfbf7]">
 			<Navbar />
 
+			{failToast && (
+				<div className="fixed top-5 right-5 z-50 bg-[#b91c1c] text-white [font-family:var(--font-outfit)] text-[13.5px] font-medium py-3 px-5 rounded-xl shadow-lg max-w-sm">
+					Guide did not meet the pass mark. Redirecting to quiz reviews…
+				</div>
+			)}
+
 			<div className="flex-1 flex flex-col min-w-0">
 				<header className="flex items-center justify-between px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
 					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">Quiz Reviews</h1>
@@ -76,7 +104,7 @@ export default function QuizGradingPage() {
 								<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
 							</svg>
 						</button>
-						<div className="w-9 h-9 rounded-full bg-[#2d7d4e] flex items-center justify-center [font-family:var(--font-outfit)] text-xs font-semibold text-white">AM</div>
+						<div className="w-9 h-9 rounded-full bg-[#2d7d4e] flex items-center justify-center [font-family:var(--font-outfit)] text-xs font-semibold text-white">{initials}</div>
 					</div>
 				</header>
 
@@ -96,15 +124,15 @@ export default function QuizGradingPage() {
 								<div>
 									<h2 className="[font-family:var(--font-outfit)] m-0 mb-2 text-2xl font-semibold text-[#1a3a2a]">Grading: {attempt.quiz?.title ?? '—'}</h2>
 									<div className="flex items-center gap-4">
-										<span className="[font-family:var(--font-outfit)] bg-[#e8f5ee] text-[#266841] py-[2px] px-2 rounded text-xs font-semibold">Attempt #{attempt.attemptNumber ?? 1}</span>
+										<span className="[font-family:var(--font-outfit)] bg-[#e8f5ee] text-[#266841] py-0.5 px-2 rounded text-xs font-semibold">Attempt #{attempt.attemptNumber ?? 1}</span>
 										<span className="[font-family:var(--font-outfit)] text-[#78716c] text-[13px]">Submitted {new Date(attempt.submittedAt).toLocaleDateString()}</span>
 									</div>
 								</div>
 
-								<div className={`bg-white border border-[#e7e5e4] rounded-xl p-6 min-w-[220px] text-center border-l-[5px] ${isPass ? 'border-l-[#2d7d4e]' : 'border-l-[#d32f2f]'}`}>
+								<div className={`bg-white border border-[#e7e5e4] rounded-xl p-6 min-w-55 text-center border-l-[5px] ${isPass ? 'border-l-[#2d7d4e]' : 'border-l-[#d32f2f]'}`}>
 									<div className="flex justify-between items-center mb-2">
 										<span className="[font-family:var(--font-outfit)] text-xs text-[#78716c] font-semibold uppercase">Total Score</span>
-										<span className={`[font-family:var(--font-outfit)] text-[11px] py-[2px] px-2 rounded-full font-bold ${isPass ? 'bg-[#e8f5ee] text-[#266841]' : 'bg-[#ffebee] text-[#d32f2f]'}`}>
+										<span className={`[font-family:var(--font-outfit)] text-[11px] py-0.5 px-2 rounded-full font-bold ${isPass ? 'bg-[#e8f5ee] text-[#266841]' : 'bg-[#ffebee] text-[#d32f2f]'}`}>
 											{isPass ? 'PASS' : 'FAIL'}
 										</span>
 									</div>
@@ -120,7 +148,7 @@ export default function QuizGradingPage() {
 									<div key={answer.questionId} className="bg-white border border-[#e7e5e4] rounded-xl p-6">
 										<div className="flex justify-between mb-4 pb-2 border-b border-[#f5f5f4]">
 											<span className="[font-family:var(--font-outfit)] font-semibold text-[#1c1917]">Question {index + 1}</span>
-											<span className="[font-family:var(--font-outfit)] bg-[#f5f5f4] text-[#44403c] py-[2px] px-2 rounded text-xs font-medium">{answer.question?.type ?? '—'}</span>
+											<span className="[font-family:var(--font-outfit)] bg-[#f5f5f4] text-[#44403c] py-0.5 px-2 rounded text-xs font-medium">{answer.question?.type ?? '—'}</span>
 										</div>
 
 										<h4 className="[font-family:var(--font-serif)] m-0 mb-4 text-base text-[#1a3a2a] leading-[1.5]">{answer.question?.text ?? '—'}</h4>
@@ -134,7 +162,7 @@ export default function QuizGradingPage() {
 											<label className="[font-family:var(--font-outfit)] text-xs font-semibold text-[#78716c] uppercase">Points:</label>
 											<input
 												type="number"
-												className="w-[80px] py-[6px] px-2 border border-[#d6d3d1] rounded text-base font-semibold text-center text-[#1c1917] focus:outline-none focus:border-[#1a3a2a]"
+												className="w-20 py-1.5 px-2 border border-[#d6d3d1] rounded text-base font-semibold text-center text-[#1c1917] focus:outline-none focus:border-[#1a3a2a]"
 												value={scores[answer.questionId] ?? 0}
 												onChange={e => setScores(prev => ({ ...prev, [answer.questionId]: parseInt(e.target.value) || 0 }))}
 												min="0"
@@ -152,15 +180,15 @@ export default function QuizGradingPage() {
 
 							<div className="flex justify-end gap-3">
 								<button
-									onClick={() => gradeMutation.mutate()}
-									disabled={gradeMutation.isPending || answers.length === 0}
-									className="py-[10px] px-8 bg-[#1a3a2a] text-white border-none rounded-lg [font-family:var(--font-outfit)] font-medium text-sm cursor-pointer transition-colors duration-200 hover:bg-[#132d20] disabled:opacity-50"
+									onClick={handleSubmitGrades}
+									disabled={isSubmitting || answers.length === 0}
+									className="py-2.5 px-8 bg-[#1a3a2a] text-white border-none rounded-lg [font-family:var(--font-outfit)] font-medium text-sm cursor-pointer transition-colors duration-200 hover:bg-[#132d20] disabled:opacity-50"
 								>
-									{gradeMutation.isPending ? 'Submitting…' : 'Submit Grades'}
+									{isSubmitting ? 'Submitting…' : 'Submit Grades'}
 								</button>
 								<button
 									onClick={() => navigate('/quiz-reviews')}
-									className="py-[10px] px-6 bg-transparent text-[#44403c] border border-[#d6d3d1] rounded-lg [font-family:var(--font-outfit)] font-medium text-sm cursor-pointer transition-colors duration-200 hover:bg-[#f5f5f4]"
+									className="py-2.5 px-6 bg-transparent text-[#44403c] border border-[#d6d3d1] rounded-lg [font-family:var(--font-outfit)] font-medium text-sm cursor-pointer transition-colors duration-200 hover:bg-[#f5f5f4]"
 								>
 									Cancel
 								</button>
@@ -179,7 +207,7 @@ export default function QuizGradingPage() {
 								].map(([label, value]) => (
 									<div key={label} className="flex justify-between mb-4">
 										<span className="[font-family:var(--font-outfit)] text-sm text-[#78716c] font-medium">{label}</span>
-										<span className="[font-family:var(--font-outfit)] text-sm text-[#1c1917] font-semibold text-right max-w-[140px]">{value}</span>
+										<span className="[font-family:var(--font-outfit)] text-sm text-[#1c1917] font-semibold text-right max-w-35">{value}</span>
 									</div>
 								))}
 

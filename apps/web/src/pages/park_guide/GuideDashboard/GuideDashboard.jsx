@@ -135,7 +135,7 @@ export default function GuideDashboardPage() {
 					</header>
 
 					<div className="relative bg-[#1a3a2a] rounded-[12px] py-8 px-10 overflow-hidden">
-						<div className="absolute -right-[60px] -top-[60px] w-[280px] h-[280px] rounded-full bg-white/[0.04] pointer-events-none"></div>
+						<div className="absolute -right-15 -top-15 w-70 h-70 rounded-full bg-white/[0.04] pointer-events-none"></div>
 						<div className="relative z-[1] mb-5">
 							<h2 className="[font-family:var(--font-outfit)] text-[1.6rem] font-bold text-white mb-[0.35rem]">
 								Welcome back, {me?.firstName ?? '…'}! 🌿
@@ -144,7 +144,7 @@ export default function GuideDashboardPage() {
 								Keep up the great work. You're {overallPct}% through your training program.
 							</p>
 						</div>
-						<div className="relative z-[1] flex items-center gap-[14px]">
+						<div className="relative z-[1] flex items-center gap-3.5">
 							<div className="flex-1 h-2 bg-white/[0.18] rounded-[4px] overflow-hidden">
 								<div className="h-full bg-[#2d7d4e] rounded-[4px]" style={{ width: `${overallPct}%` }}></div>
 							</div>
@@ -155,7 +155,7 @@ export default function GuideDashboardPage() {
 					<div className="grid grid-cols-4 gap-5">
 						{stats.map((stat, i) => (
 							<div key={i} className={`bg-white border border-[#e7e5e4] border-t-[3px] rounded-[10px] py-5 px-6 flex items-center gap-4 shadow-[0_1px_3px_rgba(0,0,0,0.05)] ${STAT_CARD_BORDER[stat.color]}`}>
-								<div className={`w-[52px] h-[52px] rounded-full flex items-center justify-center [font-family:var(--font-outfit)] text-[1.15rem] font-bold shrink-0 ${STAT_BADGE_CLASS[stat.color]}`}>
+								<div className={`w-13 h-13 rounded-full flex items-center justify-center [font-family:var(--font-outfit)] text-[1.15rem] font-bold shrink-0 ${STAT_BADGE_CLASS[stat.color]}`}>
 									{stat.value}
 								</div>
 								<div className="flex flex-col gap-[3px]">
@@ -192,7 +192,7 @@ export default function GuideDashboardPage() {
 												<span className={`[font-family:var(--font-outfit)] text-[0.7rem] font-semibold py-[3px] px-[9px] rounded-[12px] ${STATUS_BADGE_CLASS[color]}`}>{status}</span>
 											</div>
 											<h4 className="[font-family:var(--font-outfit)] text-[0.92rem] font-semibold text-[#1c1917] leading-[1.4]">{enrolment.module?.title ?? '—'}</h4>
-											<div className="h-[6px] bg-[#e7e5e4] rounded-[3px] overflow-hidden">
+											<div className="h-1.5 bg-[#e7e5e4] rounded-[3px] overflow-hidden">
 												<div className={MODULE_BAR_CLASS[color]} style={{ width: `${pct}%` }}></div>
 											</div>
 											<p className={MODULE_PROGRESS_TEXT_CLASS[color]}>{pct}% complete</p>
@@ -235,17 +235,17 @@ export default function GuideDashboardPage() {
 										const isUrgent = (dueDate - new Date()) < 3 * 24 * 60 * 60 * 1000
 										return (
 											<div key={enrolment.id} className="flex items-center gap-4 py-3 border-b border-[#f5f5f4] last:border-b-0">
-												<div className={`flex flex-col items-center justify-center w-[46px] min-w-[46px] h-[52px] rounded-[8px] text-white ${DUE_BOX_COLORS[i % DUE_BOX_COLORS.length]}`}>
+												<div className={`flex flex-col items-center justify-center w-11.5 min-w-11.5 h-13 rounded-[8px] text-white ${DUE_BOX_COLORS[i % DUE_BOX_COLORS.length]}`}>
 													<span className="[font-family:var(--font-outfit)] text-[1.1rem] font-bold leading-[1.1]">{dueDate.getDate()}</span>
 													<span className="[font-family:var(--font-outfit)] text-[0.65rem] font-medium uppercase tracking-[0.05em]">
 														{dueDate.toLocaleString('en', { month: 'short' })}
 													</span>
 												</div>
-												<div className="flex-1 flex flex-col gap-[2px]">
+												<div className="flex-1 flex flex-col gap-0.5">
 													<p className="[font-family:var(--font-outfit)] text-[0.88rem] font-semibold text-[#1c1917]">{enrolment.module?.title ?? '—'}</p>
 													<p className="[font-family:var(--font-outfit)] text-[0.78rem] text-[#78716c]">{enrolment.progressPct ?? 0}% complete</p>
 													{isUrgent && (
-														<span className="inline-flex items-center gap-[3px] [font-family:var(--font-outfit)] text-[0.7rem] font-semibold text-[#b45309] bg-[#fef3c7] py-[2px] px-[7px] rounded-[4px] mt-[3px] w-fit">
+														<span className="inline-flex items-center gap-[3px] [font-family:var(--font-outfit)] text-[0.7rem] font-semibold text-[#b45309] bg-[#fef3c7] py-0.5 px-[7px] rounded-[4px] mt-[3px] w-fit">
 															⚠️ Urgent
 														</span>
 													)}
@@ -281,14 +281,14 @@ export default function GuideDashboardPage() {
 										const isExpired = cert.expiresAt && new Date(cert.expiresAt) <= new Date()
 										return (
 											<div key={cert.id} className="flex items-start gap-4 p-3 bg-[#fafaf9] border border-[#e7e5e4] rounded-[8px]">
-												<div className="w-10 h-10 min-w-[40px] bg-[#fef3c7] rounded-[8px] flex items-center justify-center text-[1.1rem]">🏆</div>
-												<div className="flex-1 flex flex-col gap-[2px]">
+												<div className="w-10 h-10 min-w-10 bg-[#fef3c7] rounded-[8px] flex items-center justify-center text-[1.1rem]">🏆</div>
+												<div className="flex-1 flex flex-col gap-0.5">
 													<p className="[font-family:var(--font-outfit)] text-[0.88rem] font-semibold text-[#1c1917]">{cert.enrolment?.module?.title ?? '—'}</p>
 													<p className="[font-family:var(--font-outfit)] text-[0.75rem] text-[#78716c]">
 														Issued: {new Date(cert.issuedAt).toLocaleDateString()}
 														{cert.expiresAt ? ` · Expires: ${new Date(cert.expiresAt).toLocaleDateString()}` : ''}
 													</p>
-													<span className={`inline-flex items-center gap-[3px] [font-family:var(--font-outfit)] text-[0.7rem] font-semibold py-[2px] px-2 rounded-[12px] mt-1 w-fit border ${isExpired ? 'bg-[#ffebee] text-[#d32f2f] border-[#ffcdd2]' : 'bg-[#ecfdf5] text-[#059669] border-[#a7f3d0]'}`}>
+													<span className={`inline-flex items-center gap-[3px] [font-family:var(--font-outfit)] text-[0.7rem] font-semibold py-0.5 px-2 rounded-[12px] mt-1 w-fit border ${isExpired ? 'bg-[#ffebee] text-[#d32f2f] border-[#ffcdd2]' : 'bg-[#ecfdf5] text-[#059669] border-[#a7f3d0]'}`}>
 														{isExpired ? '⏳ Expired' : '✓ Active'}
 													</span>
 												</div>

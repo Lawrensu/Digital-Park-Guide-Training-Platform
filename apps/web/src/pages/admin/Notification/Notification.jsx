@@ -50,7 +50,7 @@ function TypeIcon({ type }) {
 	)
 
 	return (
-		<div className="w-[38px] h-[38px] rounded-full shrink-0 flex items-center justify-center" style={{ backgroundColor: meta.bg, color: meta.color }}>
+		<div className="w-9.5 h-9.5 rounded-full shrink-0 flex items-center justify-center" style={{ backgroundColor: meta.bg, color: meta.color }}>
 			{icon}
 		</div>
 	)
@@ -138,10 +138,10 @@ export default function NotificationPage() {
 					<div className="bg-white border border-[#e7e5e4] rounded-xl p-6 flex flex-col gap-5">
 						<h2 className="[font-family:var(--font-outfit)] text-[18px] font-semibold text-[#1a3a2a]">Send Custom Notification</h2>
 						<div className="grid grid-cols-[auto_1fr] gap-6 items-start">
-							<div className="flex flex-col gap-[6px]">
+							<div className="flex flex-col gap-1.5">
 								<label className="[font-family:var(--font-outfit)] text-[13px] font-medium text-[#44403c]">Recipient</label>
 								<select
-									className="py-[10px] px-[14px] min-w-[200px] border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] cursor-pointer transition-[border-color] duration-150 focus:outline-none focus:border-[#1a3a2a]"
+									className="py-2.5 px-3.5 min-w-50 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] cursor-pointer transition-[border-color] duration-150 focus:outline-none focus:border-[#1a3a2a]"
 									value={targetRole}
 									onChange={e => setTargetRole(e.target.value)}
 								>
@@ -149,21 +149,21 @@ export default function NotificationPage() {
 									<option value="ADMIN">All Admins</option>
 								</select>
 							</div>
-							<div className="flex flex-col gap-[6px]">
+							<div className="flex flex-col gap-1.5">
 								<label className="[font-family:var(--font-outfit)] text-[13px] font-medium text-[#44403c]">Title</label>
 								<input
 									type="text"
-									className="w-full py-[10px] px-[14px] border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] transition-[border-color] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
+									className="w-full py-2.5 px-3.5 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] transition-[border-color] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
 									placeholder="Notification title…"
 									value={title}
 									onChange={e => setTitle(e.target.value)}
 								/>
 							</div>
 						</div>
-						<div className="flex flex-col gap-[6px]">
+						<div className="flex flex-col gap-1.5">
 							<label className="[font-family:var(--font-outfit)] text-[13px] font-medium text-[#44403c]">Message</label>
 							<textarea
-								className="w-full py-3 px-[14px] border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] resize-y transition-[border-color] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
+								className="w-full py-3 px-3.5 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] resize-y transition-[border-color] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
 								rows="3"
 								placeholder="Type your notification message here…"
 								value={message}
@@ -173,7 +173,7 @@ export default function NotificationPage() {
 						{sendError && <p className="[font-family:var(--font-outfit)] text-xs text-red-500">{sendError}</p>}
 						<div className="flex justify-end">
 							<button
-								className="bg-[#b35c2a] text-white [font-family:var(--font-outfit)] text-sm font-medium py-[10px] px-6 rounded-lg border-none cursor-pointer transition-colors duration-200 hover:bg-[#9c4f24] disabled:opacity-50"
+								className="bg-[#b35c2a] text-white [font-family:var(--font-outfit)] text-sm font-medium py-2.5 px-6 rounded-lg border-none cursor-pointer transition-colors duration-200 hover:bg-[#9c4f24] disabled:opacity-50"
 								onClick={handleSend}
 								disabled={sendMutation.isPending || !message.trim()}
 							>
@@ -184,10 +184,10 @@ export default function NotificationPage() {
 
 					<div className="flex flex-col gap-4">
 						<div className="flex items-center justify-between">
-							<div className="flex items-center gap-[10px]">
+							<div className="flex items-center gap-2.5">
 								<h2 className="[font-family:var(--font-outfit)] text-[18px] font-semibold text-[#1a3a2a]">Inbox</h2>
 								{unreadCount > 0 && (
-									<span className="py-[3px] px-[10px] rounded-full bg-[#fdf0e6] text-[#b35c2a] [font-family:var(--font-outfit)] text-xs font-medium">{unreadCount} unread</span>
+									<span className="py-[3px] px-2.5 rounded-full bg-[#fdf0e6] text-[#b35c2a] [font-family:var(--font-outfit)] text-xs font-medium">{unreadCount} unread</span>
 								)}
 							</div>
 							{unreadCount > 0 && (
@@ -209,7 +209,7 @@ export default function NotificationPage() {
 								{notifications.length > 0 ? notifications.map(notif => (
 									<div
 										key={notif.id}
-										className={`bg-white border border-[#e7e5e4] rounded-xl py-4 px-5 flex items-start gap-[14px] cursor-pointer transition-[box-shadow,border-color] duration-200 hover:shadow-[0_2px_12px_rgba(26,58,42,0.08)] hover:border-[#d6d3d1] ${!notif.isRead ? 'border-l-[3px] border-l-[#b35c2a] bg-[#fef7f0]' : ''}`}
+										className={`bg-white border border-[#e7e5e4] rounded-xl py-4 px-5 flex items-start gap-3.5 cursor-pointer transition-[box-shadow,border-color] duration-200 hover:shadow-[0_2px_12px_rgba(26,58,42,0.08)] hover:border-[#d6d3d1] ${!notif.isRead ? 'border-l-[3px] border-l-[#b35c2a] bg-[#fef7f0]' : ''}`}
 										onClick={() => handleClick(notif)}
 									>
 										<TypeIcon type={notif.type} />
@@ -236,7 +236,7 @@ export default function NotificationPage() {
 
 			{isModalOpen && selectedNotif && (
 				<div className="fixed inset-0 bg-black/45 backdrop-blur-[2px] flex items-center justify-center z-50" onClick={() => setIsModalOpen(false)}>
-					<div className="bg-white rounded-2xl w-[90%] max-w-[480px] shadow-[0_20px_60px_rgba(0,0,0,0.2)] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+					<div className="bg-white rounded-2xl w-[90%] max-w-120 shadow-[0_20px_60px_rgba(0,0,0,0.2)] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
 						<div className="flex items-center justify-between px-6 py-5 border-b border-[#f5f5f4]">
 							<h3 className="[font-family:var(--font-outfit)] text-[18px] font-semibold text-[#1a3a2a]">Notification Details</h3>
 							<button className="w-8 h-8 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" onClick={() => setIsModalOpen(false)} aria-label="Close">
@@ -256,7 +256,7 @@ export default function NotificationPage() {
 							</div>
 						</div>
 						<div className="px-6 py-4 border-t border-[#f5f5f4] flex justify-end">
-							<button className="bg-[#b35c2a] text-white [font-family:var(--font-outfit)] text-sm font-medium py-[10px] px-6 rounded-lg border-none cursor-pointer transition-colors duration-200 hover:bg-[#9c4f24]" onClick={() => setIsModalOpen(false)}>Close</button>
+							<button className="bg-[#b35c2a] text-white [font-family:var(--font-outfit)] text-sm font-medium py-2.5 px-6 rounded-lg border-none cursor-pointer transition-colors duration-200 hover:bg-[#9c4f24]" onClick={() => setIsModalOpen(false)}>Close</button>
 						</div>
 					</div>
 				</div>

@@ -96,7 +96,7 @@ export default function Register() {
 								type="text" required
 								value={form.firstName}
 								onChange={set('firstName')}
-								className="py-[10px] px-3 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] outline-none focus:border-[#1a3a2a] focus:bg-white transition-colors"
+								className="py-2.5 px-3 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] outline-none focus:border-[#1a3a2a] focus:bg-white transition-colors"
 							/>
 						</div>
 						<div className="flex flex-col gap-1.5">
@@ -105,7 +105,7 @@ export default function Register() {
 								type="text" required
 								value={form.lastName}
 								onChange={set('lastName')}
-								className="py-[10px] px-3 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] outline-none focus:border-[#1a3a2a] focus:bg-white transition-colors"
+								className="py-2.5 px-3 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] outline-none focus:border-[#1a3a2a] focus:bg-white transition-colors"
 							/>
 						</div>
 					</div>
@@ -116,7 +116,7 @@ export default function Register() {
 							type="email" required
 							value={form.email}
 							onChange={set('email')}
-							className="py-[10px] px-3 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] outline-none focus:border-[#1a3a2a] focus:bg-white transition-colors"
+							className="py-2.5 px-3 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] outline-none focus:border-[#1a3a2a] focus:bg-white transition-colors"
 						/>
 					</div>
 
@@ -126,7 +126,7 @@ export default function Register() {
 							type="text" required
 							value={form.icPassportNumber}
 							onChange={set('icPassportNumber')}
-							className="py-[10px] px-3 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] outline-none focus:border-[#1a3a2a] focus:bg-white transition-colors"
+							className="py-2.5 px-3 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] outline-none focus:border-[#1a3a2a] focus:bg-white transition-colors"
 						/>
 					</div>
 
@@ -136,7 +136,7 @@ export default function Register() {
 							required rows={3}
 							value={form.address}
 							onChange={set('address')}
-							className="py-[10px] px-3 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] outline-none focus:border-[#1a3a2a] focus:bg-white transition-colors resize-y"
+							className="py-2.5 px-3 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] outline-none focus:border-[#1a3a2a] focus:bg-white transition-colors resize-y"
 						/>
 					</div>
 
@@ -147,7 +147,7 @@ export default function Register() {
 							value={form.reasonForApplying}
 							onChange={set('reasonForApplying')}
 							placeholder="Tell us why you want to become a Sarawak park guide…"
-							className="py-[10px] px-3 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] outline-none focus:border-[#1a3a2a] focus:bg-white transition-colors resize-y placeholder:text-[#a8a29e]"
+							className="py-2.5 px-3 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] outline-none focus:border-[#1a3a2a] focus:bg-white transition-colors resize-y placeholder:text-[#a8a29e]"
 						/>
 					</div>
 
@@ -158,7 +158,7 @@ export default function Register() {
 						<input
 							type="file" accept=".pdf" required
 							onChange={e => setCvFile(e.target.files[0] ?? null)}
-							className="py-[10px] px-3 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-outfit)] text-sm text-[#44403c] cursor-pointer file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-[#e8f5ee] file:text-[#266841] file:text-xs file:font-medium file:cursor-pointer"
+							className="py-2.5 px-3 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-outfit)] text-sm text-[#44403c] cursor-pointer file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-[#e8f5ee] file:text-[#266841] file:text-xs file:font-medium file:cursor-pointer"
 						/>
 					</div>
 

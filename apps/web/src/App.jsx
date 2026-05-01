@@ -2,6 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 import Login from './pages/Login/Login'
 import Register from './pages/register/Register'
+import ForgotPassword from './pages/auth/ForgotPassword'
+import ResetPassword from './pages/auth/ResetPassword'
+import Activate from './pages/auth/Activate'
 
 import Dashboard from './pages/admin/Dashboard/Dashboard'
 import Modules from './pages/admin/Module/Module'
@@ -46,6 +49,9 @@ function App() {
                     <Route path="/" element={<Login />} />
                     <Route path="/login" element={<Navigate to="/" replace />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/activate" element={<Activate />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
 
                     {/* Admin routes */}
                     <Route path="/dashboard" element={

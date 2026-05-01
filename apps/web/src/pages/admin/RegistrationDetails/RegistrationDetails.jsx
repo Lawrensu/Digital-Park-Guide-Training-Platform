@@ -93,7 +93,7 @@ export default function RegistrationDetails() {
 						</button>
 						<h1 className="[font-family:var(--font-outfit)] font-semibold text-[28px] text-[#1a3a2a]">Registration Details</h1>
 					</div>
-					<span className={`py-[6px] px-4 rounded-[20px] [font-family:var(--font-outfit)] font-semibold text-sm uppercase tracking-[0.5px] ${STATUS_BADGE[reg.status] ?? ''}`}>
+					<span className={`py-1.5 px-4 rounded-[20px] [font-family:var(--font-outfit)] font-semibold text-sm uppercase tracking-[0.5px] ${STATUS_BADGE[reg.status] ?? ''}`}>
 						{STATUS_LABEL[reg.status] ?? reg.status}
 					</span>
 				</div>

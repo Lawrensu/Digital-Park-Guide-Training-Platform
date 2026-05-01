@@ -90,7 +90,7 @@ export default function ModulesPage() {
 
 					<div className="flex items-center justify-between">
 						<h2 className="[font-family:var(--font-outfit)] text-2xl font-semibold text-[#1a3a2a]">Training Modules</h2>
-						<button className="bg-[#1f4d35] text-white [font-family:var(--font-outfit)] text-sm font-medium py-[10px] px-5 rounded-lg border-none cursor-pointer transition-colors duration-200 hover:bg-[#1a3a2a]" onClick={() => navigate('/modules/new')}>
+						<button className="bg-[#1f4d35] text-white [font-family:var(--font-outfit)] text-sm font-medium py-2.5 px-5 rounded-lg border-none cursor-pointer transition-colors duration-200 hover:bg-[#1a3a2a]" onClick={() => navigate('/modules/new')}>
 							+ New Module
 						</button>
 					</div>
@@ -99,7 +99,7 @@ export default function ModulesPage() {
 						{TABS.map(tab => (
 							<button
 								key={tab}
-								className={`py-[7px] px-[18px] rounded-full [font-family:var(--font-outfit)] text-[13px] font-medium border border-[#d6d3d1] bg-white text-[#44403c] cursor-pointer transition-all duration-150 hover:border-[#1a3a2a] hover:text-[#1a3a2a] ${activeTab === tab ? 'bg-[#1f4d35] border-[#1f4d35] text-white' : ''}`}
+								className={`py-[7px] px-4.5 rounded-full [font-family:var(--font-outfit)] text-[13px] font-medium border border-[#d6d3d1] bg-white text-[#44403c] cursor-pointer transition-all duration-150 hover:border-[#1a3a2a] hover:text-[#1a3a2a] ${activeTab === tab ? 'bg-[#1f4d35] border-[#1f4d35] text-white' : ''}`}
 								onClick={() => setActiveTab(tab)}
 							>
 								{tab === 'All' ? 'All' : tab.charAt(0) + tab.slice(1).toLowerCase()}
@@ -116,7 +116,7 @@ export default function ModulesPage() {
 								{filtered.map(m => (
 									<div key={m.id} className="bg-white border border-[#e7e5e4] rounded-xl p-5 flex flex-col gap-3 transition-[box-shadow,transform] duration-200 hover:shadow-[0_4px_16px_rgba(26,58,42,0.1)] hover:-translate-y-0.5">
 										<div className="flex items-center justify-end">
-											<span className={`inline-flex items-center py-[3px] px-[10px] rounded-full [font-family:var(--font-outfit)] text-[11px] font-medium ${BADGE_CLASSES[m.status] ?? ''}`}>{m.status}</span>
+											<span className={`inline-flex items-center py-[3px] px-2.5 rounded-full [font-family:var(--font-outfit)] text-[11px] font-medium ${BADGE_CLASSES[m.status] ?? ''}`}>{m.status}</span>
 										</div>
 										<h3 className="[font-family:var(--font-serif)] text-base font-normal text-[#1a3a2a] leading-[1.5] flex-1">{m.title}</h3>
 										<div className="flex gap-2 mt-auto pt-3 border-t border-[#f5f5f4]">

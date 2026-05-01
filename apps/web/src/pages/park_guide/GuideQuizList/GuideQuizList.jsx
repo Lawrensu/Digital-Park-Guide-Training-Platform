@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import GuideNavbar from '../../../components/GuideNavbar/GuideNavbar'
 import * as quizAttemptsApi from '../../../api/quizAttempts.js'
+import * as certificationsApi from '../../../api/certifications.js'
 
 
 const STAT_BORDER = {
@@ -19,7 +20,7 @@ const STATUS_BADGE = {
 const GuideQuizList = () => {
 	const navigate = useNavigate()
 
-	const { data, isLoading, error } = useQuery({
+	const { data: attemptsData, isLoading, error } = useQuery({
 		queryKey: ['quiz-attempts', 'me'],
 		queryFn: async () => {
 			const res = await quizAttemptsApi.getAll()
@@ -27,9 +28,24 @@ const GuideQuizList = () => {
 		},
 	})
 
-	const attempts = data ?? []
-	const graded   = attempts.filter(a => a.status === 'GRADED')
-	const pending  = attempts.filter(a => a.status === 'PENDING_REVIEW')
+	const { data: certsData } = useQuery({
+		queryKey: ['certifications', 'me'],
+		queryFn: async () => {
+			const res = await certificationsApi.getMine()
+			return res.data.data
+		},
+	})
+
+	const attempts = attemptsData ?? []
+	const certs    = certsData    ?? []
+
+	const graded  = attempts.filter(a => a.status === 'GRADED')
+	const pending = attempts.filter(a => a.status === 'PENDING_REVIEW')
+
+	const certByAttemptId = certs.reduce((map, cert) => {
+		if (cert.quizAttemptId) map[cert.quizAttemptId] = cert
+		return map
+	}, {})
 
 	const stats = [
 		{ id: 1, label: 'Total Attempts',  value: attempts.length, icon: '📝', class: 'total'   },
@@ -39,12 +55,23 @@ const GuideQuizList = () => {
 
 	const renderAction = (attempt) => {
 		if (attempt.status === 'GRADED') {
+			const cert = certByAttemptId[attempt.id]
+			if (cert) {
+				return (
+					<button
+						className="py-2 px-4 rounded-[6px] text-[0.85rem] font-semibold cursor-pointer border border-[#E0E0E0] bg-transparent text-[#333333] transition-all duration-200 hover:border-[#666666] hover:bg-[#f5f5f5]"
+						onClick={() => navigate(`/guide/certifications/${cert.id}`)}
+					>
+						View Certificate
+					</button>
+				)
+			}
 			return (
 				<button
 					className="py-2 px-4 rounded-[6px] text-[0.85rem] font-semibold cursor-pointer border border-[#E0E0E0] bg-transparent text-[#333333] transition-all duration-200 hover:border-[#666666] hover:bg-[#f5f5f5]"
 					onClick={() => navigate('/guide/certifications')}
 				>
-					View Certificate
+					View Certificates
 				</button>
 			)
 		}

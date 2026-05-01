@@ -63,7 +63,7 @@ export default function CertificationPage() {
 								</svg>
 								<input
 									type="text"
-									className="py-[9px] pr-[14px] pl-9 w-[300px] border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] transition-[border-color,background] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
+									className="py-[9px] pr-3.5 pl-9 w-75 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] transition-[border-color,background] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
 									placeholder="Search guide, module or cert ID…"
 									value={searchQuery}
 									onChange={e => setSearchQuery(e.target.value)}
@@ -90,19 +90,19 @@ export default function CertificationPage() {
 									<tbody>
 										{filtered.length > 0 ? filtered.map((c, idx) => (
 											<tr key={c.id} className={`hover:bg-[#fef7f0] ${idx === filtered.length - 1 ? '[&>td]:border-b-0' : ''}`}>
-												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle">
+												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle">
 													<p className="[font-family:var(--font-serif)] text-[15px] text-[#1a3a2a]">{c.guide?.firstName} {c.guide?.lastName}</p>
 												</td>
-												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle [font-family:var(--font-serif)] text-sm text-[#78716c]">{c.enrolment?.module?.title ?? '—'}</td>
-												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle [font-family:var(--font-serif)] text-sm text-[#78716c]">{new Date(c.issuedAt).toLocaleDateString()}</td>
-												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle [font-family:var(--font-serif)] text-sm text-[#78716c]">{c.expiresAt ? new Date(c.expiresAt).toLocaleDateString() : '—'}</td>
-												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle">
+												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle [font-family:var(--font-serif)] text-sm text-[#78716c]">{c.enrolment?.module?.title ?? '—'}</td>
+												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle [font-family:var(--font-serif)] text-sm text-[#78716c]">{new Date(c.issuedAt).toLocaleDateString()}</td>
+												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle [font-family:var(--font-serif)] text-sm text-[#78716c]">{c.expiresAt ? new Date(c.expiresAt).toLocaleDateString() : '—'}</td>
+												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle">
 													<span className="[font-family:var(--font-outfit)] text-xs font-medium text-[#44403c] tracking-[0.3px]">{c.certificateNumber}</span>
 												</td>
-												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle">
+												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle">
 													<div className="flex items-center gap-3">
 														<button
-															className="inline-flex items-center py-[5px] px-[14px] border border-[#e7e5e4] rounded-[6px] bg-[#fafaf9] [font-family:var(--font-outfit)] text-xs font-medium text-[#44403c] cursor-pointer transition-all duration-150 hover:bg-[#f0e9db] hover:border-[#d6d3d1]"
+															className="inline-flex items-center py-[5px] px-3.5 border border-[#e7e5e4] rounded-[6px] bg-[#fafaf9] [font-family:var(--font-outfit)] text-xs font-medium text-[#44403c] cursor-pointer transition-all duration-150 hover:bg-[#f0e9db] hover:border-[#d6d3d1]"
 															onClick={() => handleDownload(c.id)}
 														>
 															PDF

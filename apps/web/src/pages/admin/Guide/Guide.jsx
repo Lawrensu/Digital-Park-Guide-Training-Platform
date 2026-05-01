@@ -103,7 +103,7 @@ export default function GuidePage() {
 								</svg>
 								<input
 									type="text"
-									className="py-[9px] pr-[14px] pl-9 w-[280px] border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] transition-[border-color,background] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
+									className="py-[9px] pr-3.5 pl-9 w-70 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] transition-[border-color,background] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
 									placeholder="Search guides…"
 									value={searchQuery}
 									onChange={e => setSearchQuery(e.target.value)}
@@ -129,13 +129,13 @@ export default function GuidePage() {
 									<tbody>
 										{filtered.length > 0 ? filtered.map((g, idx) => (
 											<tr key={g.id} className={`hover:bg-[#fef7f0] ${idx === filtered.length - 1 ? '[&>td]:border-b-0' : ''}`}>
-												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle"><p className="[font-family:var(--font-serif)] text-[15px] text-[#1a3a2a]">{g.firstName} {g.lastName}</p></td>
-												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle [font-family:var(--font-serif)] text-sm text-[#78716c]">{g.email}</td>
-												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle">
+												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle"><p className="[font-family:var(--font-serif)] text-[15px] text-[#1a3a2a]">{g.firstName} {g.lastName}</p></td>
+												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle [font-family:var(--font-serif)] text-sm text-[#78716c]">{g.email}</td>
+												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle">
 													<span className={`inline-flex items-center py-1 px-3 rounded-full [font-family:var(--font-outfit)] text-xs font-medium ${BADGE_CLASSES[g.status] ?? ''}`}>{g.status}</span>
 												</td>
-												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle [font-family:var(--font-outfit)] text-sm text-[#44403c]">{g.username ?? '—'}</td>
-												<td className="px-6 py-[18px] border-b border-[#f5f5f4] align-middle">
+												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle [font-family:var(--font-outfit)] text-sm text-[#44403c]">{g.username ?? '—'}</td>
+												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle">
 													<button className="inline-flex items-center gap-1 [font-family:var(--font-outfit)] text-[13px] font-medium text-[#b35c2a] bg-transparent border-none cursor-pointer p-0 transition-[gap] duration-200 hover:gap-2 hover:underline" onClick={() => navigate(`/guides/${g.id}`)}>
 														View <span aria-hidden>→</span>
 													</button>
