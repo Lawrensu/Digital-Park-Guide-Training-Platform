@@ -53,7 +53,7 @@ const GuideViewCert = () => {
 
 	if (isLoading) {
 		return (
-			<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] font-['Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 				<GuideNavbar />
 				<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border">
 					<p className="text-center py-12 text-[#666666]">Loading certificate…</p>
@@ -64,7 +64,7 @@ const GuideViewCert = () => {
 
 	if (error || !cert) {
 		return (
-			<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] font-['Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 				<GuideNavbar />
 				<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border">
 					<p className="text-center py-12 text-red-500">Certificate not found.</p>
@@ -74,7 +74,7 @@ const GuideViewCert = () => {
 	}
 
 	return (
-		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] font-['Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
 			<main className="flex-1 p-8 box-border">
@@ -83,7 +83,7 @@ const GuideViewCert = () => {
 					<div>
 						<h1 className="text-[1.75rem] text-[#333333] m-0 mb-6 font-bold">Certificate Detail</h1>
 
-						<div className="bg-white p-5 sm:p-8 rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+						<div className="bg-white p-5 sm:p-8 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
 
 							<div className="flex border-b border-[#f0f0f0] py-4 last:border-b-0">
 								<div className="w-45 text-[0.9rem] text-[#666666] font-semibold shrink-0">Certificate Number</div>
@@ -131,13 +131,13 @@ const GuideViewCert = () => {
 						<div className="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
 							<button
 								onClick={handleDownload}
-								className="py-3 px-6 bg-[#FFEBEE] text-[#D32F2F] border-0 rounded-[8px] text-[0.95rem] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#FFCDD2]"
+								className="py-3 px-6 bg-[#FFEBEE] text-[#D32F2F] border-0 rounded-lg text-[0.95rem] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#FFCDD2]"
 							>
 								📄 Download PDF
 							</button>
 							<button
 								onClick={() => navigate('/guide/certifications')}
-								className="py-3 px-6 bg-white border border-[#E0E0E0] text-[#333333] rounded-[8px] text-[0.95rem] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#f5f5f5]"
+								className="py-3 px-6 bg-white border border-[#E0E0E0] text-[#333333] rounded-lg text-[0.95rem] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#f5f5f5]"
 							>
 								← Back to Certifications
 							</button>
@@ -146,9 +146,9 @@ const GuideViewCert = () => {
 
 					<div className="flex flex-col gap-8">
 
-						<div className="bg-white rounded-[12px] p-6 shadow-[0_2px_8px_rgba(0,0,0,0.05)] flex flex-col items-center text-center">
+						<div className="bg-white rounded-xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.05)] flex flex-col items-center text-center">
 							<h4 className="mb-4 text-[#666666] m-0 text-[0.95rem] font-semibold">Certificate Preview</h4>
-							<div className="border-2 border-[#C5A059] p-8 w-full h-75 bg-[radial-gradient(#fff_20%,#fcfcfc_20%)] [background-size:10px_10px] relative flex flex-col justify-center items-center text-[#333333] before:content-[''] before:absolute before:top-[5px] before:left-[5px] before:right-[5px] before:bottom-[5px] before:border before:border-[#C5A059] before:pointer-events-none">
+							<div className="border-2 border-[#C5A059] p-8 w-full h-75 bg-[radial-gradient(#fff_20%,#fcfcfc_20%)] bg-size-[10px_10px] relative flex flex-col justify-center items-center text-[#333333] before:content-[''] before:absolute before:top-1.25 before:left-1.25 before:right-1.25 before:bottom-1.25 before:border before:border-[#C5A059] before:pointer-events-none">
 								<h3 className="m-0 mb-4 text-[#2E7D32] uppercase tracking-[2px] text-[1rem]">Certificate of Completion</h3>
 								<div className="text-[3rem] my-4 text-[#C5A059]">🏆</div>
 								<h2 className="m-0 mb-2 font-serif text-[1.3rem] text-[#333333] leading-[1.3]">{moduleTitle}</h2>
@@ -160,7 +160,7 @@ const GuideViewCert = () => {
 						{otherCerts.length > 0 && (
 							<div>
 								<h3 className="text-[1.1rem] text-[#333333] m-0 mb-4 border-b-2 border-b-[#2E7D32] pb-2 inline-block">Other Certifications</h3>
-								<ul className="list-none p-0 m-0 bg-white rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] overflow-hidden">
+								<ul className="list-none p-0 m-0 bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.05)] overflow-hidden">
 									{otherCerts.map((c) => (
 										<li
 											key={c.id}
