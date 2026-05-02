@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import GuideNavbar from '../../../components/GuideNavbar/GuideNavbar'
+import { useAuth } from '../../../rbac/AuthProvider'
 import * as certificationsApi from '../../../api/certifications.js'
 import * as usersApi from '../../../api/users.js'
 
@@ -8,6 +9,7 @@ import * as usersApi from '../../../api/users.js'
 const GuideViewCert = () => {
 	const { id } = useParams()
 	const navigate = useNavigate()
+	const { user: authUser } = useAuth()
 
 	const { data: cert, isLoading, error } = useQuery({
 		queryKey: ['certifications', id],
@@ -19,11 +21,12 @@ const GuideViewCert = () => {
 	})
 
 	const { data: me } = useQuery({
-		queryKey: ['users', 'me'],
+		queryKey: ['users', authUser?.id],
 		queryFn: async () => {
-			const res = await usersApi.getMe()
+			const res = await usersApi.getOne(authUser.id)
 			return res.data.data
 		},
+		enabled: !!authUser?.id,
 	})
 
 	const { data: allCertsData } = useQuery({
@@ -34,9 +37,9 @@ const GuideViewCert = () => {
 		},
 	})
 
-	const otherCerts = (allCertsData ?? []).filter(c => c.id !== id)
-	const isExpired  = cert?.expiresAt && new Date(cert.expiresAt) <= new Date()
-	const holderName = me ? `${me.firstName} ${me.lastName}` : '—'
+	const otherCerts  = (allCertsData ?? []).filter(c => c.id !== id)
+	const isExpired   = cert?.expiresAt && new Date(cert.expiresAt) <= new Date()
+	const holderName  = me?.username ?? authUser?.email?.split('@')[0] ?? '—'
 	const moduleTitle = cert?.enrolment?.module?.title ?? '—'
 
 	const handleDownload = async () => {
@@ -50,9 +53,9 @@ const GuideViewCert = () => {
 
 	if (isLoading) {
 		return (
-			<div className="flex min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 				<GuideNavbar />
-				<main className="flex-1 p-8 box-border">
+				<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border">
 					<p className="text-center py-12 text-[#666666]">Loading certificate…</p>
 				</main>
 			</div>
@@ -61,9 +64,9 @@ const GuideViewCert = () => {
 
 	if (error || !cert) {
 		return (
-			<div className="flex min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 				<GuideNavbar />
-				<main className="flex-1 p-8 box-border">
+				<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border">
 					<p className="text-center py-12 text-red-500">Certificate not found.</p>
 				</main>
 			</div>
@@ -71,16 +74,16 @@ const GuideViewCert = () => {
 	}
 
 	return (
-		<div className="flex min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
 			<main className="flex-1 p-8 box-border">
-				<div className="grid grid-cols-[1.5fr_1fr] gap-8">
+				<div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-8">
 
 					<div>
 						<h1 className="text-[1.75rem] text-[#333333] m-0 mb-6 font-bold">Certificate Detail</h1>
 
-						<div className="bg-white p-8 rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+						<div className="bg-white p-5 sm:p-8 rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
 
 							<div className="flex border-b border-[#f0f0f0] py-4 last:border-b-0">
 								<div className="w-45 text-[0.9rem] text-[#666666] font-semibold shrink-0">Certificate Number</div>
@@ -125,7 +128,7 @@ const GuideViewCert = () => {
 
 						</div>
 
-						<div className="mt-6 flex gap-4">
+						<div className="mt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
 							<button
 								onClick={handleDownload}
 								className="py-3 px-6 bg-[#FFEBEE] text-[#D32F2F] border-0 rounded-[8px] text-[0.95rem] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#FFCDD2]"
@@ -149,7 +152,7 @@ const GuideViewCert = () => {
 								<h3 className="m-0 mb-4 text-[#2E7D32] uppercase tracking-[2px] text-[1rem]">Certificate of Completion</h3>
 								<div className="text-[3rem] my-4 text-[#C5A059]">🏆</div>
 								<h2 className="m-0 mb-2 font-serif text-[1.3rem] text-[#333333] leading-[1.3]">{moduleTitle}</h2>
-								<p className="m-0 text-[0.8rem] text-[#666666]">Awarded to {me?.firstName ?? ''}</p>
+								<p className="m-0 text-[0.8rem] text-[#666666]">Awarded to {holderName}</p>
 								<p className="m-0 text-[0.7rem] text-[#666666] mt-4">Sarawak Forestry Corporation</p>
 							</div>
 						</div>

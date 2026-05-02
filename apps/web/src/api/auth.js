@@ -2,8 +2,8 @@ import axios from 'axios'
 import api from './client.js'
 
 
-export const login = (username, password) =>
-	axios.post('/api/auth/login', { username, password }, { withCredentials: true })
+export const login = (email, password) =>
+	axios.post('/api/auth/login', { email, password }, { withCredentials: true })
 
 export const logout = () =>
 	api.post('/auth/logout')

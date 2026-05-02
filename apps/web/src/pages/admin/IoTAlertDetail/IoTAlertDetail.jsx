@@ -56,7 +56,7 @@ export default function IoTAlertDetailPage() {
 
 	if (isLoading) {
 		return (
-			<div className="flex min-h-screen bg-[#fdfbf7]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
 					<p className="[font-family:var(--font-outfit)] text-sm text-[#a8a29e]">Loading…</p>
@@ -67,7 +67,7 @@ export default function IoTAlertDetailPage() {
 
 	if (error || !alert) {
 		return (
-			<div className="flex min-h-screen bg-[#fdfbf7]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
 					<p className="[font-family:var(--font-outfit)] text-sm text-red-500">Failed to load alert.</p>
@@ -79,11 +79,11 @@ export default function IoTAlertDetailPage() {
 	const style = SEVERITY_STYLE[alert.severity] ?? SEVERITY_STYLE.INFO
 
 	return (
-		<div className="flex min-h-screen bg-[#fdfbf7]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 			<Navbar />
 
 			<div className="flex-1 flex flex-col min-w-0">
-				<header className="flex items-center justify-between px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
+				<header className="flex items-center justify-between px-4 sm:px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
 					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">IoT Alerts</h1>
 					<div className="flex items-center gap-3">
 						<button className="w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" aria-label="Notifications">
@@ -95,7 +95,7 @@ export default function IoTAlertDetailPage() {
 					</div>
 				</header>
 
-				<main className="flex-1 p-8 overflow-y-auto">
+				<main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
 
 					<div className="flex items-center gap-4 mb-8">
 						<button

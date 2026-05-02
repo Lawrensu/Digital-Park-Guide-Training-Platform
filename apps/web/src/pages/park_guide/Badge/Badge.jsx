@@ -51,16 +51,16 @@ export default function BadgePage() {
 	const totalCount = allBadgesData?.length ?? 0
 
 	return (
-		<div className="flex min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
 			<div className="flex flex-col flex-1 overflow-hidden">
-				<main className="flex-1 p-8 overflow-y-auto">
+				<main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
 					<header>
 						<h1 className="text-[1.75rem] text-[#333333] m-0 mb-8 font-bold">My Badges</h1>
 					</header>
 
-					<div className="grid grid-cols-3 gap-6 mb-10">
+					<div className="grid grid-cols-2 gap-4 sm:gap-6 mb-10">
 						<div className="bg-white p-6 rounded-[8px] shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] flex flex-col justify-center items-center border-t-4 border-t-[#10b981]">
 							<div className="text-[2.5rem] font-bold text-[#111827] leading-none mb-2">{earned.length}</div>
 							<div className="text-[0.9rem] text-[#6b7280] font-medium uppercase tracking-[0.05em]">Badges Earned</div>

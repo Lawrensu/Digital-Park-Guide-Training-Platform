@@ -47,10 +47,10 @@ export const AuthProvider = ({ children }) => {
 		silentRefresh()
 	}, [])
 
-	const login = async (username, password) => {
+	const login = async (email, password) => {
 		setLoading(true)
 		try {
-			const { data } = await authApi.login(username, password)
+			const { data } = await authApi.login(email, password)
 			setAccessToken(data.data.accessToken)
 			setUser(data.data.user)
 			if (data.data.user.role === 'ADMIN') {

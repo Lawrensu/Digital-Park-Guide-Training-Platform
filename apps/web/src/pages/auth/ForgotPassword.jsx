@@ -24,7 +24,7 @@ export default function ForgotPassword() {
 
 	return (
 		<div className="min-h-screen bg-[#f0efe9] flex items-center justify-center p-6 [font-family:'Segoe_UI',system-ui,sans-serif]">
-			<div className="bg-white rounded-[16px] shadow-[0_4px_24px_rgba(0,0,0,0.08)] pt-10 px-10 pb-8 w-full max-w-md">
+			<div className="bg-white rounded-[16px] shadow-[0_4px_24px_rgba(0,0,0,0.08)] p-6 sm:pt-10 sm:px-10 sm:pb-8 w-full max-w-md">
 
 				<div className="flex items-center gap-3 mb-8">
 					<div className="w-10 h-10 bg-[#2d6a4f] rounded-[8px] flex items-center justify-center font-bold text-[13px] tracking-[0.5px] text-white">

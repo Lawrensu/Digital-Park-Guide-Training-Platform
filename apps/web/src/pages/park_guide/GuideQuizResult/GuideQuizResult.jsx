@@ -27,9 +27,9 @@ export default function GuideQuizResult() {
 
 	if (isLoading) {
 		return (
-			<div className="flex h-screen bg-[#f0f4f1] overflow-hidden">
+			<div className="flex flex-col lg:flex-row h-screen bg-[#f0f4f1] overflow-hidden">
 				<GuideNavbar />
-				<main className="flex-1 overflow-y-auto p-8">
+				<main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
 					<div className="max-w-xl mx-auto">
 						<p className="text-center py-12 text-[#5a7a6a] [font-family:var(--font-outfit)]">Loading result…</p>
 					</div>
@@ -40,10 +40,10 @@ export default function GuideQuizResult() {
 
 	if (error || !attempt) {
 		return (
-			<div className="flex h-screen bg-[#f0f4f1] overflow-hidden">
+			<div className="flex flex-col lg:flex-row h-screen bg-[#f0f4f1] overflow-hidden">
 				<GuideNavbar />
-				<main className="flex-1 overflow-y-auto p-8">
-					<div className="max-w-xl mx-auto bg-white rounded-xl border border-[#d4e4da] p-10 text-center mt-8">
+				<main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+					<div className="max-w-xl mx-auto bg-white rounded-xl border border-[#d4e4da] p-6 sm:p-10 text-center mt-8">
 						<div className="w-20 h-20 bg-[#e8f5ee] rounded-full flex items-center justify-center mx-auto mb-5">
 							<span className="text-4xl">✅</span>
 						</div>
@@ -79,10 +79,10 @@ export default function GuideQuizResult() {
 	const isPassed        = passMark != null ? totalScore >= passMark : null
 
 	return (
-		<div className="flex h-screen bg-[#f0f4f1] overflow-hidden">
+		<div className="flex flex-col lg:flex-row h-screen bg-[#f0f4f1] overflow-hidden">
 			<GuideNavbar />
 
-			<main className="flex-1 overflow-y-auto p-8">
+			<main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
 				<div className="max-w-2xl mx-auto flex flex-col gap-6">
 
 					<button
@@ -92,7 +92,7 @@ export default function GuideQuizResult() {
 						← Back to Modules
 					</button>
 
-					<div className="bg-white rounded-xl border border-[#d4e4da] p-8 text-center">
+					<div className="bg-white rounded-xl border border-[#d4e4da] p-5 sm:p-8 text-center">
 						<div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 ${isPendingReview ? 'bg-[#FFF3E0]' : isPassed ? 'bg-[#e8f5ee]' : 'bg-[#ffebee]'}`}>
 							<span className="text-4xl">
 								{isPendingReview ? '⏳' : isPassed ? '🏆' : '📝'}

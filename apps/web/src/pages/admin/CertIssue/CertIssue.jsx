@@ -58,7 +58,7 @@ export default function CertIssuePage() {
 
 	if (isLoading) {
 		return (
-			<div className="flex min-h-screen bg-[#fdfbf7]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
 					<p className="[font-family:var(--font-outfit)] text-sm text-[#a8a29e]">Loading…</p>
@@ -69,7 +69,7 @@ export default function CertIssuePage() {
 
 	if (error || !attempt) {
 		return (
-			<div className="flex min-h-screen bg-[#fdfbf7]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
 					<p className="[font-family:var(--font-outfit)] text-sm text-red-500">Failed to load quiz attempt.</p>
@@ -85,11 +85,11 @@ export default function CertIssuePage() {
 	const canSubmit = issuerName.trim().length > 0 && issuerTitle.trim().length > 0 && companyName.trim().length > 0
 
 	return (
-		<div className="flex min-h-screen bg-[#fdfbf7]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 			<Navbar />
 
 			<div className="flex-1 flex flex-col min-w-0">
-				<header className="flex items-center justify-between px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
+				<header className="flex items-center justify-between px-4 sm:px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
 					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">Certifications</h1>
 					<div className="flex items-center gap-3">
 						<button className="w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" aria-label="Notifications">
@@ -101,7 +101,7 @@ export default function CertIssuePage() {
 					</div>
 				</header>
 
-				<main className="flex-1 p-8 overflow-y-auto">
+				<main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
 
 					<div className="flex items-center gap-4 mb-8">
 						<button
@@ -113,7 +113,7 @@ export default function CertIssuePage() {
 						<h2 className="[font-family:var(--font-outfit)] font-semibold text-[28px] text-[#1a3a2a] m-0">Issue Certificate</h2>
 					</div>
 
-					<div className="flex gap-8 items-start max-w-5xl">
+					<div className="flex flex-col lg:flex-row gap-8 items-start max-w-5xl">
 
 						<div className="flex-1 space-y-6">
 
@@ -128,7 +128,7 @@ export default function CertIssuePage() {
 							<div className="bg-white border border-[#f0e9db] rounded-xl p-6">
 								<h3 className="[font-family:var(--font-outfit)] font-medium text-[20px] text-[#1a3a2a] mb-6 border-b border-[#f0e9db] pb-3">Attempt Details</h3>
 
-								<div className="grid grid-cols-2 gap-5 mb-6">
+								<div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
 									<div className="flex flex-col gap-1">
 										<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Guide</label>
 										<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a] font-medium m-0">{guideName || '—'}</p>

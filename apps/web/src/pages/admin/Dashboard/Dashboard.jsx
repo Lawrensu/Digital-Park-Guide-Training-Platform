@@ -121,7 +121,7 @@ export default function Dashboard() {
   ]
 
   return (
-    <div className="flex min-h-screen bg-[#fdfbf7]">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
       <Navbar />
 
       {toast && (
@@ -132,17 +132,9 @@ export default function Dashboard() {
       )}
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header className="h-16 bg-white border-b border-[#e7e5e4] flex items-center justify-between px-8 shrink-0">
+        <header className="h-16 bg-white border-b border-[#e7e5e4] flex items-center justify-between px-4 sm:px-8 shrink-0">
           <h1 className="[font-family:var(--font-outfit)] text-[22px] font-semibold text-[#1c1917]">Dashboard</h1>
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center gap-2 bg-[#f5f5f4] rounded-lg px-3 h-9">
-              <span className="text-[13px] opacity-[0.45]">🔍</span>
-              <input
-                type="text"
-                placeholder="Search..."
-                className="bg-transparent border-none outline-none [font-family:var(--font-outfit)] text-[13px] text-[#44403c] w-40 placeholder:text-[#a8a29e]"
-              />
-            </div>
             <button
               className="w-9 h-9 flex items-center justify-center bg-[#f5f5f4] border-none rounded-lg cursor-pointer text-[15px] transition-colors duration-150 hover:bg-[#e7e5e4]"
               onClick={() => navigate('/notifications')}
@@ -153,23 +145,23 @@ export default function Dashboard() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto py-7 px-8 flex flex-col gap-4.5">
+        <main className="flex-1 overflow-y-auto py-5 px-4 sm:py-7 sm:px-8 flex flex-col gap-4.5">
 
-          <section className="bg-[linear-gradient(130deg,#1f4d35_0%,#1a3a2a_100%)] rounded-xl py-7 px-8 flex items-center justify-between relative overflow-hidden gap-6">
+          <section className="bg-[linear-gradient(130deg,#1f4d35_0%,#1a3a2a_100%)] rounded-xl py-6 px-5 sm:py-7 sm:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between relative overflow-hidden gap-4 sm:gap-6">
             <div className="absolute rounded-full pointer-events-none w-80 h-80 -top-35 right-70 bg-[radial-gradient(circle,rgba(56,148,94,0.22)_0%,transparent_65%)]" />
             <div className="absolute rounded-full pointer-events-none w-55 h-55 -bottom-22.5 right-20 bg-[radial-gradient(circle,rgba(56,148,94,0.16)_0%,transparent_65%)]" />
             <div className="relative z-[1]">
               <h2 className="[font-family:var(--font-outfit)] text-[22px] font-semibold text-white mb-1.5">Welcome back! 👋</h2>
               <p className="[font-family:var(--font-serif)] text-sm text-white/70">Here's what's happening with SFC training today.</p>
             </div>
-            <div className="flex gap-2.5 shrink-0 relative z-[1]">
+            <div className="flex flex-wrap gap-2 sm:gap-2.5 shrink-0 relative z-[1]">
               <span className="py-2 px-3.5 rounded-[20px] [font-family:var(--font-outfit)] text-xs font-medium bg-[rgba(56,148,94,0.22)] text-[#a7f3c0] border border-[rgba(56,148,94,0.28)]">● {activeGuides} Active Guides</span>
               <span className="py-2 px-3.5 rounded-[20px] [font-family:var(--font-outfit)] text-xs font-medium bg-[rgba(201,109,56,0.22)] text-[#fcd9b6] border border-[rgba(201,109,56,0.28)]">● {modulesLive} Modules Live</span>
               <span className="py-2 px-3.5 rounded-[20px] [font-family:var(--font-outfit)] text-xs font-medium bg-[rgba(43,108,176,0.22)] text-[#bee3f8] border border-[rgba(43,108,176,0.28)]">● {certsIssued} Certs Issued</span>
             </div>
           </section>
 
-          <section className="grid grid-cols-4 gap-4">
+          <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {STATS.map((s) => (
               <div key={s.label} className={`bg-white rounded-[10px] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06)] border-t-4 border-t-transparent flex gap-3.5 items-start ${STAT_ACCENT_CLASSES[s.accent]}`}>
                 <div className="w-11 h-11 rounded-[10px] bg-[#f5f5f4] flex items-center justify-center text-[20px] shrink-0">{s.icon}</div>
@@ -181,7 +173,7 @@ export default function Dashboard() {
             ))}
           </section>
 
-          <section className="grid grid-cols-2 gap-4">
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="bg-white rounded-[10px] py-5 px-5.5 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="[font-family:var(--font-outfit)] text-[15px] font-semibold text-[#1c1917] mb-0.5">Recent Activity</h3>

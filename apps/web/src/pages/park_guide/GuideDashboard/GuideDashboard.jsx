@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import GuideNavbar from '../../../components/GuideNavbar/GuideNavbar'
+import { useAuth } from '../../../rbac/AuthProvider'
 import * as usersApi from '../../../api/users.js'
 import * as enrolmentsApi from '../../../api/enrolments.js'
 import * as certificationsApi from '../../../api/certifications.js'
@@ -52,13 +53,15 @@ const DUE_BOX_COLORS = ['bg-[#ef4444]', 'bg-[#f97316]', 'bg-[#3b82f6]']
 
 export default function GuideDashboardPage() {
 	const navigate = useNavigate()
+	const { user: authUser } = useAuth()
 
 	const { data: me } = useQuery({
-		queryKey: ['users', 'me'],
+		queryKey: ['users', authUser?.id],
 		queryFn: async () => {
-			const res = await usersApi.getMe()
+			const res = await usersApi.getOne(authUser.id)
 			return res.data.data
 		},
+		enabled: !!authUser?.id,
 	})
 
 	const { data: enrolmentsData } = useQuery({
@@ -124,21 +127,21 @@ export default function GuideDashboardPage() {
 	}
 
 	return (
-		<div className="flex min-h-screen bg-[#f5f5f4]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#f5f5f4]">
 			<GuideNavbar />
 
 			<div className="flex flex-col flex-1 overflow-hidden">
-				<main className="flex-1 p-8 overflow-y-auto flex flex-col gap-[1.75rem]">
+				<main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto flex flex-col gap-[1.75rem]">
 
 					<header>
 						<h1 className="[font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif] text-[1.75rem] font-bold text-[#333333]">Dashboard</h1>
 					</header>
 
-					<div className="relative bg-[#1a3a2a] rounded-[12px] py-8 px-10 overflow-hidden">
+					<div className="relative bg-[#1a3a2a] rounded-[12px] py-8 px-5 sm:px-10 overflow-hidden">
 						<div className="absolute -right-15 -top-15 w-70 h-70 rounded-full bg-white/[0.04] pointer-events-none"></div>
 						<div className="relative z-[1] mb-5">
 							<h2 className="[font-family:var(--font-outfit)] text-[1.6rem] font-bold text-white mb-[0.35rem]">
-								Welcome back, {me?.firstName ?? '…'}! 🌿
+								Welcome back, {me?.username ?? authUser?.email?.split('@')[0] ?? '…'}! 🌿
 							</h2>
 							<p className="[font-family:var(--font-outfit)] text-[0.9rem] text-white/65">
 								Keep up the great work. You're {overallPct}% through your training program.
@@ -152,7 +155,7 @@ export default function GuideDashboardPage() {
 						</div>
 					</div>
 
-					<div className="grid grid-cols-4 gap-5">
+					<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
 						{stats.map((stat, i) => (
 							<div key={i} className={`bg-white border border-[#e7e5e4] border-t-[3px] rounded-[10px] py-5 px-6 flex items-center gap-4 shadow-[0_1px_3px_rgba(0,0,0,0.05)] ${STAT_CARD_BORDER[stat.color]}`}>
 								<div className={`w-13 h-13 rounded-full flex items-center justify-center [font-family:var(--font-outfit)] text-[1.15rem] font-bold shrink-0 ${STAT_BADGE_CLASS[stat.color]}`}>
@@ -178,7 +181,7 @@ export default function GuideDashboardPage() {
 						</div>
 
 						{modulesInProgress.length > 0 ? (
-							<div className="grid grid-cols-3 gap-5">
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 								{modulesInProgress.map((enrolment, i) => {
 									const color   = MODULE_COLORS[i % MODULE_COLORS.length]
 									const pct     = enrolment.progressPct ?? 0
@@ -222,7 +225,7 @@ export default function GuideDashboardPage() {
 						)}
 					</div>
 
-					<div className="grid grid-cols-2 gap-5">
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
 						<div className="bg-white border border-[#e7e5e4] rounded-[10px] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
 							<div className="flex items-center justify-between mb-4">

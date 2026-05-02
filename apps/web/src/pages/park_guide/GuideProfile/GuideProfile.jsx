@@ -9,15 +9,16 @@ import * as quizAttemptsApi from '../../../api/quizAttempts.js'
 
 
 const GuideProfile = () => {
-	const { logout } = useAuth()
+	const { logout, user: authUser } = useAuth()
 	const navigate = useNavigate()
 
 	const { data: me } = useQuery({
-		queryKey: ['users', 'me'],
+		queryKey: ['users', authUser?.id],
 		queryFn: async () => {
-			const res = await usersApi.getMe()
+			const res = await usersApi.getOne(authUser.id)
 			return res.data.data
 		},
+		enabled: !!authUser?.id,
 	})
 
 	const { data: enrolmentsData } = useQuery({
@@ -49,7 +50,8 @@ const GuideProfile = () => {
 	const attempts   = attemptsData   ?? []
 	const completed  = enrolments.filter(e => e.completedAt)
 
-	const initials = me ? `${me.firstName?.[0] ?? ''}${me.lastName?.[0] ?? ''}`.toUpperCase() : '?'
+	const displayName = me?.username ?? authUser?.email?.split('@')[0] ?? ''
+	const initials    = displayName ? displayName.slice(0, 2).toUpperCase() : '?'
 
 	const handleDownload = async (certId) => {
 		try {
@@ -61,24 +63,24 @@ const GuideProfile = () => {
 	}
 
 	return (
-		<div className="flex min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
-			<main className="flex-1 p-8 box-border flex flex-col">
+			<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border flex flex-col">
 
-				<div className="bg-white rounded-[12px] p-10 text-center shadow-[0_2px_8px_rgba(0,0,0,0.05)] mb-8 relative overflow-hidden before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-20 before:bg-[#2E7D32] before:z-0">
+				<div className="bg-white rounded-[12px] p-6 sm:p-10 text-center shadow-[0_2px_8px_rgba(0,0,0,0.05)] mb-8 relative overflow-hidden before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-20 before:bg-[#2E7D32] before:z-0">
 					<div className="w-25 h-25 bg-white text-[#2E7D32] rounded-full flex items-center justify-center text-[2.5rem] font-bold mx-auto mb-4 relative z-[1] border-4 border-white shadow-[0_4px_6px_rgba(0,0,0,0.1)]">
 						{initials}
 					</div>
 					<h1 className="text-[1.5rem] font-bold text-[#333333] m-0 mb-2 relative z-[1]">
-						{me ? `${me.firstName} ${me.lastName}` : '—'}
+						{displayName || '—'}
 					</h1>
 					<div className="inline-block bg-[#E8F5E9] text-[#2E7D32] py-1 px-4 rounded-[20px] text-[0.9rem] font-semibold relative z-[1]">
 						Park Guide · {me?.status ?? ''}
 					</div>
 				</div>
 
-				<div className="grid grid-cols-4 gap-6 mb-8">
+				<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
 					{[
 						{ label: 'Enrolled Modules', value: enrolments.length },
 						{ label: 'Completed',         value: completed.length  },
@@ -92,14 +94,14 @@ const GuideProfile = () => {
 					))}
 				</div>
 
-				<div className="grid grid-cols-2 gap-8 mb-8">
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8">
 
 					<div className="bg-white p-6 rounded-[12px] shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
 						<h2 className="text-[1.1rem] font-bold text-[#333333] m-0 mb-6 pb-3 border-b border-[#f0f0f0]">Personal Information</h2>
 						{[
-							['Name',     me ? `${me.firstName} ${me.lastName}` : '—'],
-							['Username', me?.username ? `@${me.username}` : '—'],
-							['Email',    me?.email ?? '—'],
+							['Username', me?.username ?? '—'],
+							['Email',    me?.email    ?? '—'],
+							['Status',   me?.status   ?? '—'],
 						].map(([label, value]) => (
 							<div key={label} className="flex justify-between mb-4 text-[0.95rem]">
 								<span className="text-[#666666] font-medium">{label}</span>

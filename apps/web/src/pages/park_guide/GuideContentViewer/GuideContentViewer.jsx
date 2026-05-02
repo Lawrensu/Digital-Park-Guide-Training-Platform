@@ -35,7 +35,7 @@ export default function GuideContentViewer() {
 
 	if (isLoading) {
 		return (
-			<div className="flex h-screen bg-[#f0f4f1] overflow-hidden">
+			<div className="flex flex-col lg:flex-row h-screen bg-[#f0f4f1] overflow-hidden">
 				<GuideNavbar />
 				<main className="flex-1 overflow-y-auto p-8">
 					<div className="max-w-3xl mx-auto">
@@ -48,7 +48,7 @@ export default function GuideContentViewer() {
 
 	if (error || !item) {
 		return (
-			<div className="flex h-screen bg-[#f0f4f1] overflow-hidden">
+			<div className="flex flex-col lg:flex-row h-screen bg-[#f0f4f1] overflow-hidden">
 				<GuideNavbar />
 				<main className="flex-1 overflow-y-auto p-8">
 					<div className="max-w-3xl mx-auto">
@@ -149,7 +149,7 @@ export default function GuideContentViewer() {
 	}
 
 	return (
-		<div className="flex h-screen bg-[#f0f4f1] overflow-hidden">
+		<div className="flex flex-col lg:flex-row h-screen bg-[#f0f4f1] overflow-hidden">
 			<GuideNavbar />
 
 			<main className="flex-1 overflow-y-auto p-8">

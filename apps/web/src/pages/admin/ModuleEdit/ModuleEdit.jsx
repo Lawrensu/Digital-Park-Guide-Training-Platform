@@ -73,24 +73,24 @@ export default function ModuleEditPage() {
 
   if (isEditing && loadingExisting) {
     return (
-      <div className="bg-[#fafaf9] flex min-h-screen">
+      <div className="bg-[#fafaf9] flex flex-col lg:flex-row min-h-screen">
         <Navbar />
-        <div className="flex-1 p-8"><p className="text-center py-12 text-[#78716c]">Loading module…</p></div>
+        <div className="flex-1 p-4 sm:p-6 lg:p-8"><p className="text-center py-12 text-[#78716c]">Loading module…</p></div>
       </div>
     )
   }
 
   return (
-    <div className="bg-[#fafaf9] flex min-h-screen">
+    <div className="bg-[#fafaf9] flex flex-col lg:flex-row min-h-screen">
       <Navbar />
 
       <div className="flex-1 flex flex-col">
 
-        <header className="flex items-center justify-between px-8 h-16 bg-white border-b border-[#e7e5e4]">
+        <header className="flex items-center justify-between px-4 sm:px-8 h-16 bg-white border-b border-[#e7e5e4]">
           <h1 className="text-xl font-semibold text-[#1c1917]">Modules</h1>
         </header>
 
-        <main className="p-8 flex-1">
+        <main className="p-4 sm:p-6 lg:p-8 flex-1">
 
           <button
             className="text-sm text-[#1f4d35] mb-6 hover:underline bg-transparent border-0 cursor-pointer"

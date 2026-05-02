@@ -52,11 +52,11 @@ export default function ModulesPage() {
 	const filtered = activeTab === 'All' ? modules : modules.filter(m => m.status === activeTab)
 
 	return (
-		<div className="flex min-h-screen bg-[#fdfbf7]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 			<Navbar />
 
 			<div className="flex-1 flex flex-col min-w-0">
-				<header className="flex items-center justify-between px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
+				<header className="flex items-center justify-between px-4 sm:px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
 					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">Modules</h1>
 					<div className="flex items-center gap-3">
 						<button className="w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" aria-label="Notifications">
@@ -68,9 +68,9 @@ export default function ModulesPage() {
 					</div>
 				</header>
 
-				<main className="flex-1 p-8 flex flex-col gap-6 overflow-y-auto">
+				<main className="flex-1 p-4 sm:p-6 lg:p-8 flex flex-col gap-6 overflow-y-auto">
 
-					<section className="grid grid-cols-4 gap-4">
+					<section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
 						{[
 							{ key: 'All',       label: 'Total Modules', colorClass: 'mod-stat--total'     },
 							{ key: 'PUBLISHED', label: 'Published',     colorClass: 'mod-stat--published' },
@@ -88,7 +88,7 @@ export default function ModulesPage() {
 						))}
 					</section>
 
-					<div className="flex items-center justify-between">
+					<div className="flex items-center justify-between flex-wrap gap-3">
 						<h2 className="[font-family:var(--font-outfit)] text-2xl font-semibold text-[#1a3a2a]">Training Modules</h2>
 						<button className="bg-[#1f4d35] text-white [font-family:var(--font-outfit)] text-sm font-medium py-2.5 px-5 rounded-lg border-none cursor-pointer transition-colors duration-200 hover:bg-[#1a3a2a]" onClick={() => navigate('/modules/new')}>
 							+ New Module
@@ -112,7 +112,7 @@ export default function ModulesPage() {
 
 					{!isLoading && !error && (
 						filtered.length > 0 ? (
-							<div className="grid grid-cols-3 gap-4">
+							<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 								{filtered.map(m => (
 									<div key={m.id} className="bg-white border border-[#e7e5e4] rounded-xl p-5 flex flex-col gap-3 transition-[box-shadow,transform] duration-200 hover:shadow-[0_4px_16px_rgba(26,58,42,0.1)] hover:-translate-y-0.5">
 										<div className="flex items-center justify-end">

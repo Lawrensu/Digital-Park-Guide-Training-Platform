@@ -5,8 +5,7 @@ import * as authApi from '../../api/auth.js'
 
 function Login() {
     const [showPassword, setShowPassword] = useState(false)
-    const [rememberMe, setRememberMe]     = useState(false)
-    const [username, setUsername]         = useState('')
+    const [email, setEmail]               = useState('')
     const [password, setPassword]         = useState('')
     const [error, setError]               = useState('')
     const [showResend, setShowResend]     = useState(false)
@@ -18,7 +17,7 @@ function Login() {
     const handleLogin = async (e) => {
         e.preventDefault()
         setError('')
-        const result = await login(username, password)
+        const result = await login(email, password)
         if (!result.success) {
             setError(result.message)
         }
@@ -36,10 +35,10 @@ function Login() {
     }
 
     return (
-        <div className="flex min-h-screen [font-family:'Segoe_UI',system-ui,sans-serif]">
+        <div className="flex flex-col md:flex-row min-h-screen [font-family:'Segoe_UI',system-ui,sans-serif]">
 
-            {/* ── LEFT PANEL ── */}
-            <div className="relative [flex:0_0_48%] bg-[#1b3a2d] flex flex-col justify-between py-10 px-12 overflow-hidden text-white">
+            {/* ── LEFT PANEL — hidden on mobile, visible md+ ── */}
+            <div className="hidden md:flex relative [flex:0_0_48%] bg-[#1b3a2d] flex-col justify-between py-10 px-12 overflow-hidden text-white">
 
                 {/* Decorative circles */}
                 <div className="absolute rounded-full pointer-events-none w-95 h-95 -top-30 -right-15 bg-[radial-gradient(circle_at_42%_40%,rgba(120,180,140,0.35)_0%,rgba(80,140,100,0.18)_40%,rgba(50,100,70,0.08)_65%,transparent_85%)]" />
@@ -70,22 +69,6 @@ function Login() {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-8">
-                        <div className="flex flex-col gap-0.5">
-                            <span className="text-[28px] font-bold text-white leading-none">48</span>
-                            <span className="text-[12px] text-white/55">Active Guides</span>
-                        </div>
-                        <div className="w-px h-9 bg-white/20" />
-                        <div className="flex flex-col gap-0.5">
-                            <span className="text-[28px] font-bold text-white leading-none">8</span>
-                            <span className="text-[12px] text-white/55">Modules Live</span>
-                        </div>
-                        <div className="w-px h-9 bg-white/20" />
-                        <div className="flex flex-col gap-0.5">
-                            <span className="text-[28px] font-bold text-white leading-none">156</span>
-                            <span className="text-[12px] text-white/55">Certs Issued</span>
-                        </div>
-                    </div>
                 </div>
 
                 <div className="relative z-[1] text-[12px] text-white/40">
@@ -94,8 +77,8 @@ function Login() {
             </div>
 
             {/* ── RIGHT PANEL ── */}
-            <div className="flex-1 bg-[#f0efe9] flex flex-col items-center justify-center py-12 px-8 gap-5">
-                <div className="bg-white rounded-[16px] shadow-[0_4px_24px_rgba(0,0,0,0.08)] pt-10 px-10 pb-7 w-full max-w-105">
+            <div className="flex-1 bg-[#f0efe9] flex flex-col items-center justify-center py-8 px-4 gap-5 md:py-12 md:px-8">
+                <div className="bg-white rounded-[16px] shadow-[0_4px_24px_rgba(0,0,0,0.08)] pt-8 px-6 pb-6 w-full max-w-105 md:pt-10 md:px-10 md:pb-7">
 
                     <div className="mb-7">
                         <h2 className="text-[24px] font-bold text-[#1a1a1a] mb-1">Welcome back</h2>
@@ -105,8 +88,8 @@ function Login() {
                     <form className="flex flex-col gap-4.5" onSubmit={handleLogin}>
 
                         <div className="flex flex-col gap-1.5">
-                            <label htmlFor="username" className="text-[13px] font-medium text-[#1a1a1a]">
-                                Username
+                            <label htmlFor="email" className="text-[13px] font-medium text-[#1a1a1a]">
+                                Email
                             </label>
                             <div className="relative flex items-center">
                                 <span className="absolute left-3 text-[#9ca3af] flex items-center pointer-events-none">
@@ -116,11 +99,11 @@ function Login() {
                                     </svg>
                                 </span>
                                 <input
-                                    id="username"
-                                    type="text"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                    autoComplete="username"
+                                    id="email"
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    autoComplete="email"
                                     className="w-full py-2.5 pr-10 pl-9 border border-[#e2e2dc] rounded-[8px] bg-[#f9f9f7] text-[14px] text-[#1a1a1a] outline-none transition-[border-color] duration-200 focus:border-[#2d6a4f]"
                                 />
                             </div>
@@ -167,16 +150,6 @@ function Login() {
                             </div>
                         </div>
 
-                        <label className="flex items-center gap-2 text-[13px] text-[#6b7280] cursor-pointer">
-                            <input
-                                type="checkbox"
-                                checked={rememberMe}
-                                onChange={(e) => setRememberMe(e.target.checked)}
-                                className="w-[15px] h-[15px] accent-[#1b3a2d] cursor-pointer"
-                            />
-                            <span>Remember me for 7 days</span>
-                        </label>
-
                         {error && (
                             <p className="text-[13px] text-red-600 bg-red-50 border border-red-200 rounded-[6px] px-3 py-2">
                                 {error}
@@ -209,11 +182,6 @@ function Login() {
                             For access requests, contact your system administrator.
                         </p>
 
-                        <div className="h-px bg-[#e2e2dc]" />
-
-                        <button type="button" className="w-full py-[11px] bg-transparent border border-[#e2e2dc] rounded-[8px] text-[14px] text-[#1a1a1a] cursor-pointer transition-[border-color,background] duration-200 hover:border-[#2d6a4f] hover:bg-[rgba(45,106,79,0.04)]">
-                            Sign in with SSO (Sarawak Gov Portal)
-                        </button>
                     </form>
 
                     <p className="mt-6 text-[11.5px] text-[#9ca3af] text-center">

@@ -50,10 +50,10 @@ const GuideNotification = () => {
 	})
 
 	return (
-		<div className="flex min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
-			<main className="flex-1 p-8 box-border">
+			<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border">
 				<header className="flex justify-between items-center mb-8">
 					<div>
 						<h1 className="text-[1.75rem] text-[#333333] m-0 font-bold">Notifications</h1>

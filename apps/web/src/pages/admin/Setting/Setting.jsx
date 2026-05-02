@@ -59,10 +59,10 @@ export default function SettingPage() {
     }
 
     return (
-        <div className="flex h-screen bg-[#f0f4f1] overflow-hidden">
+        <div className="flex flex-col lg:flex-row h-screen bg-[#f0f4f1] overflow-hidden">
             <Navbar />
 
-            <main className="flex-1 overflow-y-auto p-8">
+            <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
                 <div className="max-w-4xl mx-auto">
 
                     <div className="mb-6">

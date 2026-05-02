@@ -91,13 +91,13 @@ const GuideModule = () => {
 	]
 
 	return (
-		<div className="flex min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
-			<main className="flex-1 p-8 box-border">
+			<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border">
 				<h1 className="text-[1.75rem] text-[#333333] m-0 mb-6 font-bold">My Modules</h1>
 
-				<div className="grid grid-cols-4 gap-6 mb-10">
+				<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10">
 					{stats.map((stat, index) => (
 						<div key={index} className="bg-white p-6 rounded-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.05)] flex flex-col justify-center items-center text-center border-t-4 border-t-[#2E7D32]">
 							<div className="text-[2rem] font-bold text-[#2E7D32] mb-1">{stat.count}</div>
@@ -109,7 +109,7 @@ const GuideModule = () => {
 				{isLoading && <p className="text-center py-8 text-[#666666]">Loading modules…</p>}
 
 				{!isLoading && (
-					<div className="grid grid-cols-[repeat(auto-fill,minmax(350px,1fr))] gap-6">
+					<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
 						{modules.length > 0 ? modules.map((mod) => {
 							const { status, statusClass, actionType, progress, dueAt } = getModuleState(mod)
 							const itemCount = mod._count?.contentItems ?? mod.contentItems?.length ?? 0

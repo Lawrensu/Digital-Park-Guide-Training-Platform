@@ -31,10 +31,10 @@ const GuideCertifications = () => {
 	}
 
 	return (
-		<div className="flex min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
-			<main className="flex-1 p-8 box-border">
+			<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border">
 				<header>
 					<h1 className="text-[1.75rem] text-[#333333] m-0 mb-8 font-bold">My Certificates</h1>
 				</header>
@@ -67,8 +67,8 @@ const GuideCertifications = () => {
 						{certs.length > 0 ? certs.map(cert => {
 							const isExpired = cert.expiresAt && new Date(cert.expiresAt) <= new Date()
 							return (
-								<div key={cert.id} className="bg-white p-6 rounded-[12px] flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[#E0E0E0]">
-									<div className="flex items-center gap-6">
+								<div key={cert.id} className="bg-white p-4 sm:p-6 rounded-[12px] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[#E0E0E0]">
+									<div className="flex items-center gap-4 sm:gap-6">
 										<div className="w-14 h-14 bg-[#FFF8E1] text-[#FBC02D] rounded-full flex items-center justify-center text-[1.75rem]">🎓</div>
 										<div>
 											<h4 className="m-0 mb-1 text-[1.1rem] text-[#333333]">{cert.enrolment?.module?.title ?? '—'}</h4>

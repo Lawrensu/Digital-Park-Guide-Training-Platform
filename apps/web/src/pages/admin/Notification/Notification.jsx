@@ -117,11 +117,11 @@ export default function NotificationPage() {
 	}
 
 	return (
-		<div className="flex min-h-screen bg-[#fdfbf7]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 			<Navbar />
 
 			<div className="flex-1 flex flex-col min-w-0">
-				<header className="flex items-center justify-between px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
+				<header className="flex items-center justify-between px-4 sm:px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
 					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">Notifications</h1>
 					<div className="flex items-center gap-3">
 						<button className="w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" aria-label="Notifications">
@@ -133,11 +133,11 @@ export default function NotificationPage() {
 					</div>
 				</header>
 
-				<main className="flex-1 p-8 flex flex-col gap-6 overflow-y-auto">
+				<main className="flex-1 p-4 sm:p-6 lg:p-8 flex flex-col gap-6 overflow-y-auto">
 
 					<div className="bg-white border border-[#e7e5e4] rounded-xl p-6 flex flex-col gap-5">
 						<h2 className="[font-family:var(--font-outfit)] text-[18px] font-semibold text-[#1a3a2a]">Send Custom Notification</h2>
-						<div className="grid grid-cols-[auto_1fr] gap-6 items-start">
+						<div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-6 items-start">
 							<div className="flex flex-col gap-1.5">
 								<label className="[font-family:var(--font-outfit)] text-[13px] font-medium text-[#44403c]">Recipient</label>
 								<select

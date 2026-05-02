@@ -78,9 +78,9 @@ const GuideModuleDetail = () => {
 
 	if (isLoading) {
 		return (
-			<div className="flex min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 				<GuideNavbar />
-				<main className="flex-1 p-8 box-border">
+				<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border">
 					<p className="text-center py-12 text-[#666666]">Loading module…</p>
 				</main>
 			</div>
@@ -88,12 +88,12 @@ const GuideModuleDetail = () => {
 	}
 
 	return (
-		<div className="flex min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
-			<main className="flex-1 p-8 box-border">
+			<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border">
 
-				<div className="mb-8 flex items-center justify-between">
+				<div className="mb-8 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
 					<h1 className="text-[2rem] font-bold text-[#333333] m-0">{module?.title ?? '—'}</h1>
 					{!isEnrolled && (
 						<button
@@ -125,7 +125,7 @@ const GuideModuleDetail = () => {
 					</div>
 				)}
 
-				<div className="grid grid-cols-[2fr_1fr] gap-8 items-start">
+				<div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 items-start">
 
 					<div className="flex flex-col gap-4">
 						{!isEnrolled && (

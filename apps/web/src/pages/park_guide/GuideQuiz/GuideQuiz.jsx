@@ -84,7 +84,7 @@ export default function GuideQuizPage() {
 
 	if (isLoading) {
 		return (
-			<div className="flex min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 				<GuideNavbar />
 				<main className="flex-1 p-8"><p className="text-center py-12 text-[#666666]">Loading quiz…</p></main>
 			</div>
@@ -93,7 +93,7 @@ export default function GuideQuizPage() {
 
 	if (error || !quiz) {
 		return (
-			<div className="flex min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 				<GuideNavbar />
 				<main className="flex-1 p-8"><p className="text-center py-12 text-red-500">Quiz not found.</p></main>
 			</div>
@@ -103,7 +103,7 @@ export default function GuideQuizPage() {
 	const trueFalseOptions = ['True', 'False']
 
 	return (
-		<div className="flex min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
 			<div className="flex flex-col flex-1 overflow-hidden">

@@ -640,16 +640,16 @@ export default function ContentBuilderPage() {
 	}
 
 	return (
-		<div className="flex min-h-screen bg-[#f3f4f6]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#f3f4f6]">
 			<Navbar />
 
 			<div className="flex flex-col flex-1 overflow-hidden">
 
-				<header className="flex items-center justify-between px-8 h-16 bg-white border-b border-[#e5e7eb]">
+				<header className="flex items-center justify-between px-4 sm:px-8 h-16 bg-white border-b border-[#e5e7eb]">
 					<h1 className="text-xl font-semibold text-[#111827] m-0">Content Builder</h1>
 				</header>
 
-				<main className="flex-1 p-8 overflow-y-auto">
+				<main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
 
 					<div className="flex justify-between items-center mb-6">
 						<button

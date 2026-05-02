@@ -55,19 +55,28 @@
 /* ─────────────────────────────────────────
    BASE
 ───────────────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
 
-html, body, #root {
-  height: 100%;
-}
+/*
+  The reset must live inside @layer base so that Tailwind's @layer utilities
+  still wins in the cascade. Unlayered CSS always beats layered CSS in CSS4,
+  so leaving this outside a layer would silently override every p-*, m-*, gap-*
+  utility class across the entire app.
+*/
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-body {
-  font-family: var(--font-outfit);
-  background-color: var(--secondary-100);
-  color: var(--stone-900);
-  -webkit-font-smoothing: antialiased;
+  html, body, #root {
+    height: 100%;
+  }
+
+  body {
+    font-family: var(--font-outfit);
+    background-color: var(--secondary-100);
+    color: var(--stone-900);
+    -webkit-font-smoothing: antialiased;
+  }
 }

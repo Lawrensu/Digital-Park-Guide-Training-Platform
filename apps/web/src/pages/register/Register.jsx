@@ -66,7 +66,7 @@ export default function Register() {
 
 	return (
 		<div className="min-h-screen bg-[#fdfbf7] flex items-center justify-center px-4 py-10">
-			<div className="bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] p-10 w-full max-w-lg">
+			<div className="bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] p-6 sm:p-10 w-full max-w-lg">
 				<div className="flex items-center gap-3 mb-8">
 					<div className="w-10 h-10 bg-[#1a3a2a] rounded-lg flex items-center justify-center shrink-0">
 						<span className="text-lg">🌿</span>
@@ -89,7 +89,7 @@ export default function Register() {
 				</p>
 
 				<form onSubmit={handleSubmit} className="flex flex-col gap-5">
-					<div className="grid grid-cols-2 gap-4">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 						<div className="flex flex-col gap-1.5">
 							<label className="[font-family:var(--font-outfit)] text-[13px] font-medium text-[#1c1917]">First Name</label>
 							<input

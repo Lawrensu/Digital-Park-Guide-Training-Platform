@@ -55,7 +55,7 @@ export default function RegistrationDetails() {
 
 	if (isLoading) {
 		return (
-			<div className="flex min-h-screen bg-[#fdfbf7]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
 					<p className="[font-family:var(--font-outfit)] text-sm text-[#a8a29e]">Loading…</p>
@@ -66,7 +66,7 @@ export default function RegistrationDetails() {
 
 	if (error || !reg) {
 		return (
-			<div className="flex min-h-screen bg-[#fdfbf7]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
 					<p className="[font-family:var(--font-outfit)] text-sm text-red-500">Failed to load registration.</p>
@@ -79,11 +79,11 @@ export default function RegistrationDetails() {
 	const actionPending = approveMutation.isPending || rejectMutation.isPending
 
 	return (
-		<div className="bg-[#fdfbf7] min-h-screen flex">
+		<div className="bg-[#fdfbf7] min-h-screen flex flex-col lg:flex-row">
 			<Navbar />
 
-			<div className="flex-1 p-8 overflow-auto">
-				<div className="flex justify-between items-center mb-8">
+			<div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto">
+				<div className="flex justify-between items-center flex-wrap gap-3 mb-8">
 					<div className="flex items-center gap-4">
 						<button
 							onClick={() => navigate('/registrations')}

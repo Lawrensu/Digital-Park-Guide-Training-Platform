@@ -50,11 +50,11 @@ export default function QuizPage() {
 	})
 
 	return (
-		<div className="flex min-h-screen bg-[#fdfbf7]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 			<Navbar />
 
 			<div className="flex-1 flex flex-col min-w-0">
-				<header className="flex items-center justify-between px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
+				<header className="flex items-center justify-between px-4 sm:px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
 					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">Quiz Reviews</h1>
 					<div className="flex items-center gap-3">
 						<button className="w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" aria-label="Notifications">
@@ -66,9 +66,9 @@ export default function QuizPage() {
 					</div>
 				</header>
 
-				<main className="flex-1 p-8 flex flex-col gap-6 overflow-y-auto">
+				<main className="flex-1 p-4 sm:p-6 lg:p-8 flex flex-col gap-6 overflow-y-auto">
 
-					<section className="grid grid-cols-3 gap-4">
+					<section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 						{[
 							{ key: 'all',            label: 'Total Submissions', colorClass: 'quiz-stat--total'   },
 							{ key: 'PENDING_REVIEW', label: 'Pending Review',    colorClass: 'quiz-stat--pending' },
@@ -86,14 +86,14 @@ export default function QuizPage() {
 					</section>
 
 					<section className="bg-white border border-[#e7e5e4] rounded-xl overflow-hidden">
-						<div className="flex items-center justify-between px-6 py-4 border-b border-[#f5f5f4]">
-							<div className="relative flex items-center">
+						<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-6 py-4 border-b border-[#f5f5f4]">
+							<div className="relative flex items-center flex-1 sm:flex-none">
 								<svg className="absolute left-3 text-[#a8a29e] pointer-events-none" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
 									<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
 								</svg>
 								<input
 									type="text"
-									className="py-[9px] pr-3.5 pl-9 w-75 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] transition-[border-color,background] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
+									className="py-[9px] pr-3.5 pl-9 w-full sm:w-75 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] transition-[border-color,background] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
 									placeholder="Search guide, module or quiz…"
 									value={searchQuery}
 									onChange={e => setSearchQuery(e.target.value)}

@@ -110,7 +110,7 @@ export default function GuideDetailPage() {
 
 	if (loadingGuide) {
 		return (
-			<div className="flex min-h-screen bg-[#fdfbf7]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
 					<p className="[font-family:var(--font-outfit)] text-sm text-[#a8a29e]">Loading…</p>
@@ -121,7 +121,7 @@ export default function GuideDetailPage() {
 
 	if (guideError || !guide) {
 		return (
-			<div className="flex min-h-screen bg-[#fdfbf7]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
 					<p className="[font-family:var(--font-outfit)] text-sm text-red-500">Failed to load guide.</p>
@@ -141,11 +141,11 @@ export default function GuideDetailPage() {
 	]
 
 	return (
-		<div className="flex min-h-screen bg-[#fdfbf7]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 			<Navbar />
 
 			<div className="flex-1 flex flex-col min-w-0">
-				<header className="flex items-center justify-between px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
+				<header className="flex items-center justify-between px-4 sm:px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
 					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">Guides</h1>
 					<div className="flex items-center gap-3">
 						<button className="w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" aria-label="Notifications">
@@ -157,7 +157,7 @@ export default function GuideDetailPage() {
 					</div>
 				</header>
 
-				<main className="flex-1 p-8 overflow-y-auto">
+				<main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
 
 					<div className="flex items-center gap-4 mb-8">
 						<button onClick={() => navigate('/guides')} className="[font-family:var(--font-outfit)] text-sm text-[#78716c] hover:text-[#1a3a2a] transition-colors">
@@ -179,7 +179,7 @@ export default function GuideDetailPage() {
 						</div>
 					</div>
 
-					<div className="grid grid-cols-5 gap-4 mb-6">
+					<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
 						{stats.map((stat, i) => (
 							<div key={i} className="bg-white border border-[#e7e5e4] rounded-xl px-5 py-4 flex items-center gap-4">
 								<div className="w-10 h-10 bg-[#f3faf6] text-[#2d7d4e] rounded-lg flex items-center justify-center shrink-0">{stat.icon}</div>
@@ -191,7 +191,7 @@ export default function GuideDetailPage() {
 						))}
 					</div>
 
-					<div className="grid grid-cols-[2fr_1fr] gap-6">
+					<div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
 
 						<div className="bg-white border border-[#e7e5e4] rounded-xl overflow-hidden">
 							<div className="flex justify-between items-center px-6 py-4 border-b border-[#f5f5f4]">

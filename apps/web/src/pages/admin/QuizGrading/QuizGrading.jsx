@@ -57,7 +57,7 @@ export default function QuizGradingPage() {
 
 	if (isLoading) {
 		return (
-			<div className="flex min-h-screen bg-[#fdfbf7]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
 					<p className="[font-family:var(--font-outfit)] text-sm text-[#a8a29e]">Loading…</p>
@@ -68,7 +68,7 @@ export default function QuizGradingPage() {
 
 	if (error || !attempt) {
 		return (
-			<div className="flex min-h-screen bg-[#fdfbf7]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
 					<p className="[font-family:var(--font-outfit)] text-sm text-red-500">Failed to load quiz attempt.</p>
@@ -86,7 +86,7 @@ export default function QuizGradingPage() {
 	const guideName   = `${attempt.guide?.firstName ?? ''} ${attempt.guide?.lastName ?? ''}`
 
 	return (
-		<div className="flex min-h-screen bg-[#fdfbf7]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 			<Navbar />
 
 			{failToast && (
@@ -96,7 +96,7 @@ export default function QuizGradingPage() {
 			)}
 
 			<div className="flex-1 flex flex-col min-w-0">
-				<header className="flex items-center justify-between px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
+				<header className="flex items-center justify-between px-4 sm:px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
 					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">Quiz Reviews</h1>
 					<div className="flex items-center gap-3">
 						<button className="w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" aria-label="Notifications">
@@ -108,7 +108,7 @@ export default function QuizGradingPage() {
 					</div>
 				</header>
 
-				<main className="flex-1 p-8 overflow-y-auto">
+				<main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
 
 					<div className="flex items-center gap-4 mb-8">
 						<button onClick={() => navigate('/quiz-reviews')} className="[font-family:var(--font-outfit)] text-sm text-[#78716c] hover:text-[#1a3a2a] transition-colors">
@@ -116,7 +116,7 @@ export default function QuizGradingPage() {
 						</button>
 					</div>
 
-					<div className="grid grid-cols-[2.5fr_1fr] gap-8 items-start">
+					<div className="grid grid-cols-1 lg:grid-cols-[2.5fr_1fr] gap-8 items-start">
 
 						<div className="flex flex-col gap-6">
 
