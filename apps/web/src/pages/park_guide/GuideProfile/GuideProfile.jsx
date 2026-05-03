@@ -63,19 +63,19 @@ const GuideProfile = () => {
 	}
 
 	return (
-		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] font-['Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
 			<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border flex flex-col">
 
-				<div className="bg-white rounded-[12px] p-6 sm:p-10 text-center shadow-[0_2px_8px_rgba(0,0,0,0.05)] mb-8 relative overflow-hidden before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-20 before:bg-[#2E7D32] before:z-0">
-					<div className="w-25 h-25 bg-white text-[#2E7D32] rounded-full flex items-center justify-center text-[2.5rem] font-bold mx-auto mb-4 relative z-[1] border-4 border-white shadow-[0_4px_6px_rgba(0,0,0,0.1)]">
+				<div className="bg-white rounded-xl p-6 sm:p-10 text-center shadow-[0_2px_8px_rgba(0,0,0,0.05)] mb-8 relative overflow-hidden before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-20 before:bg-[#2E7D32] before:z-0">
+					<div className="w-25 h-25 bg-white text-[#2E7D32] rounded-full flex items-center justify-center text-[2.5rem] font-bold mx-auto mb-4 relative z-1 border-4 border-white shadow-[0_4px_6px_rgba(0,0,0,0.1)]">
 						{initials}
 					</div>
-					<h1 className="text-[1.5rem] font-bold text-[#333333] m-0 mb-2 relative z-[1]">
+					<h1 className="text-[1.5rem] font-bold text-[#333333] m-0 mb-2 relative z-1">
 						{displayName || '—'}
 					</h1>
-					<div className="inline-block bg-[#E8F5E9] text-[#2E7D32] py-1 px-4 rounded-[20px] text-[0.9rem] font-semibold relative z-[1]">
+					<div className="inline-block bg-[#E8F5E9] text-[#2E7D32] py-1 px-4 rounded-[20px] text-[0.9rem] font-semibold relative z-1">
 						Park Guide · {me?.status ?? ''}
 					</div>
 				</div>
@@ -87,7 +87,7 @@ const GuideProfile = () => {
 						{ label: 'Certificates',      value: certs.length      },
 						{ label: 'Quizzes',           value: attempts.length   },
 					].map((stat, i) => (
-						<div key={i} className="bg-white p-6 rounded-[12px] text-center shadow-[0_1px_3px_rgba(0,0,0,0.05)] border-t-4 border-t-[#2E7D32]">
+						<div key={i} className="bg-white p-6 rounded-xl text-center shadow-[0_1px_3px_rgba(0,0,0,0.05)] border-t-4 border-t-[#2E7D32]">
 							<h3 className="text-[2rem] font-bold text-[#2E7D32] m-0">{stat.value}</h3>
 							<p className="text-[0.9rem] text-[#666666] m-0 mt-2">{stat.label}</p>
 						</div>
@@ -96,7 +96,7 @@ const GuideProfile = () => {
 
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8">
 
-					<div className="bg-white p-6 rounded-[12px] shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+					<div className="bg-white p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
 						<h2 className="text-[1.1rem] font-bold text-[#333333] m-0 mb-6 pb-3 border-b border-[#f0f0f0]">Personal Information</h2>
 						{[
 							['Username', me?.username ?? '—'],
@@ -110,23 +110,23 @@ const GuideProfile = () => {
 						))}
 					</div>
 
-					<div className="bg-white p-6 rounded-[12px] shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+					<div className="bg-white p-6 rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
 						<h2 className="text-[1.1rem] font-bold text-[#333333] m-0 mb-6 pb-3 border-b border-[#f0f0f0]">My Certifications</h2>
 						{certs.length > 0 ? certs.map(cert => (
 							<div key={cert.id} className="flex items-center justify-between py-4 border-b border-[#f9f9f9] last:border-b-0">
 								<div className="flex items-center gap-3">
-									<div className="w-10 h-10 bg-[#FFF8E1] text-[#FBC02D] rounded-[8px] flex items-center justify-center text-[1.25rem]">🎓</div>
+									<div className="w-10 h-10 bg-[#FFF8E1] text-[#FBC02D] rounded-lg flex items-center justify-center text-[1.25rem]">🎓</div>
 									<span className="text-[0.95rem] font-semibold text-[#333333]">{cert.enrolment?.module?.title ?? '—'}</span>
 								</div>
 								<div className="flex gap-2">
 									<button
-										className="py-[0.35rem] px-3 text-[0.8rem] rounded-[4px] cursor-pointer font-semibold bg-[#FFEBEE] text-[#D32F2F] border border-[#FFCDD2]"
+										className="py-[0.35rem] px-3 text-[0.8rem] rounded-sm cursor-pointer font-semibold bg-[#FFEBEE] text-[#D32F2F] border border-[#FFCDD2]"
 										onClick={() => handleDownload(cert.id)}
 									>
 										PDF
 									</button>
 									<button
-										className="py-[0.35rem] px-3 text-[0.8rem] rounded-[4px] cursor-pointer font-semibold bg-[#F5F5F5] text-[#666666] border-none"
+										className="py-[0.35rem] px-3 text-[0.8rem] rounded-sm cursor-pointer font-semibold bg-[#F5F5F5] text-[#666666] border-none"
 										onClick={() => navigate(`/guide/certifications/${cert.id}`)}
 									>
 										View
@@ -142,7 +142,7 @@ const GuideProfile = () => {
 
 				<div className="flex justify-end gap-4 mt-auto">
 					<button
-						className="py-3 px-8 rounded-[8px] text-[1rem] font-semibold cursor-pointer border-0 transition-all duration-200 bg-[#D32F2F] text-white hover:bg-[#B71C1C]"
+						className="py-3 px-8 rounded-lg text-[1rem] font-semibold cursor-pointer border-0 transition-all duration-200 bg-[#D32F2F] text-white hover:bg-[#B71C1C]"
 						onClick={() => logout()}
 					>
 						Log Out

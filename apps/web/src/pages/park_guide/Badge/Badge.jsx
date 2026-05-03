@@ -51,7 +51,7 @@ export default function BadgePage() {
 	const totalCount = allBadgesData?.length ?? 0
 
 	return (
-		<div className="flex flex-col lg:flex-row min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#f3f4f6] font-['Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
 			<div className="flex flex-col flex-1 overflow-hidden">
@@ -61,11 +61,11 @@ export default function BadgePage() {
 					</header>
 
 					<div className="grid grid-cols-2 gap-4 sm:gap-6 mb-10">
-						<div className="bg-white p-6 rounded-[8px] shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] flex flex-col justify-center items-center border-t-4 border-t-[#10b981]">
+						<div className="bg-white p-6 rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] flex flex-col justify-center items-center border-t-4 border-t-[#10b981]">
 							<div className="text-[2.5rem] font-bold text-[#111827] leading-none mb-2">{earned.length}</div>
 							<div className="text-[0.9rem] text-[#6b7280] font-medium uppercase tracking-[0.05em]">Badges Earned</div>
 						</div>
-						<div className="bg-white p-6 rounded-[8px] shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] flex flex-col justify-center items-center border-t-4 border-t-[#2E7D32]">
+						<div className="bg-white p-6 rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] flex flex-col justify-center items-center border-t-4 border-t-[#2E7D32]">
 							<div className="text-[2.5rem] font-bold text-[#111827] leading-none mb-2">{totalCount > 0 ? Math.round((earned.length / totalCount) * 100) : 0}%</div>
 							<div className="text-[0.9rem] text-[#6b7280] font-medium uppercase tracking-[0.05em]">Collection Complete</div>
 						</div>
@@ -81,7 +81,7 @@ export default function BadgePage() {
 									const badge = userBadge.badge ?? userBadge
 									const color = BADGE_COLORS[i % BADGE_COLORS.length]
 									return (
-										<div key={userBadge.id} className="bg-white border border-[#e5e7eb] rounded-[8px] p-6 text-center transition-[transform,box-shadow] duration-200 flex flex-col items-center shadow-[0_4px_6px_rgba(0,0,0,0.05)] hover:-translate-y-1 hover:shadow-[0_10px_15px_rgba(0,0,0,0.1)]">
+										<div key={userBadge.id} className="bg-white border border-[#e5e7eb] rounded-lg p-6 text-center transition-[transform,box-shadow] duration-200 flex flex-col items-center shadow-[0_4px_6px_rgba(0,0,0,0.05)] hover:-translate-y-1 hover:shadow-[0_10px_15px_rgba(0,0,0,0.1)]">
 											<div className="mb-4" style={{ color }}>
 												<StarIcon />
 											</div>
@@ -90,7 +90,7 @@ export default function BadgePage() {
 												<p className="m-0 text-[0.8rem] text-[#6b7280] leading-[1.4] mb-3">{badge.description}</p>
 											)}
 											<div className="flex flex-col gap-1 mt-auto w-full">
-												<span className="text-[0.75rem] text-[#6b7280] bg-[#f3f4f6] py-1 px-2 rounded-[4px]">
+												<span className="text-[0.75rem] text-[#6b7280] bg-[#f3f4f6] py-1 px-2 rounded-sm">
 													📅 {new Date(userBadge.awardedAt ?? userBadge.createdAt).toLocaleDateString()}
 												</span>
 											</div>

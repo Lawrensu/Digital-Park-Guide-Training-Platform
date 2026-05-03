@@ -59,7 +59,7 @@ export default function IoTAlertDetailPage() {
 			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
-					<p className="[font-family:var(--font-outfit)] text-sm text-[#a8a29e]">Loading…</p>
+					<p className="font-outfit text-sm text-[#a8a29e]">Loading…</p>
 				</div>
 			</div>
 		)
@@ -70,7 +70,7 @@ export default function IoTAlertDetailPage() {
 			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
-					<p className="[font-family:var(--font-outfit)] text-sm text-red-500">Failed to load alert.</p>
+					<p className="font-outfit text-sm text-red-500">Failed to load alert.</p>
 				</div>
 			</div>
 		)
@@ -84,14 +84,14 @@ export default function IoTAlertDetailPage() {
 
 			<div className="flex-1 flex flex-col min-w-0">
 				<header className="flex items-center justify-between px-4 sm:px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
-					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">IoT Alerts</h1>
+					<h1 className="font-outfit text-[20px] font-semibold text-[#1c1917]">IoT Alerts</h1>
 					<div className="flex items-center gap-3">
 						<button className="w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" aria-label="Notifications">
 							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
 								<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
 							</svg>
 						</button>
-						<div className="w-9 h-9 rounded-full bg-[#2d7d4e] flex items-center justify-center [font-family:var(--font-outfit)] text-xs font-semibold text-white">AM</div>
+						<div className="w-9 h-9 rounded-full bg-[#2d7d4e] flex items-center justify-center font-outfit text-xs font-semibold text-white">AM</div>
 					</div>
 				</header>
 
@@ -100,13 +100,13 @@ export default function IoTAlertDetailPage() {
 					<div className="flex items-center gap-4 mb-8">
 						<button
 							onClick={() => navigate('/iot-alerts')}
-							className="[font-family:var(--font-outfit)] text-sm text-[#78716c] hover:text-[#1a3a2a] transition-colors"
+							className="font-outfit text-sm text-[#78716c] hover:text-[#1a3a2a] transition-colors"
 						>
 							← Back
 						</button>
-						<h2 className="[font-family:var(--font-outfit)] font-semibold text-[28px] text-[#1a3a2a] m-0">{alert.alertType}</h2>
+						<h2 className="font-outfit font-semibold text-[28px] text-[#1a3a2a] m-0">{alert.alertType}</h2>
 						<span
-							className="inline-flex items-center py-1 px-3 rounded-full [font-family:var(--font-outfit)] text-xs font-medium"
+							className="inline-flex items-center py-1 px-3 rounded-full font-outfit text-xs font-medium"
 							style={{ backgroundColor: style.bg, color: style.text }}
 						>
 							{SEVERITY_LABEL[alert.severity] ?? alert.severity}
@@ -118,28 +118,28 @@ export default function IoTAlertDetailPage() {
 						<div className="lg:col-span-2 space-y-6">
 
 							<div className="bg-white border border-[#f0e9db] rounded-xl p-6">
-								<h3 className="[font-family:var(--font-outfit)] font-medium text-[20px] text-[#1a3a2a] mb-6 border-b border-[#f0e9db] pb-3">Alert Details</h3>
+								<h3 className="font-outfit font-medium text-[20px] text-[#1a3a2a] mb-6 border-b border-[#f0e9db] pb-3">Alert Details</h3>
 								<div className="grid grid-cols-2 gap-6">
 									<div className="flex flex-col gap-1">
-										<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Device</label>
-										<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a]">{alert.device?.serialNumber ?? '—'}</p>
+										<label className="font-outfit font-medium text-sm text-gray-500">Device</label>
+										<p className="font-serif text-base text-[#1a3a2a]">{alert.device?.serialNumber ?? '—'}</p>
 									</div>
 									<div className="flex flex-col gap-1">
-										<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Station</label>
-										<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a]">{alert.device?.station?.name ?? '—'}</p>
+										<label className="font-outfit font-medium text-sm text-gray-500">Station</label>
+										<p className="font-serif text-base text-[#1a3a2a]">{alert.device?.station?.name ?? '—'}</p>
 									</div>
 									<div className="flex flex-col gap-1">
-										<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Triggered At</label>
-										<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a]">{new Date(alert.triggeredAt).toLocaleString()}</p>
+										<label className="font-outfit font-medium text-sm text-gray-500">Triggered At</label>
+										<p className="font-serif text-base text-[#1a3a2a]">{new Date(alert.triggeredAt).toLocaleString()}</p>
 									</div>
 									<div className="flex flex-col gap-1">
-										<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Confidence</label>
-										<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a]">{alert.confidenceScore != null ? `${alert.confidenceScore}%` : '—'}</p>
+										<label className="font-outfit font-medium text-sm text-gray-500">Confidence</label>
+										<p className="font-serif text-base text-[#1a3a2a]">{alert.confidenceScore != null ? `${alert.confidenceScore}%` : '—'}</p>
 									</div>
 									{alert.payload && (
 										<div className="flex flex-col gap-1 col-span-2">
-											<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Payload</label>
-											<pre className="[font-family:var(--font-serif)] text-sm text-[#1a3a2a] whitespace-pre-wrap break-all bg-[#fafaf9] border border-[#f0e9db] rounded-lg p-3">{typeof alert.payload === 'string' ? alert.payload : JSON.stringify(alert.payload, null, 2)}</pre>
+											<label className="font-outfit font-medium text-sm text-gray-500">Payload</label>
+											<pre className="font-serif text-sm text-[#1a3a2a] whitespace-pre-wrap break-all bg-[#fafaf9] border border-[#f0e9db] rounded-lg p-3">{typeof alert.payload === 'string' ? alert.payload : JSON.stringify(alert.payload, null, 2)}</pre>
 										</div>
 									)}
 								</div>
@@ -147,15 +147,15 @@ export default function IoTAlertDetailPage() {
 
 							{alert.evidenceS3Key && (
 								<div className="bg-white border border-[#f0e9db] rounded-xl p-6">
-									<h3 className="[font-family:var(--font-outfit)] font-medium text-[20px] text-[#1a3a2a] mb-4 border-b border-[#f0e9db] pb-3">Evidence</h3>
+									<h3 className="font-outfit font-medium text-[20px] text-[#1a3a2a] mb-4 border-b border-[#f0e9db] pb-3">Evidence</h3>
 									<div className="flex items-center gap-4 bg-[#f9f5ed] p-4 rounded-lg border border-[#f0e9db]">
 										<div className="flex-1">
-											<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a] font-medium">Captured Evidence</p>
-											<p className="[font-family:var(--font-serif)] text-sm text-gray-500">Click View to open the pre-signed URL</p>
+											<p className="font-serif text-base text-[#1a3a2a] font-medium">Captured Evidence</p>
+											<p className="font-serif text-sm text-gray-500">Click View to open the pre-signed URL</p>
 										</div>
 										<button
 											onClick={handleEvidenceUrl}
-											className="[font-family:var(--font-outfit)] font-medium text-sm text-[#b35c2a] border border-[#b35c2a] rounded-lg px-4 py-2 bg-transparent cursor-pointer hover:bg-[#fdfbf7] transition-colors"
+											className="font-outfit font-medium text-sm text-[#b35c2a] border border-[#b35c2a] rounded-lg px-4 py-2 bg-transparent cursor-pointer hover:bg-[#fdfbf7] transition-colors"
 										>
 											View
 										</button>
@@ -166,30 +166,30 @@ export default function IoTAlertDetailPage() {
 
 						<div className="space-y-6">
 							<div className="bg-white border border-[#f0e9db] rounded-xl p-6">
-								<h3 className="[font-family:var(--font-outfit)] font-medium text-[20px] text-[#1a3a2a] mb-4">Flag Status</h3>
+								<h3 className="font-outfit font-medium text-[20px] text-[#1a3a2a] mb-4">Flag Status</h3>
 
 								<div className="mb-4">
-									<span className={`inline-flex items-center py-1 px-3 rounded-full [font-family:var(--font-outfit)] text-xs font-medium ${FLAG_STATUS_BADGE[alert.flagStatus] ?? ''}`}>
+									<span className={`inline-flex items-center py-1 px-3 rounded-full font-outfit text-xs font-medium ${FLAG_STATUS_BADGE[alert.flagStatus] ?? ''}`}>
 										{FLAG_STATUS_LABEL[alert.flagStatus] ?? alert.flagStatus}
 									</span>
 								</div>
 
 								{flagMutation.error && (
-									<p className="[font-family:var(--font-outfit)] text-xs text-red-500 mb-3">Action failed. Please try again.</p>
+									<p className="font-outfit text-xs text-red-500 mb-3">Action failed. Please try again.</p>
 								)}
 
 								<div className="flex flex-col gap-3">
 									<button
 										onClick={() => flagMutation.mutate('CONFIRMED')}
 										disabled={flagMutation.isPending || alert.flagStatus === 'CONFIRMED'}
-										className="w-full py-3 bg-[#1a3a2a] text-white border-none rounded-lg [font-family:var(--font-outfit)] font-medium text-sm cursor-pointer transition-colors duration-200 hover:bg-[#132d20] disabled:opacity-50"
+										className="w-full py-3 bg-[#1a3a2a] text-white border-none rounded-lg font-outfit font-medium text-sm cursor-pointer transition-colors duration-200 hover:bg-[#132d20] disabled:opacity-50"
 									>
 										Confirm Detection
 									</button>
 									<button
 										onClick={() => flagMutation.mutate('FALSE_DETECTION')}
 										disabled={flagMutation.isPending || alert.flagStatus === 'FALSE_DETECTION'}
-										className="w-full py-3 bg-transparent text-[#d32f2f] border border-[#d32f2f] rounded-lg [font-family:var(--font-outfit)] font-medium text-sm cursor-pointer transition-colors duration-200 hover:bg-[#ffebee] disabled:opacity-50"
+										className="w-full py-3 bg-transparent text-[#d32f2f] border border-[#d32f2f] rounded-lg font-outfit font-medium text-sm cursor-pointer transition-colors duration-200 hover:bg-[#ffebee] disabled:opacity-50"
 									>
 										Mark False Detection
 									</button>

@@ -22,16 +22,10 @@ const SidebarContent = ({ navItems, displayName, initials, logout, onClose }) =>
     <>
         <div className="flex items-center justify-between px-1.5 pb-5">
             <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 bg-[#266841] rounded-lg flex items-center justify-center text-lg shrink-0">
-                    🌿
-                </div>
+                <img src="/forest-3d-fluency-32.png" alt="Forest branding" className="w-8 h-8 object-contain" />
                 <div>
-                    <p className="[font-family:var(--font-outfit)] text-[15px] font-semibold text-white leading-[1.3]">
-                        SFC Admin
-                    </p>
-                    <p className="[font-family:var(--font-outfit)] text-[11px] text-white/50 leading-[1.4]">
-                        Management Portal
-                    </p>
+                    <p className="font-outfit text-[15px] font-semibold text-white m-0">SFC</p>
+                    <p className="text-[12px] text-white/60 m-0">Admin Portal</p>
                 </div>
             </div>
             {onClose && (
@@ -54,9 +48,9 @@ const SidebarContent = ({ navItems, displayName, initials, logout, onClose }) =>
                     to={to}
                     onClick={onClose}
                     className={({ isActive }) =>
-                        `flex items-center gap-2.5 px-3 py-2.5 rounded-lg [font-family:var(--font-outfit)] text-[13.5px] font-medium no-underline relative transition-[background-color,color] duration-150 hover:bg-white/[0.07] ${
+                        `flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-outfit text-[13.5px] font-medium no-underline relative transition-[background-color,color] duration-150 hover:bg-white/7 ${
                             isActive
-                                ? 'bg-[#1f4d35] text-white font-semibold before:content-[""] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3px] before:h-5.5 before:bg-[#38945e] before:rounded-[0_3px_3px_0]'
+                                ? 'bg-[#1f4d35] text-white font-semibold before:content-[""] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-0.75 before:h-5.5 before:bg-[#38945e] before:rounded-[0_3px_3px_0]'
                                 : 'text-white/60 hover:text-white/90'
                         }`
                     }
@@ -64,7 +58,7 @@ const SidebarContent = ({ navItems, displayName, initials, logout, onClose }) =>
                     <span className="text-[15px] w-5 text-center shrink-0">{icon}</span>
                     <span className="flex-1">{label}</span>
                     {badge !== null && (
-                        <span className="min-w-4.5 h-4.5 px-[5px] bg-[#c96d38] text-white [font-family:var(--font-outfit)] text-[11px] font-semibold rounded-[9px] flex items-center justify-center">
+                        <span className="min-w-4.5 h-4.5 px-1.25 bg-[#c96d38] text-white font-outfit text-[11px] font-semibold rounded-[9px] flex items-center justify-center">
                             {badge}
                         </span>
                     )}
@@ -76,21 +70,21 @@ const SidebarContent = ({ navItems, displayName, initials, logout, onClose }) =>
         <div className="h-px bg-white/10 mx-1.5 my-1" />
 
         <div className="flex items-center gap-2.5 pt-4 px-1.5 pb-1">
-            <div className="w-9 h-9 bg-[#2d7d4e] rounded-full flex items-center justify-center [font-family:var(--font-outfit)] text-xs font-semibold text-white shrink-0">
+            <div className="w-9 h-9 bg-[#2d7d4e] rounded-full flex items-center justify-center font-outfit text-xs font-semibold text-white shrink-0">
                 {initials}
             </div>
             <div>
-                <p className="[font-family:var(--font-outfit)] text-[13px] font-semibold text-white leading-[1.3]">
+                <p className="font-outfit text-[13px] font-semibold text-white leading-[1.3]">
                     {displayName}
                 </p>
-                <p className="[font-family:var(--font-outfit)] text-[11px] text-white/50">
+                <p className="font-outfit text-[11px] text-white/50">
                     Admin
                 </p>
             </div>
         </div>
 
         <button
-            className="w-full mt-3 p-2.5 bg-white/[0.08] border border-white/[0.15] rounded-lg text-white/75 [font-family:var(--font-outfit)] text-[13px] cursor-pointer transition-[background,color] duration-200 hover:bg-red-500/25 hover:text-white hover:border-red-500/50"
+            className="w-full mt-3 p-2.5 bg-white/8 border border-white/15 rounded-lg text-white/75 font-outfit text-[13px] cursor-pointer transition-[background,color] duration-200 hover:bg-red-500/25 hover:text-white hover:border-red-500/50"
             onClick={logout}
         >
             🚪 Logout
@@ -161,7 +155,7 @@ export default function Navbar() {
             <header className="lg:hidden fixed top-0 inset-x-0 h-14 bg-[#1a3a2a] z-30 flex items-center px-4 gap-3 shadow-md">
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.08] border border-white/[0.15] text-white cursor-pointer hover:bg-white/[0.14] transition-colors relative"
+                    className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/8 border border-white/15 text-white cursor-pointer hover:bg-white/14 transition-colors relative"
                     aria-label="Open menu"
                 >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -170,16 +164,16 @@ export default function Navbar() {
                         <line x1="3" y1="18" x2="21" y2="18" />
                     </svg>
                     {totalBadges > 0 && (
-                        <span className="absolute -top-1 -right-1 min-w-4 h-4 px-[4px] bg-[#c96d38] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                        <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 bg-[#c96d38] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                             {totalBadges}
                         </span>
                     )}
                 </button>
                 <div className="flex items-center gap-2">
                     <div className="w-7 h-7 bg-[#266841] rounded-md flex items-center justify-center text-sm">🌿</div>
-                    <span className="[font-family:var(--font-outfit)] text-[14px] font-semibold text-white">SFC Admin</span>
+                    <span className="font-outfit text-[14px] font-semibold text-white">SFC Admin</span>
                 </div>
-                <div className="ml-auto w-8 h-8 bg-[#2d7d4e] rounded-full flex items-center justify-center [font-family:var(--font-outfit)] text-xs font-semibold text-white shrink-0">
+                <div className="ml-auto w-8 h-8 bg-[#2d7d4e] rounded-full flex items-center justify-center font-outfit text-xs font-semibold text-white shrink-0">
                     {initials}
                 </div>
             </header>

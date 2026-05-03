@@ -122,26 +122,26 @@ export default function NotificationPage() {
 
 			<div className="flex-1 flex flex-col min-w-0">
 				<header className="flex items-center justify-between px-4 sm:px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
-					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">Notifications</h1>
+					<h1 className="font-outfit text-[20px] font-semibold text-[#1c1917]">Notifications</h1>
 					<div className="flex items-center gap-3">
 						<button className="w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" aria-label="Notifications">
 							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
 								<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
 							</svg>
 						</button>
-						<div className="w-9 h-9 rounded-full bg-[#2d7d4e] flex items-center justify-center [font-family:var(--font-outfit)] text-xs font-semibold text-white">AM</div>
+						<div className="w-9 h-9 rounded-full bg-[#2d7d4e] flex items-center justify-center font-outfit text-xs font-semibold text-white">AM</div>
 					</div>
 				</header>
 
 				<main className="flex-1 p-4 sm:p-6 lg:p-8 flex flex-col gap-6 overflow-y-auto">
 
 					<div className="bg-white border border-[#e7e5e4] rounded-xl p-6 flex flex-col gap-5">
-						<h2 className="[font-family:var(--font-outfit)] text-[18px] font-semibold text-[#1a3a2a]">Send Custom Notification</h2>
+						<h2 className="font-outfit text-[18px] font-semibold text-[#1a3a2a]">Send Custom Notification</h2>
 						<div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-6 items-start">
 							<div className="flex flex-col gap-1.5">
-								<label className="[font-family:var(--font-outfit)] text-[13px] font-medium text-[#44403c]">Recipient</label>
+								<label className="font-outfit text-[13px] font-medium text-[#44403c]">Recipient</label>
 								<select
-									className="py-2.5 px-3.5 min-w-50 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] cursor-pointer transition-[border-color] duration-150 focus:outline-none focus:border-[#1a3a2a]"
+									className="py-2.5 px-3.5 min-w-50 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] font-serif text-sm text-[#1c1917] cursor-pointer transition-[border-color] duration-150 focus:outline-none focus:border-[#1a3a2a]"
 									value={targetRole}
 									onChange={e => setTargetRole(e.target.value)}
 								>
@@ -150,10 +150,10 @@ export default function NotificationPage() {
 								</select>
 							</div>
 							<div className="flex flex-col gap-1.5">
-								<label className="[font-family:var(--font-outfit)] text-[13px] font-medium text-[#44403c]">Title</label>
+								<label className="font-outfit text-[13px] font-medium text-[#44403c]">Title</label>
 								<input
 									type="text"
-									className="w-full py-2.5 px-3.5 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] transition-[border-color] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
+									className="w-full py-2.5 px-3.5 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] font-serif text-sm text-[#1c1917] transition-[border-color] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
 									placeholder="Notification title…"
 									value={title}
 									onChange={e => setTitle(e.target.value)}
@@ -161,19 +161,19 @@ export default function NotificationPage() {
 							</div>
 						</div>
 						<div className="flex flex-col gap-1.5">
-							<label className="[font-family:var(--font-outfit)] text-[13px] font-medium text-[#44403c]">Message</label>
+							<label className="font-outfit text-[13px] font-medium text-[#44403c]">Message</label>
 							<textarea
-								className="w-full py-3 px-3.5 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] [font-family:var(--font-serif)] text-sm text-[#1c1917] resize-y transition-[border-color] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
+								className="w-full py-3 px-3.5 border border-[#e7e5e4] rounded-lg bg-[#fafaf9] font-serif text-sm text-[#1c1917] resize-y transition-[border-color] duration-150 placeholder:text-[#a8a29e] focus:outline-none focus:border-[#1a3a2a] focus:bg-white"
 								rows="3"
 								placeholder="Type your notification message here…"
 								value={message}
 								onChange={e => setMessage(e.target.value)}
 							/>
 						</div>
-						{sendError && <p className="[font-family:var(--font-outfit)] text-xs text-red-500">{sendError}</p>}
+						{sendError && <p className="font-outfit text-xs text-red-500">{sendError}</p>}
 						<div className="flex justify-end">
 							<button
-								className="bg-[#b35c2a] text-white [font-family:var(--font-outfit)] text-sm font-medium py-2.5 px-6 rounded-lg border-none cursor-pointer transition-colors duration-200 hover:bg-[#9c4f24] disabled:opacity-50"
+								className="bg-[#b35c2a] text-white font-outfit text-sm font-medium py-2.5 px-6 rounded-lg border-none cursor-pointer transition-colors duration-200 hover:bg-[#9c4f24] disabled:opacity-50"
 								onClick={handleSend}
 								disabled={sendMutation.isPending || !message.trim()}
 							>
@@ -185,14 +185,14 @@ export default function NotificationPage() {
 					<div className="flex flex-col gap-4">
 						<div className="flex items-center justify-between">
 							<div className="flex items-center gap-2.5">
-								<h2 className="[font-family:var(--font-outfit)] text-[18px] font-semibold text-[#1a3a2a]">Inbox</h2>
+								<h2 className="font-outfit text-[18px] font-semibold text-[#1a3a2a]">Inbox</h2>
 								{unreadCount > 0 && (
-									<span className="py-[3px] px-2.5 rounded-full bg-[#fdf0e6] text-[#b35c2a] [font-family:var(--font-outfit)] text-xs font-medium">{unreadCount} unread</span>
+									<span className="py-0.75 px-2.5 rounded-full bg-[#fdf0e6] text-[#b35c2a] font-outfit text-xs font-medium">{unreadCount} unread</span>
 								)}
 							</div>
 							{unreadCount > 0 && (
 								<button
-									className="[font-family:var(--font-outfit)] text-[13px] font-medium text-[#78716c] bg-transparent border-none cursor-pointer p-0 transition-colors duration-150 hover:text-[#1a3a2a] hover:underline disabled:opacity-50"
+									className="font-outfit text-[13px] font-medium text-[#78716c] bg-transparent border-none cursor-pointer p-0 transition-colors duration-150 hover:text-[#1a3a2a] hover:underline disabled:opacity-50"
 									onClick={() => markAllReadMutation.mutate()}
 									disabled={markAllReadMutation.isPending}
 								>
@@ -201,8 +201,8 @@ export default function NotificationPage() {
 							)}
 						</div>
 
-						{isLoading && <p className="text-center py-8 [font-family:var(--font-outfit)] text-sm text-[#a8a29e]">Loading notifications…</p>}
-						{error && <p className="text-center py-8 [font-family:var(--font-outfit)] text-sm text-red-500">Failed to load notifications.</p>}
+						{isLoading && <p className="text-center py-8 font-outfit text-sm text-[#a8a29e]">Loading notifications…</p>}
+						{error && <p className="text-center py-8 font-outfit text-sm text-red-500">Failed to load notifications.</p>}
 
 						{!isLoading && !error && (
 							<div className="flex flex-col gap-2">
@@ -216,16 +216,16 @@ export default function NotificationPage() {
 										<div className="flex-1 flex flex-col gap-1">
 											<div className="flex items-center justify-between gap-2">
 												<div className="flex items-center gap-2">
-													<span className="[font-family:var(--font-outfit)] text-sm font-semibold text-[#1a3a2a]">{notif.title}</span>
+													<span className="font-outfit text-sm font-semibold text-[#1a3a2a]">{notif.title}</span>
 													{!notif.isRead && <span className="w-2 h-2 rounded-full bg-[#b35c2a] shrink-0" aria-hidden />}
 												</div>
-												<span className="[font-family:var(--font-outfit)] text-xs text-[#a8a29e] whitespace-nowrap shrink-0">{new Date(notif.createdAt).toLocaleString()}</span>
+												<span className="font-outfit text-xs text-[#a8a29e] whitespace-nowrap shrink-0">{new Date(notif.createdAt).toLocaleString()}</span>
 											</div>
-											<p className="[font-family:var(--font-serif)] text-sm text-[#78716c] leading-[1.5]">{notif.body}</p>
+											<p className="font-serif text-sm text-[#78716c] leading-[1.5]">{notif.body}</p>
 										</div>
 									</div>
 								)) : (
-									<div className="text-center py-12 [font-family:var(--font-serif)] text-base text-[#a8a29e]">No notifications yet.</div>
+									<div className="text-center py-12 font-serif text-base text-[#a8a29e]">No notifications yet.</div>
 								)}
 							</div>
 						)}
@@ -238,7 +238,7 @@ export default function NotificationPage() {
 				<div className="fixed inset-0 bg-black/45 backdrop-blur-[2px] flex items-center justify-center z-50" onClick={() => setIsModalOpen(false)}>
 					<div className="bg-white rounded-2xl w-[90%] max-w-120 shadow-[0_20px_60px_rgba(0,0,0,0.2)] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
 						<div className="flex items-center justify-between px-6 py-5 border-b border-[#f5f5f4]">
-							<h3 className="[font-family:var(--font-outfit)] text-[18px] font-semibold text-[#1a3a2a]">Notification Details</h3>
+							<h3 className="font-outfit text-[18px] font-semibold text-[#1a3a2a]">Notification Details</h3>
 							<button className="w-8 h-8 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" onClick={() => setIsModalOpen(false)} aria-label="Close">
 								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
 									<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -247,16 +247,16 @@ export default function NotificationPage() {
 						</div>
 						<div className="p-6 flex flex-col gap-4">
 							<div className="flex flex-col gap-1">
-								<p className="[font-family:var(--font-outfit)] text-xs font-medium text-[#a8a29e] uppercase tracking-[0.5px]">Title</p>
-								<p className="[font-family:var(--font-serif)] text-[15px] text-[#1a3a2a] leading-[1.5]">{selectedNotif.title}</p>
+								<p className="font-outfit text-xs font-medium text-[#a8a29e] uppercase tracking-[0.5px]">Title</p>
+								<p className="font-serif text-[15px] text-[#1a3a2a] leading-[1.5]">{selectedNotif.title}</p>
 							</div>
 							<div className="flex flex-col gap-1">
-								<p className="[font-family:var(--font-outfit)] text-xs font-medium text-[#a8a29e] uppercase tracking-[0.5px]">Message</p>
-								<p className="[font-family:var(--font-serif)] text-[15px] text-[#1a3a2a] leading-[1.5]">{selectedNotif.body}</p>
+								<p className="font-outfit text-xs font-medium text-[#a8a29e] uppercase tracking-[0.5px]">Message</p>
+								<p className="font-serif text-[15px] text-[#1a3a2a] leading-[1.5]">{selectedNotif.body}</p>
 							</div>
 						</div>
 						<div className="px-6 py-4 border-t border-[#f5f5f4] flex justify-end">
-							<button className="bg-[#b35c2a] text-white [font-family:var(--font-outfit)] text-sm font-medium py-2.5 px-6 rounded-lg border-none cursor-pointer transition-colors duration-200 hover:bg-[#9c4f24]" onClick={() => setIsModalOpen(false)}>Close</button>
+							<button className="bg-[#b35c2a] text-white font-outfit text-sm font-medium py-2.5 px-6 rounded-lg border-none cursor-pointer transition-colors duration-200 hover:bg-[#9c4f24]" onClick={() => setIsModalOpen(false)}>Close</button>
 						</div>
 					</div>
 				</div>

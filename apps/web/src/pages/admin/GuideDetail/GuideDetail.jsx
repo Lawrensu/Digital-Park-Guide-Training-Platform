@@ -113,7 +113,7 @@ export default function GuideDetailPage() {
 			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
-					<p className="[font-family:var(--font-outfit)] text-sm text-[#a8a29e]">Loading…</p>
+					<p className="font-outfit text-sm text-[#a8a29e]">Loading…</p>
 				</div>
 			</div>
 		)
@@ -124,7 +124,7 @@ export default function GuideDetailPage() {
 			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
-					<p className="[font-family:var(--font-outfit)] text-sm text-red-500">Failed to load guide.</p>
+					<p className="font-outfit text-sm text-red-500">Failed to load guide.</p>
 				</div>
 			</div>
 		)
@@ -146,35 +146,35 @@ export default function GuideDetailPage() {
 
 			<div className="flex-1 flex flex-col min-w-0">
 				<header className="flex items-center justify-between px-4 sm:px-8 h-16 bg-white border-b border-[#e7e5e4] shrink-0">
-					<h1 className="[font-family:var(--font-outfit)] text-[20px] font-semibold text-[#1c1917]">Guides</h1>
+					<h1 className="font-outfit text-[20px] font-semibold text-[#1c1917]">Guides</h1>
 					<div className="flex items-center gap-3">
 						<button className="w-9 h-9 rounded-lg bg-[#f5f5f4] border-none flex items-center justify-center text-[#78716c] cursor-pointer transition-colors duration-150 hover:bg-[#e7e5e4]" aria-label="Notifications">
 							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
 								<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
 							</svg>
 						</button>
-						<div className="w-9 h-9 rounded-full bg-[#2d7d4e] flex items-center justify-center [font-family:var(--font-outfit)] text-xs font-semibold text-white">AM</div>
+						<div className="w-9 h-9 rounded-full bg-[#2d7d4e] flex items-center justify-center font-outfit text-xs font-semibold text-white">AM</div>
 					</div>
 				</header>
 
 				<main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
 
 					<div className="flex items-center gap-4 mb-8">
-						<button onClick={() => navigate('/guides')} className="[font-family:var(--font-outfit)] text-sm text-[#78716c] hover:text-[#1a3a2a] transition-colors">
+						<button onClick={() => navigate('/guides')} className="font-outfit text-sm text-[#78716c] hover:text-[#1a3a2a] transition-colors">
 							← Back
 						</button>
 					</div>
 
 					<div className="bg-white border border-[#f0e9db] rounded-xl p-8 flex items-center gap-6 mb-6 border-l-[5px] border-l-[#2d7d4e]">
-						<div className="w-20 h-20 bg-[#2d7d4e] text-white rounded-full flex items-center justify-center text-[28px] font-bold [font-family:var(--font-outfit)] shrink-0">
+						<div className="w-20 h-20 bg-[#2d7d4e] text-white rounded-full flex items-center justify-center text-[28px] font-bold font-outfit shrink-0">
 							{initials}
 						</div>
 						<div className="flex flex-col gap-2">
-							<h2 className="[font-family:var(--font-outfit)] m-0 text-2xl font-semibold text-[#1c1917]">{guide.firstName} {guide.lastName}</h2>
+							<h2 className="font-outfit m-0 text-2xl font-semibold text-[#1c1917]">{guide.firstName} {guide.lastName}</h2>
 							<div className="flex items-center gap-3">
-								<span className={`inline-flex items-center py-1 px-3 rounded-full [font-family:var(--font-outfit)] text-xs font-medium ${STATUS_BADGE[guide.status] ?? ''}`}>{guide.status}</span>
-								<span className="[font-family:var(--font-outfit)] text-sm text-[#78716c]">{guide.email}</span>
-								{guide.username && <span className="[font-family:var(--font-outfit)] text-sm text-[#44403c]">@{guide.username}</span>}
+								<span className={`inline-flex items-center py-1 px-3 rounded-full font-outfit text-xs font-medium ${STATUS_BADGE[guide.status] ?? ''}`}>{guide.status}</span>
+								<span className="font-outfit text-sm text-[#78716c]">{guide.email}</span>
+								{guide.username && <span className="font-outfit text-sm text-[#44403c]">@{guide.username}</span>}
 							</div>
 						</div>
 					</div>
@@ -184,8 +184,8 @@ export default function GuideDetailPage() {
 							<div key={i} className="bg-white border border-[#e7e5e4] rounded-xl px-5 py-4 flex items-center gap-4">
 								<div className="w-10 h-10 bg-[#f3faf6] text-[#2d7d4e] rounded-lg flex items-center justify-center shrink-0">{stat.icon}</div>
 								<div className="flex flex-col">
-									<span className="[font-family:var(--font-outfit)] text-2xl font-bold text-[#1c1917] leading-none">{stat.value}</span>
-									<span className="[font-family:var(--font-outfit)] text-xs text-[#78716c] mt-1">{stat.label}</span>
+									<span className="font-outfit text-2xl font-bold text-[#1c1917] leading-none">{stat.value}</span>
+									<span className="font-outfit text-xs text-[#78716c] mt-1">{stat.label}</span>
 								</div>
 							</div>
 						))}
@@ -195,26 +195,26 @@ export default function GuideDetailPage() {
 
 						<div className="bg-white border border-[#e7e5e4] rounded-xl overflow-hidden">
 							<div className="flex justify-between items-center px-6 py-4 border-b border-[#f5f5f4]">
-								<h3 className="[font-family:var(--font-outfit)] m-0 text-base font-semibold text-[#1c1917]">Enrolments</h3>
+								<h3 className="font-outfit m-0 text-base font-semibold text-[#1c1917]">Enrolments</h3>
 							</div>
 							<div className="p-4 flex flex-col gap-3">
 								{enrolments.length > 0 ? enrolments.map(enrolment => (
 									<div key={enrolment.id} className="flex justify-between items-center p-4 border border-[#f5f5f4] rounded-lg">
 										<div className="flex-1">
-											<h4 className="[font-family:var(--font-outfit)] m-0 mb-2 text-[15px] text-[#1a3a2a] font-medium">{enrolment.module?.title ?? '—'}</h4>
+											<h4 className="font-outfit m-0 mb-2 text-[15px] text-[#1a3a2a] font-medium">{enrolment.module?.title ?? '—'}</h4>
 											<div className="flex items-center gap-2.5">
 												<div className="flex-1 h-1.5 bg-[#e7e5e4] rounded-[3px] overflow-hidden max-w-50">
 													<div className="h-full bg-[#2d7d4e] rounded-[3px]" style={{ width: `${enrolment.progressPct ?? 0}%` }} />
 												</div>
-												<span className="[font-family:var(--font-outfit)] text-xs text-[#78716c] font-medium min-w-[35px] text-right">{enrolment.progressPct ?? 0}%</span>
+												<span className="font-outfit text-xs text-[#78716c] font-medium min-w-[35px] text-right">{enrolment.progressPct ?? 0}%</span>
 											</div>
 										</div>
 										{enrolment.completedAt && (
-											<span className="ml-4 inline-flex items-center py-1 px-3 rounded-full [font-family:var(--font-outfit)] text-xs font-medium bg-[#e8f5ee] text-[#266841]">Completed</span>
+											<span className="ml-4 inline-flex items-center py-1 px-3 rounded-full font-outfit text-xs font-medium bg-[#e8f5ee] text-[#266841]">Completed</span>
 										)}
 									</div>
 								)) : (
-									<p className="[font-family:var(--font-serif)] text-sm text-[#a8a29e] py-4 text-center">No enrolments yet.</p>
+									<p className="font-serif text-sm text-[#a8a29e] py-4 text-center">No enrolments yet.</p>
 								)}
 							</div>
 						</div>
@@ -223,7 +223,7 @@ export default function GuideDetailPage() {
 
 							<div className="bg-white border border-[#e7e5e4] rounded-xl overflow-hidden">
 								<div className="px-6 py-4 border-b border-[#f5f5f4]">
-									<h3 className="[font-family:var(--font-outfit)] m-0 text-base font-semibold text-[#1c1917]">Certifications</h3>
+									<h3 className="font-outfit m-0 text-base font-semibold text-[#1c1917]">Certifications</h3>
 								</div>
 								<div className="p-2">
 									{certs.length > 0 ? certs.map(cert => (
@@ -232,19 +232,19 @@ export default function GuideDetailPage() {
 												<CertIcon />
 											</div>
 											<div className="flex flex-col gap-1 w-full">
-												<span className="[font-family:var(--font-outfit)] text-sm text-[#1a3a2a] font-medium">{cert.enrolment?.module?.title ?? '—'}</span>
-												<span className="[font-family:var(--font-outfit)] text-xs text-[#a8a29e]">{new Date(cert.issuedAt).toLocaleDateString()}</span>
+												<span className="font-outfit text-sm text-[#1a3a2a] font-medium">{cert.enrolment?.module?.title ?? '—'}</span>
+												<span className="font-outfit text-xs text-[#a8a29e]">{new Date(cert.issuedAt).toLocaleDateString()}</span>
 											</div>
 										</div>
 									)) : (
-										<p className="[font-family:var(--font-serif)] text-sm text-[#a8a29e] py-4 text-center px-3">No certifications yet.</p>
+										<p className="font-serif text-sm text-[#a8a29e] py-4 text-center px-3">No certifications yet.</p>
 									)}
 								</div>
 							</div>
 
 							<div className="bg-white border border-[#e7e5e4] rounded-xl overflow-hidden">
 								<div className="px-6 py-4 border-b border-[#f5f5f4]">
-									<h3 className="[font-family:var(--font-outfit)] m-0 text-base font-semibold text-[#1c1917]">Quiz Attempts</h3>
+									<h3 className="font-outfit m-0 text-base font-semibold text-[#1c1917]">Quiz Attempts</h3>
 								</div>
 								<div className="p-2">
 									{attempts.length > 0 ? attempts.slice(0, 5).map(attempt => (
@@ -253,19 +253,19 @@ export default function GuideDetailPage() {
 												<QuizIcon />
 											</div>
 											<div className="flex flex-col gap-1 w-full">
-												<span className="[font-family:var(--font-outfit)] text-sm text-[#1a3a2a] font-medium">{attempt.quiz?.title ?? '—'}</span>
+												<span className="font-outfit text-sm text-[#1a3a2a] font-medium">{attempt.quiz?.title ?? '—'}</span>
 												<div className="flex justify-between items-center">
 													{attempt.totalScore != null && (
-														<span className={`[font-family:var(--font-outfit)] text-xs font-bold py-0.5 px-1.5 rounded-[4px] ${attempt.totalScore >= 70 ? 'bg-[#e8f5ee] text-[#266841]' : 'bg-[#fdf0e6] text-[#b35c2a]'}`}>
+														<span className={`font-outfit text-xs font-bold py-0.5 px-1.5 rounded-sm ${attempt.totalScore >= 70 ? 'bg-[#e8f5ee] text-[#266841]' : 'bg-[#fdf0e6] text-[#b35c2a]'}`}>
 															{attempt.totalScore}%
 														</span>
 													)}
-													<span className="[font-family:var(--font-outfit)] text-xs text-[#a8a29e]">{new Date(attempt.submittedAt).toLocaleDateString()}</span>
+													<span className="font-outfit text-xs text-[#a8a29e]">{new Date(attempt.submittedAt).toLocaleDateString()}</span>
 												</div>
 											</div>
 										</div>
 									)) : (
-										<p className="[font-family:var(--font-serif)] text-sm text-[#a8a29e] py-4 text-center px-3">No quiz attempts yet.</p>
+										<p className="font-serif text-sm text-[#a8a29e] py-4 text-center px-3">No quiz attempts yet.</p>
 									)}
 								</div>
 							</div>

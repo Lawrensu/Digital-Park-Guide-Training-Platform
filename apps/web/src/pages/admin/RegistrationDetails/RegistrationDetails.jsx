@@ -58,7 +58,7 @@ export default function RegistrationDetails() {
 			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
-					<p className="[font-family:var(--font-outfit)] text-sm text-[#a8a29e]">Loading…</p>
+					<p className="font-outfit text-sm text-[#a8a29e]">Loading…</p>
 				</div>
 			</div>
 		)
@@ -69,7 +69,7 @@ export default function RegistrationDetails() {
 			<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
 				<Navbar />
 				<div className="flex-1 flex items-center justify-center">
-					<p className="[font-family:var(--font-outfit)] text-sm text-red-500">Failed to load registration.</p>
+					<p className="font-outfit text-sm text-red-500">Failed to load registration.</p>
 				</div>
 			</div>
 		)
@@ -87,13 +87,13 @@ export default function RegistrationDetails() {
 					<div className="flex items-center gap-4">
 						<button
 							onClick={() => navigate('/registrations')}
-							className="[font-family:var(--font-outfit)] text-sm text-[#78716c] hover:text-[#1a3a2a] transition-colors"
+							className="font-outfit text-sm text-[#78716c] hover:text-[#1a3a2a] transition-colors"
 						>
 							← Back
 						</button>
-						<h1 className="[font-family:var(--font-outfit)] font-semibold text-[28px] text-[#1a3a2a]">Registration Details</h1>
+						<h1 className="font-outfit font-semibold text-[28px] text-[#1a3a2a]">Registration Details</h1>
 					</div>
-					<span className={`py-1.5 px-4 rounded-[20px] [font-family:var(--font-outfit)] font-semibold text-sm uppercase tracking-[0.5px] ${STATUS_BADGE[reg.status] ?? ''}`}>
+					<span className={`py-1.5 px-4 rounded-[20px] font-outfit font-semibold text-sm uppercase tracking-[0.5px] ${STATUS_BADGE[reg.status] ?? ''}`}>
 						{STATUS_LABEL[reg.status] ?? reg.status}
 					</span>
 				</div>
@@ -103,38 +103,38 @@ export default function RegistrationDetails() {
 					<div className="lg:col-span-2 space-y-6">
 
 						<div className="bg-white border border-[#f0e9db] rounded-xl p-6">
-							<h3 className="[font-family:var(--font-outfit)] font-medium text-[20px] text-[#1a3a2a] mb-6 border-b border-[#f0e9db] pb-3">Personal Information</h3>
+							<h3 className="font-outfit font-medium text-[20px] text-[#1a3a2a] mb-6 border-b border-[#f0e9db] pb-3">Personal Information</h3>
 							<div className="grid grid-cols-2 gap-6">
 								<div className="flex flex-col gap-1">
-									<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Full Name</label>
-									<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a] font-medium">{reg.firstName} {reg.lastName}</p>
+									<label className="font-outfit font-medium text-sm text-gray-500">Full Name</label>
+									<p className="font-serif text-base text-[#1a3a2a] font-medium">{reg.firstName} {reg.lastName}</p>
 								</div>
 								<div className="flex flex-col gap-1">
-									<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">IC / Passport</label>
-									<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a]">{reg.icPassportNumber}</p>
+									<label className="font-outfit font-medium text-sm text-gray-500">IC / Passport</label>
+									<p className="font-serif text-base text-[#1a3a2a]">{reg.icPassportNumber}</p>
 								</div>
 								<div className="flex flex-col gap-1">
-									<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Email Address</label>
-									<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a]">{reg.email}</p>
+									<label className="font-outfit font-medium text-sm text-gray-500">Email Address</label>
+									<p className="font-serif text-base text-[#1a3a2a]">{reg.email}</p>
 								</div>
 								<div className="flex flex-col gap-1">
-									<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Submitted</label>
-									<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a]">{new Date(reg.createdAt).toLocaleDateString()}</p>
+									<label className="font-outfit font-medium text-sm text-gray-500">Submitted</label>
+									<p className="font-serif text-base text-[#1a3a2a]">{new Date(reg.createdAt).toLocaleDateString()}</p>
 								</div>
 								<div className="flex flex-col gap-1 col-span-2">
-									<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Address</label>
-									<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a] whitespace-pre-line">{reg.address}</p>
+									<label className="font-outfit font-medium text-sm text-gray-500">Address</label>
+									<p className="font-serif text-base text-[#1a3a2a] whitespace-pre-line">{reg.address}</p>
 								</div>
 								<div className="flex flex-col gap-1 col-span-2">
-									<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-500">Reason for Applying</label>
-									<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a]">{reg.reason}</p>
+									<label className="font-outfit font-medium text-sm text-gray-500">Reason for Applying</label>
+									<p className="font-serif text-base text-[#1a3a2a]">{reg.reason}</p>
 								</div>
 							</div>
 						</div>
 
 						{reg.cvS3Key && (
 							<div className="bg-white border border-[#f0e9db] rounded-xl p-6">
-								<h3 className="[font-family:var(--font-outfit)] font-medium text-[20px] text-[#1a3a2a] mb-4 border-b border-[#f0e9db] pb-3">Uploaded CV</h3>
+								<h3 className="font-outfit font-medium text-[20px] text-[#1a3a2a] mb-4 border-b border-[#f0e9db] pb-3">Uploaded CV</h3>
 								<div className="flex items-center gap-4 bg-[#f9f5ed] p-4 rounded-lg border border-[#f0e9db]">
 									<div className="flex items-center justify-center w-12 h-12 bg-white rounded-lg">
 										<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -143,12 +143,12 @@ export default function RegistrationDetails() {
 										</svg>
 									</div>
 									<div className="flex-1">
-										<p className="[font-family:var(--font-serif)] text-base text-[#1a3a2a] font-medium">CV Document</p>
-										<p className="[font-family:var(--font-serif)] text-sm text-gray-500">Click View to open the pre-signed URL</p>
+										<p className="font-serif text-base text-[#1a3a2a] font-medium">CV Document</p>
+										<p className="font-serif text-sm text-gray-500">Click View to open the pre-signed URL</p>
 									</div>
 									<button
 										onClick={handleViewCv}
-										className="[font-family:var(--font-outfit)] font-medium text-sm text-[#b35c2a] border border-[#b35c2a] rounded-lg px-4 py-2 bg-transparent cursor-pointer hover:bg-[#fdfbf7] transition-colors"
+										className="font-outfit font-medium text-sm text-[#b35c2a] border border-[#b35c2a] rounded-lg px-4 py-2 bg-transparent cursor-pointer hover:bg-[#fdfbf7] transition-colors"
 									>
 										View
 									</button>
@@ -160,11 +160,11 @@ export default function RegistrationDetails() {
 					<div className="space-y-6">
 
 						<div className="bg-white border border-[#f0e9db] rounded-xl p-6">
-							<h3 className="[font-family:var(--font-outfit)] font-medium text-[20px] text-[#1a3a2a] mb-4">Decision</h3>
+							<h3 className="font-outfit font-medium text-[20px] text-[#1a3a2a] mb-4">Decision</h3>
 							<div className="mb-4">
-								<label className="[font-family:var(--font-outfit)] font-medium text-sm text-gray-600 block mb-2">Remarks (optional)</label>
+								<label className="font-outfit font-medium text-sm text-gray-600 block mb-2">Remarks (optional)</label>
 								<textarea
-									className="w-full bg-[#f9f5ed] border border-[#f0e9db] rounded-lg px-4 py-3 [font-family:var(--font-serif)] resize-y transition-[border-color] duration-200 focus:outline-none focus:border-[#1a3a2a] focus:bg-white text-base"
+									className="w-full bg-[#f9f5ed] border border-[#f0e9db] rounded-lg px-4 py-3 font-serif resize-y transition-[border-color] duration-200 focus:outline-none focus:border-[#1a3a2a] focus:bg-white text-base"
 									rows="4"
 									placeholder="Enter decision remarks…"
 									value={remarks}
@@ -178,25 +178,25 @@ export default function RegistrationDetails() {
 										<button
 											onClick={() => approveMutation.mutate()}
 											disabled={actionPending}
-											className="bg-[#1a3a2a] text-white border-none cursor-pointer transition-colors duration-200 hover:bg-[#132d20] disabled:opacity-50 [font-family:var(--font-outfit)] font-medium text-sm px-6 py-3 rounded-lg w-full"
+											className="bg-[#1a3a2a] text-white border-none cursor-pointer transition-colors duration-200 hover:bg-[#132d20] disabled:opacity-50 font-outfit font-medium text-sm px-6 py-3 rounded-lg w-full"
 										>
 											{approveMutation.isPending ? 'Approving…' : 'Approve Application'}
 										</button>
 										<button
 											onClick={() => rejectMutation.mutate()}
 											disabled={actionPending}
-											className="bg-transparent border border-[#d32f2f] text-[#d32f2f] cursor-pointer transition-colors duration-200 hover:bg-[#ffebee] disabled:opacity-50 [font-family:var(--font-outfit)] font-medium text-sm px-6 py-3 rounded-lg w-full"
+											className="bg-transparent border border-[#d32f2f] text-[#d32f2f] cursor-pointer transition-colors duration-200 hover:bg-[#ffebee] disabled:opacity-50 font-outfit font-medium text-sm px-6 py-3 rounded-lg w-full"
 										>
 											{rejectMutation.isPending ? 'Rejecting…' : 'Reject Application'}
 										</button>
 									</>
 								) : (
-									<p className="[font-family:var(--font-outfit)] text-sm text-[#78716c] text-center py-2">
+									<p className="font-outfit text-sm text-[#78716c] text-center py-2">
 										This application has already been {STATUS_LABEL[reg.status]?.toLowerCase()}.
 									</p>
 								)}
 								{(approveMutation.error || rejectMutation.error) && (
-									<p className="[font-family:var(--font-outfit)] text-xs text-red-500 text-center">
+									<p className="font-outfit text-xs text-red-500 text-center">
 										Action failed. Please try again.
 									</p>
 								)}

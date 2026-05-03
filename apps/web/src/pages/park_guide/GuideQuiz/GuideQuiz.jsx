@@ -84,7 +84,7 @@ export default function GuideQuizPage() {
 
 	if (isLoading) {
 		return (
-			<div className="flex flex-col lg:flex-row min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#f3f4f6] font-['Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 				<GuideNavbar />
 				<main className="flex-1 p-8"><p className="text-center py-12 text-[#666666]">Loading quiz…</p></main>
 			</div>
@@ -93,7 +93,7 @@ export default function GuideQuizPage() {
 
 	if (error || !quiz) {
 		return (
-			<div className="flex flex-col lg:flex-row min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+			<div className="flex flex-col lg:flex-row min-h-screen bg-[#f3f4f6] font-['Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 				<GuideNavbar />
 				<main className="flex-1 p-8"><p className="text-center py-12 text-red-500">Quiz not found.</p></main>
 			</div>
@@ -103,7 +103,7 @@ export default function GuideQuizPage() {
 	const trueFalseOptions = ['True', 'False']
 
 	return (
-		<div className="flex flex-col lg:flex-row min-h-screen bg-[#f3f4f6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#f3f4f6] font-['Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
 			<div className="flex flex-col flex-1 overflow-hidden">
@@ -112,23 +112,23 @@ export default function GuideQuizPage() {
 						<h1 className="text-[1.75rem] text-[#333333] font-bold">Quiz</h1>
 					</header>
 
-					<div className="bg-white rounded-[8px] p-8 shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] border-l-[5px] border-l-[#2E7D32] flex justify-between items-start flex-wrap gap-6">
+					<div className="bg-white rounded-lg p-8 shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-[#e5e7eb] border-l-[5px] border-l-[#2E7D32] flex justify-between items-start flex-wrap gap-6">
 						<div className="flex-1">
 							<div className="text-[0.85rem] text-[#6b7280] mb-2">{quiz.module?.title ?? '—'}</div>
 							<h2 className="m-0 mb-2 text-[1.75rem] text-[#111827] font-bold">{quiz.title}</h2>
 							{quiz.module?.title && (
-								<div className="inline-block bg-[#ecfdf5] text-[#059669] py-1 px-3 rounded-[4px] text-[0.85rem] font-semibold">{quiz.module.title}</div>
+								<div className="inline-block bg-[#ecfdf5] text-[#059669] py-1 px-3 rounded-sm text-[0.85rem] font-semibold">{quiz.module.title}</div>
 							)}
 						</div>
 
 						<div className="flex gap-6">
 							{quiz.timeLimitMinutes && (
-								<div className="flex flex-row items-center justify-center gap-2 py-3 px-6 bg-[#fef2f2] rounded-[8px] min-w-25 border border-[#fee2e2]">
+								<div className="flex flex-row items-center justify-center gap-2 py-3 px-6 bg-[#fef2f2] rounded-lg min-w-25 border border-[#fee2e2]">
 									<TimerIcon />
 									<span className={`font-mono text-[1.5rem] font-bold ${timeLeft < 60 ? 'text-[#dc2626]' : 'text-[#374151]'}`}>{formatTime(timeLeft)}</span>
 								</div>
 							)}
-							<div className="flex flex-col items-center justify-center py-3 px-6 bg-[#f9fafb] rounded-[8px] min-w-25 border border-[#e5e7eb]">
+							<div className="flex flex-col items-center justify-center py-3 px-6 bg-[#f9fafb] rounded-lg min-w-25 border border-[#e5e7eb]">
 								<span className="text-[0.75rem] text-[#6b7280] uppercase tracking-[0.05em] mb-1">Progress</span>
 								<span className="text-[1.25rem] font-bold text-[#111827]">{answeredCount} / {questions.length}</span>
 							</div>
@@ -136,7 +136,7 @@ export default function GuideQuizPage() {
 					</div>
 
 					{submitMutation.isError && (
-						<p className="text-red-500 text-[0.9rem] bg-[#fef2f2] py-3 px-4 rounded-[6px]">
+						<p className="text-red-500 text-[0.9rem] bg-[#fef2f2] py-3 px-4 rounded-md">
 							{submitMutation.error?.response?.data?.error?.message ?? 'Failed to submit quiz. Please try again.'}
 						</p>
 					)}
@@ -150,12 +150,12 @@ export default function GuideQuizPage() {
 							return (
 								<div
 									key={q.id}
-									className={`bg-white rounded-[8px] p-8 border border-[#e5e7eb] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-[border-color] duration-200 ${answered ? 'border-l-[5px] border-l-[#10b981]' : ''}`}
+									className={`bg-white rounded-lg p-8 border border-[#e5e7eb] shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-[border-color] duration-200 ${answered ? 'border-l-[5px] border-l-[#10b981]' : ''}`}
 								>
 									<div className="flex justify-between items-center mb-4 pb-3 border-b border-[#f3f4f6]">
 										<div className="text-[0.9rem] font-bold text-[#6b7280]">Question {index + 1}</div>
 										<div className="flex items-center gap-3">
-											<div className="text-[0.75rem] bg-[#e5e7eb] text-[#374151] py-0.5 px-2 rounded-[4px] font-semibold">{q.type}</div>
+											<div className="text-[0.75rem] bg-[#e5e7eb] text-[#374151] py-0.5 px-2 rounded-sm font-semibold">{q.type}</div>
 											{q.points != null && <div className="text-[0.75rem] text-[#6b7280]">{q.points} pts</div>}
 											{answered && <CheckCircleIcon />}
 										</div>
@@ -169,7 +169,7 @@ export default function GuideQuizPage() {
 												{options.map((opt, i) => (
 													<label
 														key={i}
-														className={`flex items-center gap-3 py-3 px-4 border border-[#d1d5db] rounded-[6px] cursor-pointer transition-all duration-200
+														className={`flex items-center gap-3 py-3 px-4 border border-[#d1d5db] rounded-md cursor-pointer transition-all duration-200
 															${q.type === 'TRUE_FALSE' ? 'flex-1 justify-center font-semibold text-[#4b5563]' : ''}
 															${answer === opt
 																? (q.type === 'TRUE_FALSE' ? 'bg-[#2E7D32] border-[#2E7D32] text-white' : 'bg-[#ecfdf5] border-[#10b981] text-[#064e3b] font-medium')
@@ -191,7 +191,7 @@ export default function GuideQuizPage() {
 
 										{(q.type === 'SHORT_ANSWER' || q.type === 'LONG_ANSWER') && (
 											<textarea
-												className="w-full p-3 border border-[#d1d5db] rounded-[6px] text-[1rem] font-[inherit] resize-y focus:outline-none focus:border-[#2E7D32] focus:shadow-[0_0_0_2px_rgba(46,125,50,0.1)]"
+												className="w-full p-3 border border-[#d1d5db] rounded-md text-[1rem] font-[inherit] resize-y focus:outline-none focus:border-[#2E7D32] focus:shadow-[0_0_0_2px_rgba(46,125,50,0.1)]"
 												rows={q.type === 'LONG_ANSWER' ? 6 : 3}
 												placeholder="Type your answer here..."
 												value={answers[q.id] ?? ''}
@@ -204,7 +204,7 @@ export default function GuideQuizPage() {
 						})}
 					</div>
 
-					<div className="bg-white py-6 px-8 rounded-[8px] shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border border-[#e5e7eb] flex justify-between items-center mt-auto">
+					<div className="bg-white py-6 px-8 rounded-lg shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border border-[#e5e7eb] flex justify-between items-center mt-auto">
 						<div className="flex items-center gap-4 text-[#6b7280] text-[0.9rem]">
 							<span>Total Questions: {questions.length}</span>
 							<span className="text-[#d1d5db]">|</span>
@@ -213,7 +213,7 @@ export default function GuideQuizPage() {
 						<button
 							onClick={() => submitMutation.mutate()}
 							disabled={submitMutation.isPending}
-							className="py-3 px-8 bg-[#2E7D32] text-white border-0 rounded-[6px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#1b5e20] disabled:opacity-50 disabled:cursor-not-allowed"
+							className="py-3 px-8 bg-[#2E7D32] text-white border-0 rounded-md font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#1b5e20] disabled:opacity-50 disabled:cursor-not-allowed"
 						>
 							{submitMutation.isPending ? 'Submitting…' : 'Submit Quiz'}
 						</button>

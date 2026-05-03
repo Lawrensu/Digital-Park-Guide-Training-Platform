@@ -50,7 +50,7 @@ const GuideNotification = () => {
 	})
 
 	return (
-		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] font-['Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
 			<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border">
@@ -73,7 +73,7 @@ const GuideNotification = () => {
 					].map(tab => (
 						<button
 							key={tab.key}
-							className={`pb-3 text-[1rem] text-[#666666] cursor-pointer relative transition-colors duration-200 bg-transparent border-0 font-medium hover:text-[#2E7D32] ${activeTab === tab.key ? "text-[#2E7D32] font-bold after:content-[''] after:absolute after:-bottom-px after:left-0 after:w-full after:h-[3px] after:bg-[#2E7D32] after:rounded-t-[3px]" : ''}`}
+							className={`pb-3 text-[1rem] text-[#666666] cursor-pointer relative transition-colors duration-200 bg-transparent border-0 font-medium hover:text-[#2E7D32] ${activeTab === tab.key ? "text-[#2E7D32] font-bold after:content-[''] after:absolute after:-bottom-px after:left-0 after:w-full after:h-0.75 after:bg-[#2E7D32] after:rounded-t-[3px]" : ''}`}
 							onClick={() => setActiveTab(tab.key)}
 						>
 							{tab.label}
@@ -89,7 +89,7 @@ const GuideNotification = () => {
 						{filtered.length > 0 ? filtered.map(notif => (
 							<div
 								key={notif.id}
-								className={`flex items-start bg-white p-5 rounded-[8px] shadow-[0_1px_3px_rgba(0,0,0,0.05)] transition-[transform,box-shadow] duration-200 relative cursor-pointer border border-transparent hover:-translate-y-[2px] hover:shadow-[0_4px_6px_rgba(0,0,0,0.08)] ${!notif.isRead ? 'bg-[#F1F8E9] border-l-4 border-l-[#2E7D32]' : ''}`}
+								className={`flex items-start bg-white p-5 rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.05)] transition-[transform,box-shadow] duration-200 relative cursor-pointer border border-transparent hover:-translate-y-0.5 hover:shadow-[0_4px_6px_rgba(0,0,0,0.08)] ${!notif.isRead ? 'bg-[#F1F8E9] border-l-4 border-l-[#2E7D32]' : ''}`}
 								onClick={() => { if (!notif.isRead) markReadMutation.mutate(notif.id) }}
 							>
 								<div className={`w-12 h-12 rounded-full flex items-center justify-center text-[1.5rem] mr-4 shrink-0 ${ICON_CLASSES[notif.type] ?? ICON_CLASSES.CUSTOM}`}>

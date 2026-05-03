@@ -59,7 +59,7 @@ const GuideQuizList = () => {
 			if (cert) {
 				return (
 					<button
-						className="py-2 px-4 rounded-[6px] text-[0.85rem] font-semibold cursor-pointer border border-[#E0E0E0] bg-transparent text-[#333333] transition-all duration-200 hover:border-[#666666] hover:bg-[#f5f5f5]"
+						className="py-2 px-4 rounded-md text-[0.85rem] font-semibold cursor-pointer border border-[#E0E0E0] bg-transparent text-[#333333] transition-all duration-200 hover:border-[#666666] hover:bg-[#f5f5f5]"
 						onClick={() => navigate(`/guide/certifications/${cert.id}`)}
 					>
 						View Certificate
@@ -68,7 +68,7 @@ const GuideQuizList = () => {
 			}
 			return (
 				<button
-					className="py-2 px-4 rounded-[6px] text-[0.85rem] font-semibold cursor-pointer border border-[#E0E0E0] bg-transparent text-[#333333] transition-all duration-200 hover:border-[#666666] hover:bg-[#f5f5f5]"
+					className="py-2 px-4 rounded-md text-[0.85rem] font-semibold cursor-pointer border border-[#E0E0E0] bg-transparent text-[#333333] transition-all duration-200 hover:border-[#666666] hover:bg-[#f5f5f5]"
 					onClick={() => navigate('/guide/certifications')}
 				>
 					View Certificates
@@ -78,7 +78,7 @@ const GuideQuizList = () => {
 		return (
 			<button
 				disabled
-				className="py-2 px-4 rounded-[6px] text-[0.85rem] font-semibold border border-[#E0E0E0] bg-transparent text-[#333333] cursor-not-allowed opacity-60"
+				className="py-2 px-4 rounded-md text-[0.85rem] font-semibold border border-[#E0E0E0] bg-transparent text-[#333333] cursor-not-allowed opacity-60"
 			>
 				Awaiting Grade
 			</button>
@@ -94,7 +94,7 @@ const GuideQuizList = () => {
 	}
 
 	return (
-		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] font-['Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
 			<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border">
@@ -102,7 +102,7 @@ const GuideQuizList = () => {
 
 				<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-10">
 					{stats.map((stat) => (
-						<div key={stat.id} className={`bg-white p-6 rounded-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.05)] flex items-center gap-4 border-t-4 ${STAT_BORDER[stat.class]}`}>
+						<div key={stat.id} className={`bg-white p-6 rounded-xl shadow-[0_2px_4px_rgba(0,0,0,0.05)] flex items-center gap-4 border-t-4 ${STAT_BORDER[stat.class]}`}>
 							<div className="w-12 h-12 rounded-full flex items-center justify-center text-[1.5rem] bg-[#f5f5f5]">{stat.icon}</div>
 							<div>
 								<h3 className="m-0 text-[1.5rem] font-bold text-[#333333]">{stat.value}</h3>
@@ -144,7 +144,7 @@ const GuideQuizList = () => {
 
 						{/* Desktop table */}
 						{attempts.length > 0 && (
-							<div className="hidden sm:block bg-white rounded-[12px] shadow-[0_1px_3px_rgba(0,0,0,0.05)] overflow-hidden">
+							<div className="hidden sm:block bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.05)] overflow-hidden">
 								<table className="w-full border-collapse text-left">
 									<thead>
 										<tr>

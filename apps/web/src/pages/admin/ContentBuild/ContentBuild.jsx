@@ -126,7 +126,7 @@ function AddItemModal({ moduleId, onClose, onSaved }) {
 									onClick={() => handlePickType(t)}
 									className="flex flex-col items-center gap-2 py-5 px-3 border border-[#d1d5db] rounded-lg cursor-pointer transition-all duration-150 hover:border-[#2E7D32] hover:bg-[#f0fdf4] bg-white"
 								>
-									<span className={`text-[0.65rem] font-bold py-[3px] px-2 rounded text-white ${TYPE_BADGE[t]}`}>{t}</span>
+									<span className={`text-[0.65rem] font-bold py-0.75 px-2 rounded text-white ${TYPE_BADGE[t]}`}>{t}</span>
 									<span className="text-[0.82rem] text-[#374151] font-medium">{t.charAt(0) + t.slice(1).toLowerCase()}</span>
 								</button>
 							))}
@@ -718,7 +718,7 @@ export default function ContentBuilderPage() {
 												<span className="text-[#9ca3af] text-[0.9rem] mt-0.5 min-w-5">{index + 1}.</span>
 												<div className="flex flex-col gap-1.5">
 													<h4 className="m-0 text-[0.95rem] text-[#111827] font-medium leading-[1.4]">{item.title}</h4>
-													<span className={`inline-block text-[0.7rem] font-bold py-[3px] px-2 rounded w-fit text-white tracking-[0.3px] uppercase ${TYPE_BADGE[item.type] ?? 'bg-[#607D8B]'}`}>
+													<span className={`inline-block text-[0.7rem] font-bold py-0.75 px-2 rounded w-fit text-white tracking-[0.3px] uppercase ${TYPE_BADGE[item.type] ?? 'bg-[#607D8B]'}`}>
 														{item.type}
 													</span>
 												</div>

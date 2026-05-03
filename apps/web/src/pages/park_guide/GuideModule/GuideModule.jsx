@@ -54,7 +54,7 @@ const GuideModule = () => {
 			case 'continue':
 				return (
 					<button
-						className="py-2 px-5 rounded-[6px] text-[0.9rem] font-semibold cursor-pointer border-0 transition-[background] duration-200 bg-[#2E7D32] text-white hover:bg-[#1B5E20]"
+						className="py-2 px-5 rounded-md text-[0.9rem] font-semibold cursor-pointer border-0 transition-[background] duration-200 bg-[#2E7D32] text-white hover:bg-[#1B5E20]"
 						onClick={() => navigate(`/guide/modules/${moduleId}`)}
 					>
 						Continue
@@ -63,7 +63,7 @@ const GuideModule = () => {
 			case 'view':
 				return (
 					<button
-						className="py-2 px-5 rounded-[6px] text-[0.9rem] font-semibold cursor-pointer border border-[#2E7D32] bg-transparent text-[#2E7D32] transition-[background] duration-200 hover:bg-[#E8F5E9]"
+						className="py-2 px-5 rounded-md text-[0.9rem] font-semibold cursor-pointer border border-[#2E7D32] bg-transparent text-[#2E7D32] transition-[background] duration-200 hover:bg-[#E8F5E9]"
 						onClick={() => navigate(`/guide/modules/${moduleId}`)}
 					>
 						View
@@ -72,7 +72,7 @@ const GuideModule = () => {
 			case 'enrol':
 				return (
 					<button
-						className="py-2 px-5 rounded-[6px] text-[0.9rem] font-semibold cursor-pointer border border-[#E0E0E0] bg-white text-[#333333] transition-[background] duration-200 hover:bg-[#f0f0f0]"
+						className="py-2 px-5 rounded-md text-[0.9rem] font-semibold cursor-pointer border border-[#E0E0E0] bg-white text-[#333333] transition-[background] duration-200 hover:bg-[#f0f0f0]"
 						onClick={() => navigate(`/guide/modules/${moduleId}`)}
 					>
 						Enrol
@@ -91,7 +91,7 @@ const GuideModule = () => {
 	]
 
 	return (
-		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] font-['Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
 			<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border">
@@ -99,7 +99,7 @@ const GuideModule = () => {
 
 				<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10">
 					{stats.map((stat, index) => (
-						<div key={index} className="bg-white p-6 rounded-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.05)] flex flex-col justify-center items-center text-center border-t-4 border-t-[#2E7D32]">
+						<div key={index} className="bg-white p-6 rounded-xl shadow-[0_2px_4px_rgba(0,0,0,0.05)] flex flex-col justify-center items-center text-center border-t-4 border-t-[#2E7D32]">
 							<div className="text-[2rem] font-bold text-[#2E7D32] mb-1">{stat.count}</div>
 							<div className="text-[0.9rem] text-[#666666] font-medium">{stat.label}</div>
 						</div>
@@ -114,10 +114,10 @@ const GuideModule = () => {
 							const { status, statusClass, actionType, progress, dueAt } = getModuleState(mod)
 							const itemCount = mod._count?.contentItems ?? mod.contentItems?.length ?? 0
 							return (
-								<div key={mod.id} className="bg-white rounded-[12px] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[#E0E0E0] flex flex-col transition-[transform,box-shadow] duration-200 hover:-translate-y-[3px] hover:shadow-[0_8px_16px_rgba(0,0,0,0.1)]">
+								<div key={mod.id} className="bg-white rounded-xl p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[#E0E0E0] flex flex-col transition-[transform,box-shadow] duration-200 hover:-translate-y-0.75 hover:shadow-[0_8px_16px_rgba(0,0,0,0.1)]">
 									<div className="flex justify-between items-start mb-4">
 										<h3 className="text-[1.1rem] font-bold text-[#333333] m-0 leading-[1.4]">{mod.title}</h3>
-										<span className={`text-[0.75rem] font-bold py-1 px-[0.6rem] rounded-[4px] uppercase whitespace-nowrap ml-2 ${BADGE_CLASS[statusClass]}`}>{status}</span>
+										<span className={`text-[0.75rem] font-bold py-1 px-[0.6rem] rounded-sm uppercase whitespace-nowrap ml-2 ${BADGE_CLASS[statusClass]}`}>{status}</span>
 									</div>
 
 									{progress > 0 && (

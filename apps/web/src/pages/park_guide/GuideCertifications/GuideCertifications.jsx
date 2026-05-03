@@ -31,7 +31,7 @@ const GuideCertifications = () => {
 	}
 
 	return (
-		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] [font-family:'Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
+		<div className="flex flex-col lg:flex-row min-h-screen bg-[#F4F7F6] font-['Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
 			<GuideNavbar />
 
 			<main className="flex-1 p-4 sm:p-6 lg:p-8 box-border">
@@ -45,7 +45,7 @@ const GuideCertifications = () => {
 						{ label: 'Active',       value: active.length,  icon: '✅' },
 						{ label: 'Expired',      value: expired.length, icon: '⏳' },
 					].map((stat, i) => (
-						<div key={i} className="bg-white p-6 rounded-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.05)] flex items-center gap-4 border border-transparent transition-transform duration-200 hover:-translate-y-[2px] hover:border-[#E0E0E0]">
+						<div key={i} className="bg-white p-6 rounded-xl shadow-[0_2px_4px_rgba(0,0,0,0.05)] flex items-center gap-4 border border-transparent transition-transform duration-200 hover:-translate-y-0.5 hover:border-[#E0E0E0]">
 							<div className="w-12 h-12 rounded-[10px] bg-[#F4F7F6] flex items-center justify-center text-[1.5rem]">{stat.icon}</div>
 							<div>
 								<h3 className="m-0 text-[1.5rem] font-bold text-[#333333]">{stat.value}</h3>
@@ -67,7 +67,7 @@ const GuideCertifications = () => {
 						{certs.length > 0 ? certs.map(cert => {
 							const isExpired = cert.expiresAt && new Date(cert.expiresAt) <= new Date()
 							return (
-								<div key={cert.id} className="bg-white p-4 sm:p-6 rounded-[12px] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[#E0E0E0]">
+								<div key={cert.id} className="bg-white p-4 sm:p-6 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[#E0E0E0]">
 									<div className="flex items-center gap-4 sm:gap-6">
 										<div className="w-14 h-14 bg-[#FFF8E1] text-[#FBC02D] rounded-full flex items-center justify-center text-[1.75rem]">🎓</div>
 										<div>
@@ -84,13 +84,13 @@ const GuideCertifications = () => {
 									</div>
 									<div className="flex gap-3">
 										<button
-											className="py-2 px-4 rounded-[6px] text-[0.875rem] font-semibold cursor-pointer transition-all duration-200 border-0 flex items-center gap-2 bg-[#FFEBEE] text-[#D32F2F] hover:bg-[#FFCDD2]"
+											className="py-2 px-4 rounded-md text-[0.875rem] font-semibold cursor-pointer transition-all duration-200 border-0 flex items-center gap-2 bg-[#FFEBEE] text-[#D32F2F] hover:bg-[#FFCDD2]"
 											onClick={() => handleDownload(cert.id)}
 										>
 											📄 PDF
 										</button>
 										<button
-											className="py-2 px-4 rounded-[6px] text-[0.875rem] font-semibold cursor-pointer transition-all duration-200 border-0 flex items-center gap-2 bg-[#2E7D32] text-white hover:bg-[#1B5E20]"
+											className="py-2 px-4 rounded-md text-[0.875rem] font-semibold cursor-pointer transition-all duration-200 border-0 flex items-center gap-2 bg-[#2E7D32] text-white hover:bg-[#1B5E20]"
 											onClick={() => navigate(`/guide/certifications/${cert.id}`)}
 										>
 											View
@@ -104,7 +104,7 @@ const GuideCertifications = () => {
 					</div>
 				)}
 
-				<div className="mt-8 text-[0.85rem] text-[#666666] bg-[#E8F5E9] p-4 rounded-[8px] border-l-4 border-l-[#2E7D32] leading-[1.5]">
+				<div className="mt-8 text-[0.85rem] text-[#666666] bg-[#E8F5E9] p-4 rounded-lg border-l-4 border-l-[#2E7D32] leading-normal">
 					<strong>Note:</strong> You can download the PDF version of any certificate at any time.
 				</div>
 			</main>

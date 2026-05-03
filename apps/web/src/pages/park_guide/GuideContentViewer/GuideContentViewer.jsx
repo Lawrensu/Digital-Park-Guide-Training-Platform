@@ -39,7 +39,7 @@ export default function GuideContentViewer() {
 				<GuideNavbar />
 				<main className="flex-1 overflow-y-auto p-8">
 					<div className="max-w-3xl mx-auto">
-						<p className="text-center py-12 text-[#5a7a6a] [font-family:var(--font-outfit)]">Loading content…</p>
+						<p className="text-center py-12 text-[#5a7a6a] font-outfit">Loading content…</p>
 					</div>
 				</main>
 			</div>
@@ -54,11 +54,11 @@ export default function GuideContentViewer() {
 					<div className="max-w-3xl mx-auto">
 						<button
 							onClick={() => navigate(`/guide/modules/${id}`)}
-							className="flex items-center gap-2 text-[#5a7a6a] [font-family:var(--font-outfit)] text-sm mb-6 hover:text-[#1a3a2a] transition-colors bg-transparent border-0 cursor-pointer"
+							className="flex items-center gap-2 text-[#5a7a6a] font-outfit text-sm mb-6 hover:text-[#1a3a2a] transition-colors bg-transparent border-0 cursor-pointer"
 						>
 							← Back to Module
 						</button>
-						<p className="text-center py-12 text-red-500 [font-family:var(--font-outfit)]">Content not found.</p>
+						<p className="text-center py-12 text-red-500 font-outfit">Content not found.</p>
 					</div>
 				</main>
 			</div>
@@ -70,7 +70,7 @@ export default function GuideContentViewer() {
 
 			case 'TEXT':
 				return (
-					<div className="[font-family:var(--font-outfit)] text-[15px] leading-[1.8] text-[#1a3a2a] whitespace-pre-wrap">
+					<div className="font-outfit text-[15px] leading-[1.8] text-[#1a3a2a] whitespace-pre-wrap">
 						{item.textContent ?? 'No content available.'}
 					</div>
 				)
@@ -102,7 +102,7 @@ export default function GuideContentViewer() {
 				return (
 					<div className="text-center py-10 bg-[#f5f5f4] rounded-lg">
 						<div className="text-4xl mb-3">🎥</div>
-						<p className="[font-family:var(--font-outfit)] text-sm text-[#78716c]">Video not yet available.</p>
+						<p className="font-outfit text-sm text-[#78716c]">Video not yet available.</p>
 					</div>
 				)
 			}
@@ -113,7 +113,7 @@ export default function GuideContentViewer() {
 					return (
 						<div className="text-center py-10 bg-[#f5f5f4] rounded-lg">
 							<div className="text-4xl mb-3">🖼️</div>
-							<p className="[font-family:var(--font-outfit)] text-sm text-[#78716c]">
+							<p className="font-outfit text-sm text-[#78716c]">
 								Image stored in cloud storage. Available once the storage service is connected.
 							</p>
 						</div>
@@ -121,7 +121,7 @@ export default function GuideContentViewer() {
 				}
 				return (
 					<div className="text-center py-10 bg-[#f5f5f4] rounded-lg">
-						<p className="[font-family:var(--font-outfit)] text-sm text-[#78716c]">No image available.</p>
+						<p className="font-outfit text-sm text-[#78716c]">No image available.</p>
 					</div>
 				)
 
@@ -131,7 +131,7 @@ export default function GuideContentViewer() {
 					return null
 				}
 				return (
-					<p className="[font-family:var(--font-outfit)] text-sm text-[#5a7a6a]">
+					<p className="font-outfit text-sm text-[#5a7a6a]">
 						Quiz not linked to this content item.
 					</p>
 				)
@@ -140,7 +140,7 @@ export default function GuideContentViewer() {
 				return (
 					<div className="text-center py-8">
 						<div className="text-4xl mb-4">{ITEM_TYPE_ICON[item.type] ?? '📄'}</div>
-						<p className="[font-family:var(--font-outfit)] text-sm text-[#5a7a6a]">
+						<p className="font-outfit text-sm text-[#5a7a6a]">
 							{item.textContent ?? 'Content will appear here.'}
 						</p>
 					</div>
@@ -157,7 +157,7 @@ export default function GuideContentViewer() {
 
 					<button
 						onClick={() => navigate(`/guide/modules/${id}`)}
-						className="flex items-center gap-2 text-[#5a7a6a] [font-family:var(--font-outfit)] text-sm mb-6 hover:text-[#1a3a2a] transition-colors bg-transparent border-0 cursor-pointer"
+						className="flex items-center gap-2 text-[#5a7a6a] font-outfit text-sm mb-6 hover:text-[#1a3a2a] transition-colors bg-transparent border-0 cursor-pointer"
 					>
 						← Back to Module
 					</button>
@@ -169,8 +169,8 @@ export default function GuideContentViewer() {
 								{ITEM_TYPE_ICON[item.type] ?? '📄'}
 							</div>
 							<div>
-								<h1 className="[font-family:var(--font-outfit)] text-xl font-semibold text-[#1a3a2a] m-0">{item.title}</h1>
-								<span className="[font-family:var(--font-outfit)] text-xs text-[#5a7a6a] uppercase tracking-wider">{item.type}</span>
+								<h1 className="font-outfit text-xl font-semibold text-[#1a3a2a] m-0">{item.title}</h1>
+								<span className="font-outfit text-xs text-[#5a7a6a] uppercase tracking-wider">{item.type}</span>
 							</div>
 						</div>
 

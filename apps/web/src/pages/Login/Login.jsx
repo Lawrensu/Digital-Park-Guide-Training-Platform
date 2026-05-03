@@ -35,25 +35,22 @@ function Login() {
     }
 
     return (
-        <div className="flex flex-col md:flex-row min-h-screen [font-family:'Segoe_UI',system-ui,sans-serif]">
+        <div className="flex flex-col md:flex-row min-h-screen font-['Segoe_UI',system-ui,sans-serif]">
 
             {/* ── LEFT PANEL — hidden on mobile, visible md+ ── */}
-            <div className="hidden md:flex relative [flex:0_0_48%] bg-[#1b3a2d] flex-col justify-between py-10 px-12 overflow-hidden text-white">
+            <div className="hidden md:flex relative flex:[0_0_48%] bg-[#1b3a2d] flex-col justify-between py-10 px-12 overflow-hidden text-white">
 
                 {/* Decorative circles */}
                 <div className="absolute rounded-full pointer-events-none w-95 h-95 -top-30 -right-15 bg-[radial-gradient(circle_at_42%_40%,rgba(120,180,140,0.35)_0%,rgba(80,140,100,0.18)_40%,rgba(50,100,70,0.08)_65%,transparent_85%)]" />
                 <div className="absolute rounded-full pointer-events-none w-95 h-95 -bottom-30 -left-20 bg-[radial-gradient(circle_at_55%_42%,rgba(120,180,140,0.30)_0%,rgba(80,140,100,0.14)_40%,rgba(50,100,70,0.06)_65%,transparent_85%)]" />
                 <div className="absolute rounded-full pointer-events-none w-65 h-65 bottom-15 -right-7.5 bg-[radial-gradient(circle_at_40%_38%,rgba(120,180,140,0.28)_0%,rgba(80,140,100,0.12)_45%,rgba(50,100,70,0.05)_65%,transparent_85%)]" />
 
-                <div className="relative z-[1] flex-1 flex flex-col justify-center gap-7">
+                <div className="relative z-1 flex-1 flex flex-col justify-center gap-7">
 
-                    {/* SFC logo slot: replace the logo div with <img src={sfcLogo} alt="SFC" /> once available */}
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#2d6a4f] rounded-[8px] flex items-center justify-center font-bold text-[13px] tracking-[0.5px] text-white">
-                            SFC
-                        </div>
+                        <img src="/forest-3d-fluency-32.png" alt="SFC-Logo" className="w-8 h-8 object-contain" />
                         <div className="flex flex-col">
-                            <span className="text-[15px] font-semibold text-white leading-[1.2]">SFC Training</span>
+                            <span className="font-outfit text-[15px] font-semibold text-white leading-[1.2]">SFC</span>
                             <span className="text-[12px] text-white/60">Digital Park Guide Platform</span>
                         </div>
                     </div>
@@ -71,14 +68,14 @@ function Login() {
 
                 </div>
 
-                <div className="relative z-[1] text-[12px] text-white/40">
+                <div className="relative z-1 text-[12px] text-white/40">
                     Sarawak Forestry Corporation &middot; Restricted Access
                 </div>
             </div>
 
             {/* ── RIGHT PANEL ── */}
             <div className="flex-1 bg-[#f0efe9] flex flex-col items-center justify-center py-8 px-4 gap-5 md:py-12 md:px-8">
-                <div className="bg-white rounded-[16px] shadow-[0_4px_24px_rgba(0,0,0,0.08)] pt-8 px-6 pb-6 w-full max-w-105 md:pt-10 md:px-10 md:pb-7">
+                <div className="bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] pt-8 px-6 pb-6 w-full max-w-105 md:pt-10 md:px-10 md:pb-7">
 
                     <div className="mb-7">
                         <h2 className="text-[24px] font-bold text-[#1a1a1a] mb-1">Welcome back</h2>
@@ -104,7 +101,7 @@ function Login() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     autoComplete="email"
-                                    className="w-full py-2.5 pr-10 pl-9 border border-[#e2e2dc] rounded-[8px] bg-[#f9f9f7] text-[14px] text-[#1a1a1a] outline-none transition-[border-color] duration-200 focus:border-[#2d6a4f]"
+                                    className="w-full py-2.5 pr-10 pl-9 border border-[#e2e2dc] rounded-lg bg-[#f9f9f7] text-[14px] text-[#1a1a1a] outline-none transition-[border-color] duration-200 focus:border-[#2d6a4f]"
                                 />
                             </div>
                         </div>
@@ -126,7 +123,7 @@ function Login() {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     autoComplete="current-password"
-                                    className="w-full py-2.5 pr-10 pl-9 border border-[#e2e2dc] rounded-[8px] bg-[#f9f9f7] text-[14px] text-[#1a1a1a] outline-none transition-[border-color] duration-200 focus:border-[#2d6a4f]"
+                                    className="w-full py-2.5 pr-10 pl-9 border border-[#e2e2dc] rounded-lg bg-[#f9f9f7] text-[14px] text-[#1a1a1a] outline-none transition-[border-color] duration-200 focus:border-[#2d6a4f]"
                                 />
                                 <button
                                     type="button"
@@ -151,7 +148,7 @@ function Login() {
                         </div>
 
                         {error && (
-                            <p className="text-[13px] text-red-600 bg-red-50 border border-red-200 rounded-[6px] px-3 py-2">
+                            <p className="text-[13px] text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
                                 {error}
                             </p>
                         )}
@@ -159,7 +156,7 @@ function Login() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex items-center justify-center gap-2 w-full py-[13px] bg-[#1b3a2d] text-white border-0 rounded-[8px] text-[15px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#2d6a4f] disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="flex items-center justify-center gap-2 w-full py-3.25 bg-[#1b3a2d] text-white border-0 rounded-lg text-[15px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#2d6a4f] disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                             {loading ? 'Signing in…' : 'Sign In'}
                             {!loading && (
@@ -210,7 +207,7 @@ function Login() {
                         Haven't received your activation email?
                     </button>
                 ) : (
-                    <div className="bg-white rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5 w-full max-w-105">
+                    <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-5 w-full max-w-105">
                         {resendStatus === 'sent' ? (
                             <p className="text-[13px] text-[#2d6a4f] text-center">
                                 ✅ If that email has a pending account, a new activation link has been sent.
@@ -224,7 +221,7 @@ function Login() {
                                     value={resendEmail}
                                     onChange={e => setResendEmail(e.target.value)}
                                     placeholder="Your email address"
-                                    className="w-full py-2 px-3 border border-[#e2e2dc] rounded-[8px] bg-[#f9f9f7] text-[13px] outline-none focus:border-[#2d6a4f]"
+                                    className="w-full py-2 px-3 border border-[#e2e2dc] rounded-lg bg-[#f9f9f7] text-[13px] outline-none focus:border-[#2d6a4f]"
                                 />
                                 {resendStatus === 'error' && (
                                     <p className="text-[12px] text-red-500 m-0">Something went wrong. Try again.</p>
@@ -232,7 +229,7 @@ function Login() {
                                 <button
                                     type="submit"
                                     disabled={resendStatus === 'loading'}
-                                    className="w-full py-2 bg-[#1b3a2d] text-white border-0 rounded-[8px] text-[13px] font-semibold cursor-pointer hover:bg-[#2d6a4f] disabled:opacity-60"
+                                    className="w-full py-2 bg-[#1b3a2d] text-white border-0 rounded-lg text-[13px] font-semibold cursor-pointer hover:bg-[#2d6a4f] disabled:opacity-60"
                                 >
                                     {resendStatus === 'loading' ? 'Sending…' : 'Resend link'}
                                 </button>
