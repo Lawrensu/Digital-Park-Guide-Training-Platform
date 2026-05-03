@@ -4,7 +4,7 @@
 
 | Layer | Technology |
 |-------|------------|
-| Web Frontend | React + Vite, TailwindCSS, shadcn/ui, TanStack Query, Recharts |
+| Web Frontend | React + Vite, TailwindCSS, shadcn/ui, TanStack Query |
 | Mobile App | React Native + Expo, NativeWind, Expo SQLite |
 | Backend API | Node.js + Express, Zod, Socket.io |
 | Database | PostgreSQL via Prisma ORM |
@@ -57,7 +57,7 @@ Monorepo managed by pnpm workspaces and Turborepo.
 - Park Guide features: registration (public, pre-login), browse and enrol in modules, view content, take quizzes, view certifications, view badges, notifications, profile
 - Styled with TailwindCSS + shadcn/ui component library
 - Data fetching managed by TanStack Query
-- Charts and progress visualisations via Recharts
+- Data fetching and caching managed by TanStack Query
 
 ### Mobile App : React Native + Expo
 - Accessible to both Admin/Trainer and Park Guide — role-based access control determines visible screens after login

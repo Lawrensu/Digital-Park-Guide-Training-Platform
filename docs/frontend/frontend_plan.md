@@ -1,4 +1,4 @@
-# Frontend Implementation Plan
+# Frontend Implementation Plan (PERHAPS NEED AN UPDATE)
 
 **SFC Digital Park Guide Training Platform**
 
@@ -84,7 +84,7 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 
 ## Web App — Admin/Trainer and Park Guide
 
-**Tech:** React + Vite, TailwindCSS, shadcn/ui, TanStack Query, Recharts, Socket.io client
+**Tech:** React + Vite, TailwindCSS, shadcn/ui, TanStack Query, Socket.io client
 
 ### Route Structure
 
@@ -166,15 +166,19 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 **What it is:** Landing page after login. Overview of the platform state.
 
 **What it shows:**
-- Summary stats: total guides, active enrolments, pending quiz reviews, pending registrations, open IoT alerts
-- Recent activity feed: last 5 registrations, last 5 IoT alerts, last 5 quiz submissions
-- Recharts: module enrolment counts (bar chart), guide certification rate (line or donut)
+- Summary stats: total registrations, active guides, pending quiz reviews, certs issued
+- Recent activity feed: last 4 notifications from the admin's inbox
+- Quick actions: shortcut buttons to Registrations, New Module, Certifications, IoT Alerts
 
 **API calls:**
-- `GET /api/dashboard/stats` — summary numbers
-- `GET /api/registrations?status=PENDING&limit=5`
-- `GET /api/iot-alerts?status=PENDING&limit=5`
-- `GET /api/quiz-attempts?status=PENDING_REVIEW&limit=5`
+- `GET /api/registrations?limit=1` — total count
+- `GET /api/users?role=GUIDE&status=ACTIVE&limit=1` — active guide count
+- `GET /api/quiz-attempts?status=PENDING_REVIEW&limit=1` — pending review count
+- `GET /api/certifications?limit=1` — certs issued count
+- `GET /api/modules?status=PUBLISHED&limit=1` — live modules count
+- `GET /api/notifications?limit=4` — recent activity feed
+
+> **Note:** Charts (Recharts) were originally planned here but removed. The required `GET /api/dashboard/stats` aggregate endpoint was not implemented in the backend. The stat cards cover the dashboard's informational needs with real live data.
 
 **Socket.io:** Connect here on mount. Listen for `iot:alert` event — when received, show a toast notification and increment the alert badge count. Do not navigate away automatically.
 

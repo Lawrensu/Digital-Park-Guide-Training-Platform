@@ -178,16 +178,6 @@ Apps are available at:
 
 ---
 
-## Who Needs What
-
-| Role | Must run | Can skip |
-|------|----------|----------|
-| API dev (Cyndia) | Steps 1–6, `apps/api` dev server | Web, Mobile |
-| Web dev (Elyn) | Steps 1–6, `apps/web` dev server | Mobile, Android Studio |
-| Mobile dev (Xavier) | Steps 1–7 all, Android Studio | — |
-
----
-
 ## Branching Strategy
 
 ```

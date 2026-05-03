@@ -1,71 +1,155 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import LoginPage from './pages/LoginPage'
-import DashboardPage from './pages/DashboardPage'
-import CourseListPage from './pages/CourseListPage'
-import LessonPage from './pages/LessonPage'
-import QuizPage from './pages/QuizPage'
-import CertificationPage from './pages/CertificationPage'
-import ProfilePage from './pages/ProfilePage'
-import SettingsPage from './pages/SettingsPage'
-import AdminDashboardPage from './pages/AdminDashboardPage'
-import RegistrationsPage from './pages/RegistrationsPage'
-import RegistrationDetailPage from './pages/RegistrationDetailPage'
-import ModulesPage from './pages/ModulesPage'
-import NewModulePage from './pages/NewModulePage'
-import EditModulePage from './pages/EditModulePage'
-import GuidesPage from './pages/GuidesPage'
-import GuideDetailPage from './pages/GuideDetailPage'
-import QuizReviewsPage from './pages/QuizReviewsPage'
-import QuizReviewDetailPage from './pages/QuizReviewDetailPage'
-import AdminCertificationsPage from './pages/AdminCertificationsPage'
-import AdminIssueCertificationPage from './pages/AdminIssueCertificationPage'
-import AdminIoTAlertsPage from './pages/AdminIoTAlertsPage'
-import AdminIoTAlertDetailPage from './pages/AdminIoTAlertDetailPage'
-import AdminNotificationsPage from './pages/AdminNotificationsPage'
-import AdminSettingsPage from './pages/AdminSettingsPage'
-import AdminProtected from './components/AdminProtected'
-import './App.css'
+
+import Login from './pages/Login/Login'
+import Register from './pages/register/Register'
+import ForgotPassword from './pages/auth/ForgotPassword'
+import ResetPassword from './pages/auth/ResetPassword'
+import Activate from './pages/auth/Activate'
+
+import Dashboard from './pages/admin/Dashboard/Dashboard'
+import Modules from './pages/admin/Module/Module'
+import RegistrationPage from './pages/admin/Registration/Registration'
+import QuizReviews from './pages/admin/Quizzes/Quizzes'
+import GuidePage from './pages/admin/Guide/Guide'
+import Certifications from './pages/admin/Certification/Certification'
+import IoTAlerts from './pages/admin/IoTAlert/IoTAlert'
+import Notifications from './pages/admin/Notification/Notification'
+import Settings from './pages/admin/Setting/Setting'
+import SettingsStations from './pages/admin/SettingsStations/SettingsStations'
+import RegistrationDetails from './pages/admin/RegistrationDetails/RegistrationDetails'
+import ModuleEdit from './pages/admin/ModuleEdit/ModuleEdit'
+import ContentBuild from './pages/admin/ContentBuild/ContentBuild'
+import CertIssue from './pages/admin/CertIssue/CertIssue'
+import GuideDetail from './pages/admin/GuideDetail/GuideDetail'
+import QuizGrading from './pages/admin/QuizGrading/QuizGrading'
+import IoTAlertDetail from './pages/admin/IoTAlertDetail/IoTAlertDetail'
+
+import GuideDashboard from './pages/park_guide/GuideDashboard/GuideDashboard'
+import GuideQuiz from './pages/park_guide/GuideQuiz/GuideQuiz'
+import GuideBadge from './pages/park_guide/Badge/Badge'
+import GuideNotification from './pages/park_guide/GuideNotification/GuideNotification'
+import GuideCertifications from './pages/park_guide/GuideCertifications/GuideCertifications'
+import GuideViewCert from './pages/park_guide/GuideViewCert/GuideViewCert'
+import GuideProfile from './pages/park_guide/GuideProfile/GuideProfile'
+import GuideModules from './pages/park_guide/GuideModule/GuideModule'
+import GuideQuizList from './pages/park_guide/GuideQuizList/GuideQuizList'
+import GuideModuleDetail from './pages/park_guide/GuideModuleDetail/GuideModuleDetail'
+import GuideContentViewer from './pages/park_guide/GuideContentViewer/GuideContentViewer'
+import GuideQuizResult from './pages/park_guide/GuideQuizResult/GuideQuizResult'
+
+import { AuthProvider } from './rbac/AuthProvider'
+import { ProtectedRoute } from './rbac/ProtectedRoute'
 
 function App() {
-  return (
-    <Router>
-      <Routes>
-        {/* Auth Routes */}
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/login" element={<LoginPage />} />
+    return (
+        <Router>
+            <AuthProvider>
+                <Routes>
+                    {/* Public routes */}
+                    <Route path="/" element={<Login />} />
+                    <Route path="/login" element={<Navigate to="/" replace />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/activate" element={<Activate />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Admin Routes (Protected) */}
-        <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
-        <Route path="/registrations" element={<RegistrationsPage />} />
-        <Route path="/registration/:id" element={<RegistrationDetailPage />} />
-        <Route path="/modules" element={<ModulesPage />} />
-        <Route path="/module/new" element={<NewModulePage />} />
-        <Route path="/module/edit/:id" element={<EditModulePage />} />
-        <Route path="/guides" element={<GuidesPage />} />
-        <Route path="/guide/:id" element={<GuideDetailPage />} />
-        <Route path="/quiz-reviews" element={<QuizReviewsPage />} />
-        <Route path="/quiz-review/:id" element={<QuizReviewDetailPage />} />
-        <Route path="/certificates-admin" element={<AdminCertificationsPage />} />
-        <Route path="/issue-certificate/:id" element={<AdminIssueCertificationPage />} />
-        <Route path="/iot-alerts" element={<AdminIoTAlertsPage />} />
-        <Route path="/iot-alert/:id" element={<AdminIoTAlertDetailPage />} />
-        <Route path="/notifications-admin" element={<AdminNotificationsPage />} />
-        <Route path="/settings-admin" element={<AdminSettingsPage />} />
+                    {/* Admin routes */}
+                    <Route path="/dashboard" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><Dashboard /></ProtectedRoute>
+                    } />
+                    <Route path="/registrations" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><RegistrationPage /></ProtectedRoute>
+                    } />
+                    <Route path="/registrations/:id" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><RegistrationDetails /></ProtectedRoute>
+                    } />
+                    <Route path="/modules" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><Modules /></ProtectedRoute>
+                    } />
+                    <Route path="/modules/new" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><ModuleEdit /></ProtectedRoute>
+                    } />
+                    <Route path="/modules/:id/edit" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><ModuleEdit /></ProtectedRoute>
+                    } />
+                    <Route path="/modules/:id/content" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><ContentBuild /></ProtectedRoute>
+                    } />
+                    <Route path="/guides" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><GuidePage /></ProtectedRoute>
+                    } />
+                    <Route path="/guides/:id" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><GuideDetail /></ProtectedRoute>
+                    } />
+                    <Route path="/quiz-reviews" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><QuizReviews /></ProtectedRoute>
+                    } />
+                    <Route path="/quiz-reviews/:attemptId" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><QuizGrading /></ProtectedRoute>
+                    } />
+                    <Route path="/certifications" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><Certifications /></ProtectedRoute>
+                    } />
+                    <Route path="/certifications/issue/:attemptId" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><CertIssue /></ProtectedRoute>
+                    } />
+                    <Route path="/iot-alerts" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><IoTAlerts /></ProtectedRoute>
+                    } />
+                    <Route path="/iot-alerts/:alertId" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><IoTAlertDetail /></ProtectedRoute>
+                    } />
+                    <Route path="/notifications" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><Notifications /></ProtectedRoute>
+                    } />
+                    <Route path="/settings/admins" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><Settings /></ProtectedRoute>
+                    } />
+                    <Route path="/settings/stations" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><SettingsStations /></ProtectedRoute>
+                    } />
 
-        {/* Protected Routes */}
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/courses" element={<CourseListPage />} />
-        <Route path="/lesson/:courseId" element={<LessonPage />} />
-        <Route path="/quiz/:courseId" element={<QuizPage />} />
-        <Route path="/certificates" element={<CertificationPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-
-        {/* 404 */}
-        <Route path="*" element={<Navigate to="/dashboard" />} />
-      </Routes>
-    </Router>
-  )
+                    {/* Park Guide routes — all nested under /guide/ */}
+                    <Route path="/guide/home" element={
+                        <ProtectedRoute allowedRoles={['GUIDE']}><GuideDashboard /></ProtectedRoute>
+                    } />
+                    <Route path="/guide/modules" element={
+                        <ProtectedRoute allowedRoles={['GUIDE']}><GuideModules /></ProtectedRoute>
+                    } />
+                    <Route path="/guide/modules/:id" element={
+                        <ProtectedRoute allowedRoles={['GUIDE']}><GuideModuleDetail /></ProtectedRoute>
+                    } />
+                    <Route path="/guide/modules/:id/content/:itemId" element={
+                        <ProtectedRoute allowedRoles={['GUIDE']}><GuideContentViewer /></ProtectedRoute>
+                    } />
+                    <Route path="/guide/quizzes" element={
+                        <ProtectedRoute allowedRoles={['GUIDE']}><GuideQuizList /></ProtectedRoute>
+                    } />
+                    <Route path="/guide/quiz/:quizId" element={
+                        <ProtectedRoute allowedRoles={['GUIDE']}><GuideQuiz /></ProtectedRoute>
+                    } />
+                    <Route path="/guide/quiz/:quizId/result" element={
+                        <ProtectedRoute allowedRoles={['GUIDE']}><GuideQuizResult /></ProtectedRoute>
+                    } />
+                    <Route path="/guide/certifications" element={
+                        <ProtectedRoute allowedRoles={['GUIDE']}><GuideCertifications /></ProtectedRoute>
+                    } />
+                    <Route path="/guide/certifications/:id" element={
+                        <ProtectedRoute allowedRoles={['GUIDE']}><GuideViewCert /></ProtectedRoute>
+                    } />
+                    <Route path="/guide/badges" element={
+                        <ProtectedRoute allowedRoles={['GUIDE']}><GuideBadge /></ProtectedRoute>
+                    } />
+                    <Route path="/guide/notifications" element={
+                        <ProtectedRoute allowedRoles={['GUIDE']}><GuideNotification /></ProtectedRoute>
+                    } />
+                    <Route path="/guide/profile" element={
+                        <ProtectedRoute allowedRoles={['GUIDE']}><GuideProfile /></ProtectedRoute>
+                    } />
+                </Routes>
+            </AuthProvider>
+        </Router>
+    )
 }
 
 export default App
