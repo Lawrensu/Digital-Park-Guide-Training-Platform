@@ -1,0 +1,40 @@
+### Create a badge definition (admin only)
+POST {{baseUrl}}/api/badges
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "name": "First Steps",
+  "description": "Completed your first certified module",
+  "imageS3Key": "badges/first-steps.webp",
+  "threshold": 1
+}
+
+###
+
+### List all badge definitions
+GET {{baseUrl}}/api/badges
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Update a badge
+PATCH {{baseUrl}}/api/badges/{{badgeId}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "description": "Earned after completing 1 certified module"
+}
+
+###
+
+### Get badges earned by a user (guide ownership enforced)
+GET {{baseUrl}}/api/badges/earned/{{userId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Delete a badge definition (admin only)
+DELETE {{baseUrl}}/api/badges/{{badgeId}}
+Authorization: Bearer {{adminToken}}

@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev, main]
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm --filter @sfc/api exec prisma generate
+
+      - name: Validate Prisma schema
+        run: pnpm --filter @sfc/api exec prisma validate
+
+      - name: Check JS syntax
+        run: |
+          find apps/api/src -name "*.js" | xargs node --check
+          echo "Syntax OK"
+
+      - name: Smoke test app import
+        run: echo "import('./apps/api/src/app.js').then(()=>{console.log('APP_IMPORT_OK');process.exit(0)}).catch(e=>{console.error('APP_IMPORT_FAILED:',e.message);process.exit(1)})" | node --input-type=module
+        env:
+          DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
+          REDIS_URL: redis://localhost:6379
+          JWT_ACCESS_SECRET: ci-placeholder-secret
+          JWT_REFRESH_SECRET: ci-placeholder-secret
+          INTERNAL_SECRET: ci-placeholder-secret
+          PORT: "3000"
+          NODE_ENV: test
+          WEB_URL: http://localhost:5173

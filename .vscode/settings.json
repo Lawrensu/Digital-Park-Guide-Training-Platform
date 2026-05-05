@@ -1,0 +1,27 @@
+{
+	"rest-client.environmentVariables": {
+		"$shared": {
+			"baseUrl": "http://localhost:3000"
+		},
+		"local": {
+			"baseUrl": "http://localhost:3000",
+			"adminToken": "",
+			"guideToken": "",
+			"internalSecret": "dev-internal-secret-local",
+			"registrationId": "",
+			"userId": "",
+			"stationId": "",
+			"moduleId": "",
+			"contentItemId": "",
+			"enrolmentId": "",
+			"quizId": "",
+			"questionId": "",
+			"attemptId": "",
+			"certId": "",
+			"badgeId": "",
+			"notifId": "",
+			"alertId": "",
+			"activationToken": ""
+		}
+	}
+}

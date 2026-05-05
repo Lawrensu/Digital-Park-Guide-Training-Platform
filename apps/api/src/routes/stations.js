@@ -7,7 +7,7 @@ import * as stationsController from '../controllers/stations.js';
 
 const router = Router();
 
-// all stations routes are admin-only
+// all station routes are admin only
 router.get('/', requireAuth, requireRole('ADMIN'), stationsController.list);
 router.post('/', requireAuth, requireRole('ADMIN'), validate(createStationSchema), stationsController.create);
 router.get('/:id', requireAuth, requireRole('ADMIN'), stationsController.getOne);

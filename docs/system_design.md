@@ -4,7 +4,7 @@
 
 | Layer | Technology |
 |-------|------------|
-| Web Frontend | React + Vite, TailwindCSS, shadcn/ui, TanStack Query, Recharts |
+| Web Frontend | React + Vite, TailwindCSS, shadcn/ui, TanStack Query |
 | Mobile App | React Native + Expo, NativeWind, Expo SQLite |
 | Backend API | Node.js + Express, Zod, Socket.io |
 | Database | PostgreSQL via Prisma ORM |
@@ -57,7 +57,7 @@ Monorepo managed by pnpm workspaces and Turborepo.
 - Park Guide features: registration (public, pre-login), browse and enrol in modules, view content, take quizzes, view certifications, view badges, notifications, profile
 - Styled with TailwindCSS + shadcn/ui component library
 - Data fetching managed by TanStack Query
-- Charts and progress visualisations via Recharts
+- Data fetching and caching managed by TanStack Query
 
 ### Mobile App : React Native + Expo
 - Accessible to both Admin/Trainer and Park Guide — role-based access control determines visible screens after login
@@ -122,7 +122,7 @@ JWT with refresh token rotation. No session-based auth.
 
 ### AWS S3
 - **S3 Standard (hot):** active training media, uploaded CVs, certificate PDFs, user-facing assets
-- **S3 Glacier (cold):** long-term archival of IoT evidence frames after a defined retention period
+- **S3 Glacier (cold):** long-term archival of IoT evidence frames. AWS S3 Lifecycle Policy automatically transitions evidence frames from S3 Standard → S3 Glacier after **30 days**. No application code required as it is configured once on the S3 bucket. 30 days provides sufficient window for admins to review and flag alerts before frames become cold-storage only.
 - Files are accessed via pre-signed URLs generated on-demand by the API (short expiry, typically 15 minutes)
 
 ---

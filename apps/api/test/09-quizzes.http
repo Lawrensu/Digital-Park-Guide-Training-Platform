@@ -1,0 +1,114 @@
+### Create a quiz linked to a module
+POST {{baseUrl}}/api/quizzes
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "moduleId": "{{moduleId}}",
+  "title": "Wildlife Identification Quiz",
+  "passScorePct": 70,
+  "timeLimitMinutes": 30,
+  "showScoreToGuide": true,
+  "retakePriceMyr": "5.00"
+}
+
+###
+
+### List quizzes
+GET {{baseUrl}}/api/quizzes
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Get quiz with questions (correct answers hidden for guides)
+GET {{baseUrl}}/api/quizzes/{{quizId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Add an MCQ question
+POST {{baseUrl}}/api/quizzes/{{quizId}}/questions
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "text": "Which orangutan species is native to Borneo?",
+  "type": "MCQ",
+  "maxScore": 10,
+  "order": 1,
+  "options": [
+    { "text": "Pongo pygmaeus", "isCorrect": true, "order": 1 },
+    { "text": "Pongo abelii", "isCorrect": false, "order": 2 },
+    { "text": "Gorilla gorilla", "isCorrect": false, "order": 3 }
+  ]
+}
+
+###
+
+### Add a TRUE_FALSE question
+POST {{baseUrl}}/api/quizzes/{{quizId}}/questions
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "text": "The Rafflesia is the world's largest individual flower.",
+  "type": "TRUE_FALSE",
+  "maxScore": 5,
+  "order": 2,
+  "options": [
+    { "text": "True", "isCorrect": true, "order": 1 },
+    { "text": "False", "isCorrect": false, "order": 2 }
+  ]
+}
+
+###
+
+### Add a SHORT_ANSWER question
+POST {{baseUrl}}/api/quizzes/{{quizId}}/questions
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "text": "Name two endangered species found in Borneo.",
+  "type": "SHORT_ANSWER",
+  "maxScore": 10,
+  "order": 3
+}
+
+###
+
+### Update quiz settings
+PATCH {{baseUrl}}/api/quizzes/{{quizId}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "passScorePct": 75
+}
+
+###
+
+### Update a question (replaces all options)
+PATCH {{baseUrl}}/api/quizzes/{{quizId}}/questions/{{questionId}}
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "text": "Updated question text?",
+  "options": [
+    { "text": "Option A", "isCorrect": true, "order": 1 },
+    { "text": "Option B", "isCorrect": false, "order": 2 }
+  ]
+}
+
+###
+
+### Delete a question
+DELETE {{baseUrl}}/api/quizzes/{{quizId}}/questions/{{questionId}}
+Authorization: Bearer {{adminToken}}
+
+###
+
+### Delete a quiz (blocked if attempts exist)
+DELETE {{baseUrl}}/api/quizzes/{{quizId}}
+Authorization: Bearer {{adminToken}}

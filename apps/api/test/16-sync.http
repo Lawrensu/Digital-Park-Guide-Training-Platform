@@ -1,0 +1,32 @@
+### Offline batch sync (guide only)
+POST {{baseUrl}}/api/sync
+Content-Type: application/json
+Authorization: Bearer {{guideToken}}
+
+{
+  "attempts": [
+    {
+      "clientId": "offline-attempt-001",
+      "quizId": "{{quizId}}",
+      "attemptNumber": 1,
+      "submittedAt": "2026-04-15T08:30:00.000Z",
+      "responses": [
+        {
+          "questionId": "REPLACE_WITH_QUESTION_ID",
+          "selectedOptionId": "REPLACE_WITH_OPTION_ID"
+        }
+      ]
+    }
+  ]
+}
+
+###
+
+### Sync with empty attempts array (expect 200 with empty results)
+POST {{baseUrl}}/api/sync
+Content-Type: application/json
+Authorization: Bearer {{guideToken}}
+
+{
+  "attempts": []
+}
