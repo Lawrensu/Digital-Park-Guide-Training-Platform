@@ -1,21 +1,20 @@
 {
-  "name": "@sfc/mobile",
+  "name": "parkguide-training",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "ios": "expo start --ios"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "@react-navigation/bottom-tabs": "^7.0.0",
-    "@react-navigation/native": "^7.0.0",
-    "@react-navigation/stack": "^7.0.0",
-    "expo": "~54.0.33",
-    "expo-document-picker": "~14.0.8",
+    "@react-navigation/bottom-tabs": "^6.5.11",
+    "@react-navigation/native": "^6.1.10",
+    "@react-navigation/stack": "^6.3.20",
+    "axios": "^1.6.7",
+    "expo": "~54.0.0",
     "expo-status-bar": "~3.0.9",
     "react": "^19.2.4",
     "react-native": "0.81.5",
@@ -26,7 +25,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "babel-preset-expo": "~13.0.0"
+    "babel-preset-expo": "~54.0.10"
   },
   "private": true
 }

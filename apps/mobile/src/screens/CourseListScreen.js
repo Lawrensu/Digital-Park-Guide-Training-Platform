@@ -205,7 +205,7 @@ export default function CourseListScreen({ navigation }) {
       {/* Category Filter */}
       <ScrollView
         horizontal showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ padding: 16, gap: 8 }}
+        contentContainerStyle={{ paddingHorizontal: 12, paddingVertical: 10, gap: 8 }}
       >
         {CATEGORIES.map((cat) => (
           <TouchableOpacity

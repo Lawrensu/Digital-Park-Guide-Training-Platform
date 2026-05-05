@@ -5,7 +5,7 @@ import { MOCK_COURSES, MOCK_LESSONS, MOCK_QUIZZES } from '../data/seedData';
 import { getCourses, saveCourses, getLessonsByCourse, saveLessons,
          saveProgress, saveQuizResult, getPendingSyncItems, markSyncComplete } from '../database/db';
 
-const API_BASE = 'http://172.20.10.4:3000/api';
+const API_BASE = 'http://localhost:3000/api';
 const TIMEOUT_MS = 5000;
 
 // Helper: fetch with timeout
