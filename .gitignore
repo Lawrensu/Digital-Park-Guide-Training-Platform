@@ -25,6 +25,7 @@ coverage/
 .expo/
 ios/
 android/
+apps/iot_ai/saved_clips/
 
 # Secrets
 *.pem
