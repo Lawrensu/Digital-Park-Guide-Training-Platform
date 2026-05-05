@@ -16,7 +16,7 @@ function AppInner() {
   return (
     <NavigationContainer>
       <StatusBar style="light" backgroundColor="#15803d" />
-      <OfflineBanner visible={!isOnline} />
+      <OfflineBanner visible={isOnline === false} />
       <RootNavigator />
     </NavigationContainer>
   );

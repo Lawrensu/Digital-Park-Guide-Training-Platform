@@ -5,11 +5,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { syncOfflineData } from './apiService';
 
-const HEALTH_URL = 'http://localhost:3000/api/health';
+const HEALTH_URL = 'https://clients3.google.com/generate_204';
 const POLL_MS    = 15000;
 
 export default function useNetworkStatus() {
-  const [isOnline, setIsOnline]     = useState(true);
+  const [isOnline, setIsOnline]     = useState(null);
   const [lastSynced, setLastSynced] = useState(null);
   const wasOfflineRef = useRef(false);
 
