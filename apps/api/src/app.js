@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 
 // Cyndia — import your routers here as you build each domain
 import authRouter from './routes/auth.js';
+import stationsRouter from './routes/stations.js';
 // import authRouter from './routes/auth.js';
 // import stationsRouter from './routes/stations.js';
 
@@ -19,5 +20,6 @@ app.use(cookieParser());
 // app.use('/api/auth', authRouter);
 // app.use('/api/stations', stationsRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/stations', stationsRouter);
 
 export default app;
