@@ -8,13 +8,13 @@ export const getAll = (params) =>
 	api.get('/certifications', { params })
 
 export const getMine = () =>
-	api.get('/certifications/me')
+	api.get('/certifications')
 
 export const getOne = (id) =>
 	api.get(`/certifications/${id}`)
 
 export const getDownloadUrl = (id) =>
-	api.get(`/certifications/${id}/download-url`)
+	api.get(`/certifications/${id}/download`)
 
 export const verifyPublic = (id) =>
 	api.get(`/certifications/verify/${id}`)

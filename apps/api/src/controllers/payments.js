@@ -33,39 +33,47 @@ export const initiate = async (req, res) => {
 		}
 
 		const amountCents = Math.round(Number(quiz.retakePriceMyr) * 100);
+
+		// BillPlz callback is server-to-server; redirect is where the user lands after payment
 		const callbackUrl = `${process.env.WEB_URL}/api/payments/callback`;
-		const redirectUrl = `${process.env.WEB_URL}/quiz/${quizId}/retake`;
+		const redirectUrl = `${process.env.WEB_URL}/guide/quiz/${quizId}`;
 
-		// TODO: replace placeholder with real BillPlz API call once BILLPLZ_API_KEY is set
-		// const response = await fetch(`${BILLPLZ_BASE}/bills`, {
-		//   method: 'POST',
-		//   headers: { Authorization: 'Basic ' + Buffer.from(process.env.BILLPLZ_API_KEY + ':').toString('base64') },
-		//   body: new URLSearchParams({
-		//     collection_id: process.env.BILLPLZ_COLLECTION_ID,
-		//     email: req.user.email,
-		//     name: req.user.username,
-		//     amount: amountCents,
-		//     description: `Retake: ${quiz.title}`,
-		//     callback_url: callbackUrl,
-		//     redirect_url: redirectUrl,
-		//   })
-		// });
-		// const bill = await response.json();
+		const response = await fetch(`${BILLPLZ_BASE}/bills`, {
+			method: 'POST',
+			headers: {
+				Authorization: 'Basic ' + Buffer.from(process.env.BILLPLZ_API_KEY + ':').toString('base64'),
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: new URLSearchParams({
+				collection_id: process.env.BILLPLZ_COLLECTION_ID,
+				email: req.user.email,
+				name: req.user.email.split('@')[0],
+				amount: String(amountCents),
+				description: `Retake: ${quiz.title}`,
+				callback_url: callbackUrl,
+				redirect_url: redirectUrl,
+			}),
+		});
 
-		const placeholderBillId = 'placeholder-' + crypto.randomUUID();
-		const billUrl = '#billplz-pending';
+		if (!response.ok) {
+			const errBody = await response.text();
+			console.error('BillPlz create bill error:', errBody);
+			return res.status(502).json({ success: false, error: { code: 'BILLPLZ_ERROR', message: 'Failed to create payment bill' } });
+		}
+
+		const bill = await response.json();
 
 		await prisma.payment.create({
 			data: {
 				quizId,
 				userId,
 				amount: quiz.retakePriceMyr,
-				billplzBillId: placeholderBillId,
+				billplzBillId: bill.id,
 				status: 'PENDING'
 			}
 		});
 
-		return res.status(200).json({ success: true, data: { url: billUrl } });
+		return res.status(200).json({ success: true, data: { url: bill.url } });
 	} catch (err) {
 		return res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
 	}
@@ -77,14 +85,14 @@ export const callback = async (req, res) => {
 		const { 'billplz[id]': billId, 'billplz[paid]': paidRaw } = req.body;
 		const paid = paidRaw === 'true' || paidRaw === true;
 
-		// TODO: verify X Signature once BILLPLZ_X_SIGNATURE is set
-		// const xSig = req.headers['x-signature'];
-		// const expected = crypto.createHmac('sha256', process.env.BILLPLZ_X_SIGNATURE)
-		//   .update(`${billId}|${paid}`)
-		//   .digest('hex');
-		// if (xSig !== expected) {
-		//   return res.status(400).send();
-		// }
+		// Verify the request genuinely came from BillPlz, not a spoofed POST
+		const xSig = req.headers['x-signature'];
+		const expected = crypto.createHmac('sha256', process.env.BILLPLZ_X_SIGNATURE)
+			.update(`${billId}|${paid}`)
+			.digest('hex');
+		if (xSig !== expected) {
+			return res.status(400).send();
+		}
 
 		const payment = await prisma.payment.findUnique({ where: { billplzBillId: billId } });
 		if (!payment) {

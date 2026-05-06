@@ -1,7 +1,7 @@
 # API Design Guide
 **SFC Digital Park Guide Training Platform**
-**For: Cyndia (API Developer)**
-**Ask before assuming anything not covered here.**
+**API is fully implemented. This document is the reference for endpoint contracts,**
+**response shapes, and business rules. Do not re-implement any domain.**
 
 ---
 
@@ -173,7 +173,7 @@ Notice the controller doesn't validate — `validate()` already did that before 
 
 Files never pass through your API. The frontend asks your API for a pre-signed S3 URL, uploads directly to S3, then sends you back the S3 key. You store only the key.
 
-You need one endpoint: `POST /api/uploads/presign`. It receives `{ fileName, fileType, folder }` and returns `{ uploadUrl, s3Key }`. Ask Law for the S3 utility.
+The presign endpoint is `POST /api/uploads/presign`. It receives `{ purpose, contentType, extension }` and returns `{ url, key }`. Files are uploaded directly from the client to S3 using the returned URL.
 
 ---
 
@@ -252,6 +252,7 @@ All routes are prefixed with `/api/` unless noted otherwise. Auth categories: **
 | POST | /api/registrations | Public | Submit a new park guide registration application |
 | GET | /api/registrations | Admin | List all applications with optional status filter |
 | GET | /api/registrations/:id | Admin | Get a single application |
+| GET | /api/registrations/:id/cv-url | Admin | Get a pre-signed S3 download URL for the applicant's CV |
 | PATCH | /api/registrations/:id/approve | Admin | Approve application; creates User, sends activation email |
 | PATCH | /api/registrations/:id/reject | Admin | Reject application; sends rejection email |
 
@@ -368,7 +369,7 @@ The callback verifies the X Signature header before trusting the payload. Always
 | POST | /api/badges | Admin | Create a badge definition |
 | PATCH | /api/badges/:id | Admin | Update a badge |
 | DELETE | /api/badges/:id | Admin | Delete a badge |
-| GET | /api/badges/earned/:userId | Own | List badges earned by a user; guides may only view their own |
+| GET | /api/badges/users/:userId | Own | List badges earned by a user; guides may only view their own |
 
 Badges are awarded automatically when a guide's certification count meets a badge threshold. No guide-triggered award exists.
 
@@ -376,9 +377,9 @@ Badges are awarded automatically when a guide's certification count meets a badg
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| GET | /api/notifications | Auth | Get the authenticated user's notification inbox |
+| GET | /api/notifications/me | Auth | Get the authenticated user's notification inbox |
 | PATCH | /api/notifications/:id/read | Auth | Mark a single notification as read |
-| PATCH | /api/notifications/read-all | Auth | Mark all own notifications as read |
+| PATCH | /api/notifications/me/read-all | Auth | Mark all own notifications as read |
 | POST | /api/notifications/custom | Admin | Send a custom notification to specific users or an entire role |
 
 ### IoT Alerts

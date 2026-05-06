@@ -5,27 +5,17 @@ import Navbar from '../../../components/Navbar/Navbar'
 import * as modulesApi from '../../../api/modules.js'
 
 
-const STATUS_OPTIONS = ['DRAFT', 'PUBLISHED', 'ARCHIVED']
-
-const STATUS_BADGE_CLASSES = {
-  DRAFT:     'px-3 py-1 rounded-full text-xs font-semibold bg-[#fef3c7] text-[#92400e]',
-  PUBLISHED: 'px-3 py-1 rounded-full text-xs font-semibold bg-[#e8f5ee] text-[#266841]',
-  ARCHIVED:  'px-3 py-1 rounded-full text-xs font-semibold bg-[#f5f5f4] text-[#78716c]',
-}
-
-const STATUS_LABEL = {
-  DRAFT:     'Draft',
-  PUBLISHED: 'Published',
-  ARCHIVED:  'Archived',
-}
+const STATUS_OPTIONS = [
+  { value: 'DRAFT',     label: 'Draft' },
+  { value: 'PUBLISHED', label: 'Published' },
+  { value: 'ARCHIVED',  label: 'Archived' },
+]
 
 
 export default function ModuleEditPage() {
   const navigate     = useNavigate()
   const { id }       = useParams()
   const isEditing    = !!id
-  const [statusOpen, setStatusOpen] = useState(false)
-
   const [title,       setTitle]       = useState('')
   const [description, setDescription] = useState('')
   const [status,      setStatus]      = useState('DRAFT')
@@ -49,14 +39,20 @@ export default function ModuleEditPage() {
   }, [existing])
 
   const saveMutation = useMutation({
-    mutationFn: () => {
-      const payload = { title: title.trim(), description: description.trim(), status }
-      return isEditing
-        ? modulesApi.update(id, payload)
-        : modulesApi.create(payload)
+    mutationFn: async () => {
+      const payload = { title: title.trim(), description: description.trim() }
+      let savedId = id
+      if (isEditing) {
+        await modulesApi.update(id, payload)
+      } else {
+        const res = await modulesApi.create(payload)
+        savedId = res.data.data?.id
+      }
+      // status lives on a separate endpoint; always call it when editing or after create
+      if (savedId) await modulesApi.updateStatus(savedId, status)
+      return savedId
     },
-    onSuccess: (res) => {
-      const savedId = isEditing ? id : res.data.data?.id
+    onSuccess: (savedId) => {
       if (savedId) navigate(`/modules/${savedId}/content`)
       else navigate('/modules')
     },
@@ -133,30 +129,15 @@ export default function ModuleEditPage() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2 text-[#44403c]">Status</label>
-                  <div className="relative w-64">
-                    <button
-                      className="w-full border border-[#e7e5e4] px-4 py-2.5 rounded-lg text-sm outline-none focus:border-[#1f4d35] flex justify-between items-center bg-white"
-                      onClick={() => setStatusOpen(!statusOpen)}
-                      type="button"
-                    >
-                      <span className={STATUS_BADGE_CLASSES[status]}>{STATUS_LABEL[status]}</span>
-                      <span className="text-[#78716c] text-xs">▼</span>
-                    </button>
-                    {statusOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#e7e5e4] rounded-lg shadow-lg z-10">
-                        {STATUS_OPTIONS.map(s => (
-                          <button
-                            key={s}
-                            type="button"
-                            className="w-full px-4 py-2 hover:bg-[#f5f5f4] text-left"
-                            onClick={() => { setStatus(s); setStatusOpen(false) }}
-                          >
-                            <span className={STATUS_BADGE_CLASSES[s]}>{STATUS_LABEL[s]}</span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  <select
+                    className="w-64 border border-[#e7e5e4] px-4 py-2.5 rounded-lg text-sm text-[#1c1917] outline-none focus:border-[#1f4d35] bg-white cursor-pointer"
+                    value={status}
+                    onChange={e => setStatus(e.target.value)}
+                  >
+                    {STATUS_OPTIONS.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
                 </div>
 
               </div>

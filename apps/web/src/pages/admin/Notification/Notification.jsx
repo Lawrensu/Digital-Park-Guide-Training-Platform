@@ -102,7 +102,7 @@ export default function NotificationPage() {
 	const handleSend = () => {
 		if (!message.trim()) return
 		setSendError('')
-		sendMutation.mutate({ title: title.trim() || 'Announcement', body: message.trim(), targetRole })
+		sendMutation.mutate({ title: title.trim() || 'Announcement', body: message.trim(), role: targetRole })
 	}
 
 	const handleClick = (notif) => {

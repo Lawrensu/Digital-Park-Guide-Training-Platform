@@ -4,7 +4,7 @@
 
 | Layer | Technology |
 |-------|------------|
-| Web Frontend | React + Vite, TailwindCSS, shadcn/ui, TanStack Query |
+| Web Frontend | React + Vite, TailwindCSS, TanStack Query |
 | Mobile App | React Native + Expo, NativeWind, Expo SQLite |
 | Backend API | Node.js + Express, Zod, Socket.io |
 | Database | PostgreSQL via Prisma ORM |
@@ -56,7 +56,6 @@ Monorepo managed by pnpm workspaces and Turborepo.
 - Admin/Trainer features: module management, guide oversight, registration review, quiz grading, certification issuance, IoT alert monitoring, notifications, station management, admin account settings
 - Park Guide features: registration (public, pre-login), browse and enrol in modules, view content, take quizzes, view certifications, view badges, notifications, profile
 - Styled with TailwindCSS + shadcn/ui component library
-- Data fetching managed by TanStack Query
 - Data fetching and caching managed by TanStack Query
 
 ### Mobile App : React Native + Expo
@@ -77,7 +76,7 @@ Monorepo managed by pnpm workspaces and Turborepo.
 - Both web and mobile clients communicate exclusively through this API
 - The database is never exposed directly to any client
 - Routes follow RESTful conventions, prefixed `/api/`
-- Organised internally by domain: `auth`, `registrations`, `users`, `modules`, `enrolments`, `quizzes`, `certifications`, `notifications`, `iot-alerts`, `uploads`, `sync`
+- Organised internally by domain: `auth`, `registrations`, `users`, `stations`, `modules`, `content-items`, `enrolments`, `quizzes`, `quiz-attempts`, `payments`, `certifications`, `badges`, `notifications`, `iot-alerts`, `uploads`, `sync`
 - Request validation via Zod schemas on every POST and PATCH
 - Real-time alert push to connected admin clients via Socket.io
 - All uploaded images converted to WebP server-side via `sharp` before storing to S3
@@ -98,7 +97,8 @@ JWT with refresh token rotation. No session-based auth.
 - Mobile stores refresh token in Expo SecureStore
 - Web stores refresh token in HttpOnly cookie
 - On 401, client silently calls `POST /api/auth/refresh`. If refresh token is also expired, redirect to login.
-- On guide account approval: a one-time activation token is generated, its hash + expiry stored in `PasswordResetToken` table. Guide receives email with set-password link. Token expires in 24 hours. Resend activation reuses the same endpoint, invalidating the previous token first.
+- On guide account approval: a one-time activation token is generated, its hash + expiry stored in `PasswordResetToken` table. Guide receives email with an activation link. Token expires in 24 hours. Resend activation reuses the same endpoint, invalidating the previous token first.
+- **Idle session timeout:** authenticated web sessions auto-logout after 14 minutes of inactivity. A 60-second countdown modal gives the user a chance to stay logged in before logout is triggered client-side.
 
 ---
 
@@ -149,7 +149,7 @@ ESP32 detects → captures evidence frame
 → Admin notified via push notification + email (AWS SES)
 ```
 
-> **Unresolved:** On-device runtime must be confirmed as **ESP-DL or TFLite Micro** before model training begins. Standard ONNX Runtime is too large for ESP32's SRAM. This determines the export format. Blocks all AI pipeline progress.
+> **In progress:** Detection model confirmed as YOLOv8. On-device runtime and export format are pending hardware validation — standard ONNX Runtime is too large for ESP32's SRAM. IoT pipeline integration with the platform is in progress.
 
 ---
 
@@ -185,7 +185,7 @@ ESP32 detects → captures evidence frame
 
 ## CI/CD : GitHub Actions
 
-- On every pull request to `develop`: lint, tests
+- On every pull request to `dev`: lint, tests
 - On merge to `main`: build Docker image, push to registry, deploy to EC2
 - Failed health checks trigger automatic rollback
 
@@ -197,7 +197,7 @@ Two Compose files:
 
 | File | Purpose | Services |
 |------|---------|---------|
-| `docker-compose.yml` | Local development | api, postgres, redis |
+| `docker-compose.yml` | Local development | api, postgres |
 | `docker-compose.prod.yml` | EC2 deployment | api only (RDS + Upstash replace local containers) |
 
 - `apps/web` and `apps/mobile` are not containerised as Vite and Expo run natively during development

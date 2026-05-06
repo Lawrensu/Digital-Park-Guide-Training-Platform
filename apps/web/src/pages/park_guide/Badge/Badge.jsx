@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import GuideNavbar from '../../../components/GuideNavbar/GuideNavbar'
 import * as badgesApi from '../../../api/badges.js'
+import { useAuth } from '../../../rbac/AuthProvider'
 
 
 function ShieldIcon({ size = 40 }) {
@@ -31,12 +32,15 @@ const BADGE_COLORS = ['#2d7d4e', '#059669', '#d97706', '#0284c7', '#7c3aed', '#e
 
 
 export default function BadgePage() {
+	const { user } = useAuth()
+
 	const { data: earnedData, isLoading } = useQuery({
-		queryKey: ['badges', 'mine'],
+		queryKey: ['badges', 'mine', user?.id],
 		queryFn: async () => {
-			const res = await badgesApi.getMyBadges()
+			const res = await badgesApi.getEarned(user.id)
 			return res.data.data
 		},
+		enabled: !!user?.id,
 	})
 
 	const { data: allBadgesData } = useQuery({

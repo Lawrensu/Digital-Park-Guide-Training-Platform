@@ -4,6 +4,11 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const s3 = new S3Client({
 	region: process.env.AWS_REGION,
+	// SDK v3 adds CRC32 checksums to presigned PUT URLs by default.
+	// Browsers uploading via axios do not send the matching header, causing a 400.
+	// WHEN_REQUIRED only adds checksums when the operation truly requires them.
+	requestChecksumCalculation: 'WHEN_REQUIRED',
+	responseChecksumValidation: 'WHEN_REQUIRED',
 	credentials: {
 		accessKeyId: process.env.AWS_ACCESS_KEY_ID,
 		secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,

@@ -17,9 +17,9 @@ const GuideCertifications = () => {
 
 	const certs = data ?? []
 
-	const now       = new Date()
-	const active    = certs.filter(c => !c.expiresAt || new Date(c.expiresAt) > now)
-	const expired   = certs.filter(c => c.expiresAt && new Date(c.expiresAt) <= now)
+	const now     = new Date()
+	const active  = certs.filter(c => !c.expiryDate || new Date(c.expiryDate) > now)
+	const expired = certs.filter(c => c.expiryDate && new Date(c.expiryDate) <= now)
 
 	const handleDownload = async (certId) => {
 		try {
@@ -59,20 +59,45 @@ const GuideCertifications = () => {
 					<span>🎓</span> Certifications
 				</div>
 
-				{isLoading && <p className="text-center py-8 text-[#666666]">Loading certifications…</p>}
-				{error && <p className="text-center py-8 text-red-500">Failed to load certifications.</p>}
+				{isLoading && (
+					<p className="text-center py-8 text-[#666666]">Loading certifications…</p>
+				)}
 
-				{!isLoading && !error && (
+				{error && (
+					<div className="flex flex-col items-center justify-center py-16 text-center">
+						<p className="text-4xl mb-4">😕</p>
+						<p className="text-[#333333] font-semibold text-lg mb-1">Something went wrong</p>
+						<p className="text-[#666666] text-sm">Could not load your certifications. Please try refreshing the page.</p>
+					</div>
+				)}
+
+				{!isLoading && !error && certs.length === 0 && (
+					<div className="flex flex-col items-center justify-center py-16 text-center bg-white rounded-xl border border-[#E0E0E0]">
+						<p className="text-5xl mb-4">🌿</p>
+						<p className="text-[#333333] font-semibold text-lg mb-1">No certificates yet</p>
+						<p className="text-[#666666] text-sm mb-6">Complete a training module and pass the quiz to earn your first one.</p>
+						<button
+							onClick={() => navigate('/guide/modules')}
+							className="py-2.5 px-6 bg-[#2E7D32] text-white text-sm font-semibold rounded-lg border-0 cursor-pointer hover:bg-[#1B5E20] transition-colors"
+						>
+							Browse Modules
+						</button>
+					</div>
+				)}
+
+				{!isLoading && !error && certs.length > 0 && (
 					<div className="flex flex-col gap-4">
-						{certs.length > 0 ? certs.map(cert => {
-							const isExpired = cert.expiresAt && new Date(cert.expiresAt) <= new Date()
+						{certs.map(cert => {
+							const isExpired = cert.expiryDate && new Date(cert.expiryDate) <= new Date()
 							return (
 								<div key={cert.id} className="bg-white p-4 sm:p-6 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[#E0E0E0]">
 									<div className="flex items-center gap-4 sm:gap-6">
 										<div className="w-14 h-14 bg-[#FFF8E1] text-[#FBC02D] rounded-full flex items-center justify-center text-[1.75rem]">🎓</div>
 										<div>
-											<h4 className="m-0 mb-1 text-[1.1rem] text-[#333333]">{cert.enrolment?.module?.title ?? '—'}</h4>
-											<span className="text-[0.85rem] text-[#666666]">Issued: {new Date(cert.issuedAt).toLocaleDateString()}</span>
+											<h4 className="m-0 mb-1 text-[1.1rem] text-[#333333]">{cert.module?.title ?? '—'}</h4>
+											<span className="text-[0.85rem] text-[#666666]">
+												Issued: {cert.issueDate ? new Date(cert.issueDate).toLocaleDateString() : '—'}
+											</span>
 											<div>
 												{isExpired ? (
 													<span className="inline-block py-1 px-3 rounded-[20px] text-[0.75rem] font-semibold uppercase mt-2 bg-[#FFEBEE] text-[#D32F2F]">Expired</span>
@@ -98,15 +123,15 @@ const GuideCertifications = () => {
 									</div>
 								</div>
 							)
-						}) : (
-							<p className="text-center py-8 text-[#666666]">No certifications yet. Complete a module and pass the quiz to earn one.</p>
-						)}
+						})}
 					</div>
 				)}
 
-				<div className="mt-8 text-[0.85rem] text-[#666666] bg-[#E8F5E9] p-4 rounded-lg border-l-4 border-l-[#2E7D32] leading-normal">
-					<strong>Note:</strong> You can download the PDF version of any certificate at any time.
-				</div>
+				{!isLoading && !error && certs.length > 0 && (
+					<div className="mt-8 text-[0.85rem] text-[#666666] bg-[#E8F5E9] p-4 rounded-lg border-l-4 border-l-[#2E7D32] leading-normal">
+						<strong>Note:</strong> You can download the PDF version of any certificate at any time.
+					</div>
+				)}
 			</main>
 		</div>
 	)

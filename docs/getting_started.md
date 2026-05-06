@@ -1,6 +1,7 @@
 # Getting Started
 
-This document guides you through setting up the project locally for development.
+This document walks you through setting up the project locally for development.
+By the end you will have the API running on port 3000 and the web app on port 5173.
 
 ---
 
@@ -12,19 +13,19 @@ Install the following before proceeding:
 |------|---------|---------|
 | [Node.js](https://nodejs.org/) | v20 LTS | JavaScript runtime |
 | [pnpm](https://pnpm.io/) | v9+ | Package manager (`npm install -g pnpm`) |
-| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | Latest | Runs Postgres and Redis locally |
+| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | Latest | Runs Postgres locally |
 | [Git](https://git-scm.com/) | Latest | Version control |
 
-**Mobile development only (Sprint 2):**
-- Android Studio (Android SDK for emulator)
-- iOS requires macOS : use Expo Go on a physical device if on Windows/Linux
+**Mobile development only:**
+- Android Studio (for Android emulator)
+- iOS requires macOS — use Expo Go on a physical device if on Windows/Linux
 
-**Recommended editor:** VS Code with the following extensions:
+**Recommended VS Code extensions:**
 - ESLint
 - Prettier
 - Prisma
 - Docker
-- Thunder Client (API testing)
+- REST Client by Huachao Mao (required for `.http` API test files in `apps/api/test/`)
 
 ---
 
@@ -37,19 +38,16 @@ git clone https://github.com/Lawrensu/Digital-Park-Guide-Training-Platform.git
 cd Digital-Park-Guide-Training-Platform
 ```
 
-Then check out the integration branch:
+Check out the integration branch and cut your own working branch from it:
 
 ```bash
 git checkout dev
-```
-
-Cut your own working branch from there:
-
-```bash
 git checkout -b dev-yourname dev
 ```
 
 ### 2. Install dependencies
+
+From the repo root:
 
 ```bash
 pnpm install
@@ -58,6 +56,8 @@ pnpm install
 This installs all dependencies across `apps/` and `packages/` in one command.
 
 ### 3. Configure environment variables
+
+Copy the example file to create your local `.env`:
 
 **Windows:**
 ```powershell
@@ -69,18 +69,32 @@ copy .env.example .env
 cp .env.example .env
 ```
 
-Open the root `.env` and fill in these values at minimum to get the app running locally:
+Open `.env` and fill in the following. Everything else can be left as-is for local dev.
+
+**Must fill in to run locally:**
 
 ```
-JWT_ACCESS_SECRET=    ← generate one: node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+JWT_ACCESS_SECRET=    ← generate: node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 JWT_REFRESH_SECRET=   ← generate a different one using the same command
+REDIS_URL=            ← your Upstash Redis URL (format: rediss://default:PASSWORD@HOST:PORT)
+INTERNAL_SECRET=      ← any random string, e.g. local-dev-secret
 ```
 
-The `DATABASE_URL` and `REDIS_URL` values are already pre-filled to match the Docker setup, leave them as-is unless you changed the Docker port (see step 4).
+**Must fill in for seed (step 6):**
 
-AWS and SES keys can be left blank locally, uploads and email will not work but the rest of the API will.
+```
+SEED_ADMIN_EMAIL=your@email.com
+SEED_ADMIN_USERNAME=YourAdminUsername
+SEED_ADMIN_PASSWORD=YourSecurePassword
+```
 
-**Also create `apps/api/.env`** : Prisma reads its database URL from here, not the root `.env`:
+**Optional — leave blank to skip those features:**
+- `AWS_*` / `SES_*` — uploads and email will not work, but the rest of the API runs fine
+- `BILLPLZ_*` — payment flow will not work
+
+The `DATABASE_URL` is already pre-filled in `.env.example` to match the Docker setup (`localhost:5433`). Leave it as-is.
+
+**Also create `apps/api/.env`** — Prisma reads its database URL from here, not the root `.env`:
 
 **Windows:**
 ```powershell
@@ -92,10 +106,10 @@ copy .env.example apps\api\.env
 cp .env.example apps/api/.env
 ```
 
-Then edit `apps/api/.env` and keep only this line (delete everything else):
+You only need one line in `apps/api/.env`. Delete everything else and keep:
 
 ```
-DATABASE_URL=postgresql://user:password@localhost:5432/sfcpark
+DATABASE_URL=postgresql://user:password@localhost:5433/sfcpark
 ```
 
 ### 4. Start the local database
@@ -103,67 +117,49 @@ DATABASE_URL=postgresql://user:password@localhost:5432/sfcpark
 Make sure Docker Desktop is running, then:
 
 ```bash
-docker compose up postgres redis -d
+docker compose up postgres -d
 ```
 
-Wait about 10 seconds for the containers to become healthy.
+Wait about 10 seconds for the container to become healthy.
 
-> **Port conflict (Windows):** If you have a local PostgreSQL installation, it already occupies port 5432. Fix by stopping it first:
-> ```powershell
-> Stop-Service -Name "postgresql*"
-> ```
-> Then re-run the docker compose command. Alternatively, change the port in `docker-compose.yml` from `5432:5432` to `5433:5432` and update `DATABASE_URL` in both `.env` files to use port `5433`.
+> **Port conflict:** The Docker setup maps Postgres to port `5433` on your machine (not the default 5432), so it will not conflict with any existing local Postgres installation.
 
 ### 5. Run database migrations
 
+From the repo root:
+
 ```bash
-cd apps/api
-pnpm prisma migrate dev
+pnpm --filter @sfc/api exec prisma migrate dev
 ```
 
-This creates all 18 tables in your local database. You only need to run this once on first setup, and again whenever someone pushes a new migration.
+This creates all tables in your local database. Run this once on first setup, and again whenever someone pushes a new migration.
 
 ### 6. Seed the database
 
-Before seeding, open the root `.env` and fill in the primary admin credentials:
-
-```
-SEED_ADMIN_EMAIL=your@email.com
-SEED_ADMIN_USERNAME=YourAdminUsername
-SEED_ADMIN_PASSWORD=YourSecurePassword
-```
-
-Then run:
+Make sure you filled in the `SEED_ADMIN_*` values in your root `.env` (step 3), then:
 
 ```bash
-cd apps/api
-pnpm prisma db seed
+pnpm --filter @sfc/api exec prisma db seed
 ```
 
-This creates 4 stations, your primary admin account, 4 test admins, and 10 test guides. The test password for all seeded test accounts (not your primary admin) is `TestPass123!`.
+This creates 4 stations, your primary admin account, 4 test admins, and 10 test guides.
+The test password for all seeded test accounts (not your primary admin) is `TestPass123!`.
 
-You only need to run this once. Re-running is safe — it uses upsert so it won't create duplicates.
+Re-running seed is safe — it uses upsert and will not create duplicates.
 
 ### 7. Start the development servers
 
-**Sprint 1 — API + Web only:**
+Open two terminals from the repo root:
 
-From the repo root:
 ```bash
-pnpm --filter @sfc/api dev &
+# Terminal 1 — API
+pnpm --filter @sfc/api dev
+
+# Terminal 2 — Web
 pnpm --filter @sfc/web dev
 ```
 
-Or start them individually in separate terminals:
-```bash
-# Terminal 1
-cd apps/api && pnpm dev
-
-# Terminal 2
-cd apps/web && pnpm dev
-```
-
-**Sprint 2 — Mobile:**
+**Mobile:**
 ```bash
 cd apps/mobile && npx expo start
 ```
@@ -174,14 +170,14 @@ Apps are available at:
 |-----|-----|
 | API | http://localhost:3000 |
 | Web | http://localhost:5173 |
-| Mobile | Expo DevTools : scan QR code with Expo Go app |
+| Mobile | Expo DevTools — scan QR code with Expo Go |
 
 ---
 
 ## Branching Strategy
 
 ```
-main        ← production-ready, Law merges into here when ready
+main        ← production-ready, Law merges into here
 dev         ← integration branch, Law pulls from your branch into here
 dev-name    ← your personal working branch, cut from dev
 ```
@@ -189,28 +185,25 @@ dev-name    ← your personal working branch, cut from dev
 **Workflow:**
 1. Cut your branch from `dev`: `git checkout -b dev-yourname dev`
 2. Work and commit on your branch
-3. Push your branch and let Law know when your part is ready
-4. Law will review and merge it — you don't need to do anything else
+3. Push your branch and let Law know when it is ready
+4. Law will review and merge — you do not need to do anything else
 
 ---
 
 ## Useful Commands
 
 ```bash
-# Start only database and redis
-docker compose up postgres redis -d
+# Start only the database
+docker compose up postgres -d
 
 # Visual database browser (runs at http://localhost:5555)
-cd apps/api && pnpm prisma studio
+pnpm --filter @sfc/api exec prisma studio
 
 # Apply new migrations after pulling changes that include one
-cd apps/api && pnpm prisma migrate dev
+pnpm --filter @sfc/api exec prisma migrate dev
 
-# Seed the database (first-time setup, or after a full DB wipe)
-cd apps/api && pnpm prisma db seed
-
-# Run linting across all apps
-pnpm lint
+# Seed the database (first-time setup or after a full DB wipe)
+pnpm --filter @sfc/api exec prisma db seed
 
 # Run a command scoped to one app
 pnpm --filter @sfc/api <command>
@@ -219,6 +212,20 @@ pnpm --filter @sfc/web <command>
 
 ---
 
+## API Testing
+
+Test files live in `apps/api/test/` as `.http` files.
+
+1. Install the **REST Client** extension in VS Code (by Huachao Mao)
+2. Press `Ctrl+Shift+P` → "Rest Client: Switch Environment" → select **local**
+3. Open any `.http` file and click **Send Request** above each `###` block
+
+Run `apps/api/test/02-auth.http` login first, copy the `accessToken` from the response
+into `adminToken` in `.vscode/settings.json`, then all other requests will resolve automatically.
+
+---
+
 ## Diagrams
 
-Architecture and ERD diagrams are in `docs/diagrams/` using [draw.io](https://app.diagrams.net/). Open `.drawio` files in the draw.io VS Code extension or directly at app.diagrams.net.
+Architecture and ERD diagrams are in `docs/diagrams.drawio`. Open with the draw.io
+VS Code extension or directly at [app.diagrams.net](https://app.diagrams.net/).
