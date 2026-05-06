@@ -5,6 +5,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../services/AuthContext';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -130,6 +131,7 @@ function PrefRow({ icon, label, isLast, onPress }) {
 
 export default function GuideProfile() {
   const navigation  = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const { logout }  = useAuth();
   const [showSignOut, setShowSignOut] = useState(false);
 
@@ -186,7 +188,7 @@ export default function GuideProfile() {
         {/* ── Green header (scrollable) ── */}
         <View style={{
           backgroundColor: '#15803d',
-          paddingTop: 52, paddingBottom: 48, paddingHorizontal: 20,
+          paddingTop: isOnline === false ? 12 : 52, paddingBottom: 48, paddingHorizontal: 20,
           alignItems: 'center',
         }}>
           {/* Top bar */}

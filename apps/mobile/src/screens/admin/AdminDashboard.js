@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../services/AuthContext';
 import GuideList from './guidelist';
+import useNetworkStatus from '../../services/connectivityService';
 
 const STATS = [
   {
@@ -90,6 +91,7 @@ function StatCard({ icon, label, value, subtitle, subtitleColor, iconBg, iconCol
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const [activeTab, setActiveTab] = useState('overview');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
@@ -138,7 +140,7 @@ export default function AdminDashboard() {
       </Modal>
 
       {/* ── Green header ── */}
-      <View style={{ backgroundColor: '#15803d', paddingTop: 52, paddingHorizontal: 20, paddingBottom: 0 }}>
+      <View style={{ backgroundColor: '#15803d', paddingTop: isOnline === false ? 12 : 52, paddingHorizontal: 20, paddingBottom: 0 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <View>
             <Text style={{ fontSize: 22, fontWeight: '800', color: '#fff' }}>Admin Console</Text>

@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -100,6 +101,7 @@ function isAutoGraded(q) {
 
 export default function QuizScreen() {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const route      = useRoute();
   const course     = route.params?.course ?? { title: 'Rainforest Biodiversity Fundamentals' };
 
@@ -141,7 +143,7 @@ export default function QuizScreen() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingBottom: 20, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 20, paddingHorizontal: 20,
       }}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}

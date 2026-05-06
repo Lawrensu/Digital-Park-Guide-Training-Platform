@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -78,6 +79,7 @@ function StatusBadge({ status }) {
 
 function RegistrationCard({ reg }) {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const initial    = reg.name.charAt(0).toUpperCase();
   const isPending  = reg.status === 'PENDING';
 
@@ -155,7 +157,7 @@ export default function RegistrationsScreen() {
     <View style={{ flex: 1, backgroundColor: '#f3f4f6' }}>
 
       {/* ── Green header ── */}
-      <View style={{ backgroundColor: '#15803d', paddingTop: 52, paddingBottom: 20, paddingHorizontal: 20 }}>
+      <View style={{ backgroundColor: '#15803d', paddingTop: isOnline === false ? 12 : 52, paddingBottom: 20, paddingHorizontal: 20 }}>
 
         {/* Title + pending badge */}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>

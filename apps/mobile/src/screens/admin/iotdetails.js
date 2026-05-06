@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -61,6 +62,7 @@ function InfoRow({ icon, iconColor, label, value, isLast }) {
 
 export default function IoTDetails() {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const route      = useRoute();
 
   const alert = route.params?.alert ?? {
@@ -91,7 +93,7 @@ export default function IoTDetails() {
       {/* ── Dark header ── */}
       <View style={{
         backgroundColor: BG,
-        paddingTop: 52, paddingBottom: 16, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 16, paddingHorizontal: 20,
         borderBottomWidth: 1, borderBottomColor: DIVIDER,
       }}>
         <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>

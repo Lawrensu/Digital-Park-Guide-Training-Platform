@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -239,6 +240,7 @@ function CourseCard({ course, onPress }) {
 
 export default function CourseListScreen() {
   const navigation              = useNavigation();
+  const { isOnline }            = useNetworkStatus();
   const [search,   setSearch]   = useState('');
   const [category, setCategory] = useState('All');
 
@@ -257,7 +259,7 @@ export default function CourseListScreen() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingBottom: 20, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 20, paddingHorizontal: 20,
       }}>
         <Text style={[T.h1, { color: '#fff' }]}>Training Modules</Text>
       </View>

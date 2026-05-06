@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -81,6 +82,7 @@ function QuestionRow({ question, onDelete }) {
 
 export default function QuizCreate() {
   const navigation   = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const route        = useRoute();
   const linkedModule = route.params?.module ?? null;
 
@@ -107,7 +109,7 @@ export default function QuizCreate() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingBottom: 16, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 16, paddingHorizontal: 20,
         flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
       }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>

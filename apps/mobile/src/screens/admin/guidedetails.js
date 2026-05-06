@@ -4,9 +4,11 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 export default function GuideDetails() {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const route = useRoute();
   const { guide } = route.params;
 
@@ -17,7 +19,7 @@ export default function GuideDetails() {
 
       {/* ── Green header ── */}
       <View style={{
-        backgroundColor: '#15803d', paddingTop: 52, paddingBottom: 16,
+        backgroundColor: '#15803d', paddingTop: isOnline === false ? 12 : 52, paddingBottom: 16,
         paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center',
       }}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 16 }}>

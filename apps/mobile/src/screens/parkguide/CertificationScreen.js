@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -232,6 +232,7 @@ function CertCard({ cert, onView }) {
 
 export default function CertificationScreen() {
   const navigation    = useNavigation();
+  const { isOnline }  = useNetworkStatus();
   const activeCount   = CERTS.filter((c) => daysUntil(c.expiresDate) > WARN_DAYS).length;
   const expiringCount = CERTS.filter((c) => {
     const d = daysUntil(c.expiresDate);
@@ -245,7 +246,7 @@ export default function CertificationScreen() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingBottom: 24, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 24, paddingHorizontal: 20,
       }}>
         {/* Back + title */}
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>

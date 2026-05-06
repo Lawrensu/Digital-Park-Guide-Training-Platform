@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -137,6 +138,7 @@ function AdminCard({ admin }) {
 
 export default function AdminListScreen() {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const [search, setSearch] = useState('');
 
   const filtered = ADMINS.filter((a) =>
@@ -152,7 +154,7 @@ export default function AdminListScreen() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingBottom: 20, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 20, paddingHorizontal: 20,
       }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>

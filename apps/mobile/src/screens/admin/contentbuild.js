@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 // Outfit → sans-serif  |  Source Serif 4 → serif  (swap fontFamily when fonts installed)
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
@@ -29,6 +30,7 @@ const MAX_DESC = 500;
 
 export default function ContentBuild() {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const route      = useRoute();
   const linkedModule = route.params?.module ?? null;
 
@@ -43,7 +45,7 @@ export default function ContentBuild() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingBottom: 20, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 20, paddingHorizontal: 20,
         flexDirection: 'row', alignItems: 'flex-start',
       }}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 14, marginTop: 4 }}>

@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -164,6 +165,7 @@ function NeedsGradingCard({ item, marks, onMarksChange, feedback, onFeedbackChan
 
 export default function GradeSubmission() {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const route      = useRoute();
 
   const submission    = route.params?.submission ?? {
@@ -195,7 +197,7 @@ export default function GradeSubmission() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingBottom: 18, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 18, paddingHorizontal: 20,
       }}>
         <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 14, marginTop: 4 }}>

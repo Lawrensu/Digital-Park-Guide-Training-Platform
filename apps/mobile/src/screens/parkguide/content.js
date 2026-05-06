@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -652,6 +653,7 @@ function QuizPage({ page }) {
 
 export default function ContentScreen() {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const route      = useRoute();
   const course     = route.params?.course ?? { title: 'Rainforest Biodiversity Fundamentals' };
   const initialPage = route.params?.lessonIndex ?? 0;
@@ -676,7 +678,7 @@ export default function ContentScreen() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingHorizontal: 20, paddingBottom: 18,
+        paddingTop: isOnline === false ? 12 : 52, paddingHorizontal: 20, paddingBottom: 18,
       }}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}

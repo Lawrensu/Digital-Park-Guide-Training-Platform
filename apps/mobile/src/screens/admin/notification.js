@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import CustomNotificationModal from './customnotification';
 import CertIssueModal         from './certissue';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -131,6 +132,7 @@ function NotifItem({ notif, isLast, onActionPress }) {
 
 export default function NotificationsScreen() {
   const navigation                            = useNavigation();
+  const { isOnline }                          = useNetworkStatus();
   const [notifications,   setNotifications]   = useState(INITIAL_NOTIFICATIONS);
   const [showSendModal,   setShowSendModal]   = useState(false);
   const [activeCert,      setActiveCert]      = useState(null);
@@ -153,7 +155,7 @@ export default function NotificationsScreen() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingBottom: 20, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 20, paddingHorizontal: 20,
         flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between',
       }}>
         <View>

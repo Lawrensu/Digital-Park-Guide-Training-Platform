@@ -1,20 +1,23 @@
 // src/components/OfflineBanner.js
-// Animated offline banner — slides in from top when network drops
 import React from 'react';
 import { View, Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS } from '../theme/fonts';
 
 export default function OfflineBanner({ visible = false, message }) {
+  const insets = useSafeAreaInsets();
+
   if (!visible) return null;
 
   return (
     <View style={{
-      backgroundColor: '#92400e',
+      backgroundColor: '#BEBEBE',
       flexDirection: 'row',
       alignItems: 'center',
+      paddingTop: insets.top + 8,
+      paddingBottom: 8,
       paddingHorizontal: 16,
-      paddingVertical: 10,
       gap: 8,
     }}>
       <Ionicons name="cloud-offline-outline" size={16} color="#fef3c7" />

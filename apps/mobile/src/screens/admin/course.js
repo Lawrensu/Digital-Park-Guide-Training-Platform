@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Platform } from 'react-native';
+import useNetworkStatus from '../../services/connectivityService';
 
 // Outfit → sans-serif (swap fontFamily to 'Outfit' once installed)
 // Source Serif 4 → serif (swap fontFamily to 'SourceSerif4' once installed)
@@ -64,6 +65,7 @@ const MENU_ITEMS = [
 
 export default function CourseManagement() {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f3f4f6' }}>
@@ -71,7 +73,7 @@ export default function CourseManagement() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingBottom: 20, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 20, paddingHorizontal: 20,
       }}>
         <Text style={[T.h1, { color: '#fff', marginBottom: 4 }]}>
           Course Management

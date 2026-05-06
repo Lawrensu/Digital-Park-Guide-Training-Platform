@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -122,6 +123,7 @@ function LessonRow({ lesson, lessonIndex, completed, isLast, onPress }) {
 
 export default function LessonScreen() {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const route      = useRoute();
 
   const course = route.params?.course ?? {
@@ -149,7 +151,7 @@ export default function LessonScreen() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingBottom: 24, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 24, paddingHorizontal: 20,
       }}>
         {/* Back + title */}
         <TouchableOpacity

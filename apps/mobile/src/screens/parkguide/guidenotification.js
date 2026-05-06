@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -208,6 +209,7 @@ function NotifCard({ notif, onMarkRead, onAction }) {
 
 export default function GuideNotification() {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
   const [filter,        setFilter]        = useState('All');
 
@@ -239,7 +241,7 @@ export default function GuideNotification() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingBottom: 16, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 16, paddingHorizontal: 20,
       }}>
         {/* Title row */}
         <View style={{

@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -218,6 +219,7 @@ function NotifCard({ notif }) {
 
 export default function UserDashboard() {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const UNREAD     = 3;
 
   return (
@@ -230,7 +232,7 @@ export default function UserDashboard() {
         {/* ── Green header ── */}
         <View style={{
           backgroundColor: '#15803d',
-          paddingTop: 52, paddingBottom: 36, paddingHorizontal: 20,
+          paddingTop: isOnline === false ? 12 : 52, paddingBottom: 36, paddingHorizontal: 20,
         }}>
           {/* Top row: greeting + icons */}
           <View style={{

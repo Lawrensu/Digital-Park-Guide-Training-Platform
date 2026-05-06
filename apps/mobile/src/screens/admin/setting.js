@@ -5,6 +5,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../services/AuthContext';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -153,6 +154,7 @@ function SettingRow({ item, isLast, onPress }) {
 
 export default function SettingsScreen() {
   const navigation            = useNavigation();
+  const { isOnline }          = useNetworkStatus();
   const { logout }            = useAuth();
   const [showLogout, setShowLogout] = useState(false);
 
@@ -167,7 +169,7 @@ export default function SettingsScreen() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingBottom: 20, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 20, paddingHorizontal: 20,
       }}>
         <Text style={[T.h1, { color: '#fff' }]}>Settings</Text>
       </View>

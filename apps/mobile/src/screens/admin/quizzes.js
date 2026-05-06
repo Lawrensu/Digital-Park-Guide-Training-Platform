@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -143,6 +144,7 @@ function QuizCard({ quiz }) {
 
 export default function QuizzesScreen() {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const [search, setSearch] = useState('');
 
   const filtered = QUIZZES.filter((q) =>
@@ -157,7 +159,7 @@ export default function QuizzesScreen() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingBottom: 20, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 20, paddingHorizontal: 20,
       }}>
         {/* Back + title + add button */}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>

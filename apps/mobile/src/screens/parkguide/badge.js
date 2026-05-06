@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -114,6 +115,7 @@ function LockedBadge({ badge }) {
 
 export default function BadgeScreen() {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const progress   = EARNED_COUNT / TOTAL;
 
   return (
@@ -122,7 +124,7 @@ export default function BadgeScreen() {
       {/* ── Green header ── */}
       <View style={{
         backgroundColor: '#15803d',
-        paddingTop: 52, paddingBottom: 20, paddingHorizontal: 20,
+        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 20, paddingHorizontal: 20,
       }}>
         {/* Title row */}
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>

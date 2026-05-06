@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -184,6 +185,7 @@ function AlertCard({ alert, onReview }) {
 
 export default function IoTAlert() {
   const navigation          = useNavigation();
+  const { isOnline }        = useNetworkStatus();
   const [filter, setFilter] = useState('All');
 
   const groups = ['TODAY', 'YESTERDAY'];
@@ -206,7 +208,7 @@ export default function IoTAlert() {
     <View style={{ flex: 1, backgroundColor: '#f3f4f6' }}>
 
       {/* ── Green header ── */}
-      <View style={{ backgroundColor: '#15803d', paddingTop: 52, paddingBottom: 16, paddingHorizontal: 20 }}>
+      <View style={{ backgroundColor: '#15803d', paddingTop: isOnline === false ? 12 : 52, paddingBottom: 16, paddingHorizontal: 20 }}>
 
         {/* Title row */}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>

@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import useNetworkStatus from '../../services/connectivityService';
 
 const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
 const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
@@ -25,6 +26,7 @@ const PASS_MARK = 70;
 
 export default function QuizResultScreen() {
   const navigation = useNavigation();
+  const { isOnline } = useNetworkStatus();
   const route      = useRoute();
 
   const {
@@ -49,7 +51,7 @@ export default function QuizResultScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           alignItems: 'center',
-          paddingTop: 72, paddingHorizontal: 24, paddingBottom: 48,
+          paddingTop: isOnline === false ? 32 : 72, paddingHorizontal: 24, paddingBottom: 48,
         }}
       >
 
