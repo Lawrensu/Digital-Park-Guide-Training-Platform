@@ -12,6 +12,11 @@
   "license": "ISC",
   "packageManager": "pnpm@10.33.0",
   "devDependencies": {
-    "turbo": "^2.9.5"
+    "@types/react": "~19.2.10",
+    "turbo": "^2.9.5",
+    "typescript": "~5.9.2"
+  },
+  "dependencies": {
+    "expo": "^55.0.17"
   }
 }

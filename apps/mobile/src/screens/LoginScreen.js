@@ -106,18 +106,6 @@ export default function LoginScreen() {
     if (!result.success && error) Alert.alert('Login Failed', error);
   };
 
-  const fillDemo = (role) => {
-    if (role === 'admin') {
-      setEmail('admin@parkguide.gov');
-      setPassword('admin123');
-      setSelectedRole('admin');
-    } else {
-      setEmail('guide@parkguide.gov');
-      setPassword('guide123');
-      setSelectedRole('user');
-    }
-  };
-
   // ─── Join Us ───────────────────────────────────────────────
   const updateJoinForm = (field, value) => {
     setJoinForm((p) => ({ ...p, [field]: value }));
@@ -237,51 +225,6 @@ export default function LoginScreen() {
             }}>
               Sign in to continue your training
             </Text>
-
-            {/* Role Selector */}
-            <Text style={{
-              fontSize: 13, fontWeight: '700', color: '#374151',
-              marginBottom: 10, fontFamily: FONTS.label,
-            }}>
-              I AM A
-            </Text>
-            <View style={{ flexDirection: 'row', gap: 12, marginBottom: 24 }}>
-              {ROLES.map((role) => (
-                <TouchableOpacity
-                  key={role.key}
-                  onPress={() => setSelectedRole(role.key)}
-                  style={{
-                    flex: 1, borderRadius: 14, padding: 14, borderWidth: 2,
-                    borderColor: selectedRole === role.key ? '#15803d' : '#e5e7eb',
-                    backgroundColor: selectedRole === role.key ? '#f0fdf4' : '#fff',
-                    alignItems: 'center',
-                  }}
-                >
-                  <View style={{
-                    width: 40, height: 40, borderRadius: 20,
-                    backgroundColor: selectedRole === role.key ? '#dcfce7' : '#f3f4f6',
-                    alignItems: 'center', justifyContent: 'center', marginBottom: 8,
-                  }}>
-                    <Ionicons
-                      name={role.icon} size={20}
-                      color={selectedRole === role.key ? '#15803d' : '#9ca3af'}
-                    />
-                  </View>
-                  <Text style={{
-                    fontSize: 13, fontWeight: '700', fontFamily: FONTS.label,
-                    color: selectedRole === role.key ? '#15803d' : '#374151',
-                  }}>
-                    {role.label}
-                  </Text>
-                  <Text style={{
-                    fontSize: 10, color: '#9ca3af', textAlign: 'center',
-                    marginTop: 2, fontFamily: FONTS.body,
-                  }}>
-                    {role.desc}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
 
             {/* Email */}
             <Text style={{
@@ -409,34 +352,6 @@ export default function LoginScreen() {
                 Join Us as a Park Guide
               </Text>
             </TouchableOpacity>
-
-            {/* Demo Credentials */}
-            <View style={{
-              marginTop: 24, padding: 16, backgroundColor: '#f0fdf4',
-              borderRadius: 12, borderWidth: 1, borderColor: '#bbf7d0',
-            }}>
-              <Text style={{
-                fontSize: 12, fontWeight: '700', color: '#15803d',
-                marginBottom: 10, fontFamily: FONTS.label,
-              }}>
-                🔑 DEMO CREDENTIALS
-              </Text>
-              <TouchableOpacity onPress={() => fillDemo('user')} style={{ marginBottom: 6 }}>
-                <Text style={{ fontSize: 12, color: '#374151', fontFamily: FONTS.body }}>
-                  <Text style={{ fontWeight: '700' }}>Park Guide: </Text>
-                  guide@parkguide.gov / guide123
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => fillDemo('admin')}>
-                <Text style={{ fontSize: 12, color: '#374151', fontFamily: FONTS.body }}>
-                  <Text style={{ fontWeight: '700' }}>Admin: </Text>
-                  admin@parkguide.gov / admin123
-                </Text>
-              </TouchableOpacity>
-              <Text style={{ fontSize: 10, color: '#9ca3af', marginTop: 6, fontFamily: FONTS.body }}>
-                Tap to auto-fill credentials
-              </Text>
-            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
