@@ -25,6 +25,68 @@
 
 ---
 
+## Tech Stack Rationale
+
+### Web Frontend
+
+**React + Vite** was chosen over Next.js because the entire platform sits behind authentication, making server-side rendering unnecessary. Vite's HMR and build times are significantly faster than webpack-based alternatives.
+
+**TailwindCSS** enforces a consistent design constraint without separate CSS files. Combined with shadcn/ui it provides accessible, composable components without a heavy UI library dependency.
+
+**TanStack Query** handles caching, background refetching, and loading/error state uniformly, replacing manual `useEffect` + `useState` patterns across every data-fetching page.
+
+### Mobile
+
+**React Native + Expo** keeps the entire codebase in JavaScript, consistent with the web and backend. Expo's managed workflow provides built-in SecureStore (secure token storage), SQLite (offline database), and Push Notifications without native build configuration.
+
+**Expo SQLite** was chosen over WatermelonDB because WatermelonDB requires JSI and native linking, adding build complexity without meaningful benefit at this data volume.
+
+**NativeWind** applies TailwindCSS utility classes to React Native components, maintaining styling consistency with the web codebase.
+
+### Backend
+
+**Node.js + Express** keeps the full stack in one language. Express is minimal and flexible; 16 domain modules are straightforward to organise without the overhead of a full framework such as NestJS.
+
+**Zod** provides runtime validation and schema-first design. A single schema file per domain validates request payloads and serves as the shared input contract via the `packages/types` workspace.
+
+**Socket.io** was chosen over raw WebSockets for its built-in room abstraction and automatic reconnection handling. Polling was rejected as it wastes server resources proportional to connected sessions and introduces latency bounded by the poll interval.
+
+### Database and Storage
+
+**PostgreSQL** suits the relational data model: modules, enrolments, quiz attempts, certifications, and payments all require joins and ACID-compliant writes. **Prisma ORM** manages schema, migrations, and the query interface in one tool, keeping data access centralised and preventing raw SQL scattered across controllers.
+
+**Redis via Upstash** stores refresh tokens for O(1) lookup and instant invalidation on logout. Upstash is serverless and requires no persistent container, keeping the production deployment simple.
+
+**AWS S3** stores active assets; **S3 Glacier** handles long-term archival of IoT evidence frames via a Lifecycle Policy on the bucket, requiring no application code to manage the transition after 30 days.
+
+**sharp** converts all uploaded images to WebP server-side before writing to S3, reducing file size compared to PNG or JPEG at equivalent visual quality.
+
+**pdf-lib** overlays dynamic fields onto a Figma-exported PDF certificate template. PDFKit was rejected because it generates PDFs programmatically from scratch and cannot replicate a designer-produced layout without reimplementing it entirely in code.
+
+### Authentication
+
+**JWT with refresh token rotation** provides stateless authentication that scales horizontally without sticky sessions. Access tokens are kept in memory and expire in 15 minutes; refresh tokens live in Redis and expire in 7 days.
+
+### IoT and AI
+
+**MQTT over TLS** is lightweight and designed for constrained hardware. It operates on a publish/subscribe model suited to event-driven detection alerts, with lower overhead than HTTP polling from the device.
+
+**AWS IoT Core** manages device certificates and MQTT broker infrastructure. A routing rule forwards detection events to S3 for evidence storage and HTTP-POSTs to the Node.js API for alert ingest, without additional server infrastructure.
+
+**YOLOv8n** is the smallest variant in the YOLOv8 family. It is exported to ONNX and INT8 quantised to reduce memory footprint for edge deployment on the ESP32, eliminating the need for a cloud GPU and enabling detection without internet connectivity.
+
+### Tooling and Infrastructure
+
+**pnpm + Turborepo** reduce disk usage via a content-addressable package store and add task-level caching across the monorepo so unchanged packages do not rebuild on every CI run.
+
+**GitHub Actions** handles lint and validation on pull requests and automated deployment to EC2 on merge to `main`, requiring no separate CI tooling beyond the existing repository.
+
+**Docker + Docker Compose** ensures the API container runs identically in local development and on EC2. Local Postgres runs in a container; production points to RDS and Upstash, keeping the images environment-agnostic.
+
+**AWS ap-southeast-1** (Singapore) is the closest region to Sarawak, Malaysia. Consolidating EC2, RDS, S3, IoT Core, and SES in one region minimises latency and keeps data residency consistent.
+
+---
+
 ## Repository Structure
 
 Monorepo managed by pnpm workspaces and Turborepo.

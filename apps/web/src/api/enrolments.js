@@ -18,3 +18,6 @@ export const setDueDate = (enrolmentId, dueAt) =>
 
 export const remove = (enrolmentId) =>
 	api.delete(`/enrolments/${enrolmentId}`)
+
+export const markProgress = (contentItemId) =>
+	api.post('/enrolments/me/progress', { contentItemId })

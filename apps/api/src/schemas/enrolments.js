@@ -16,3 +16,8 @@ export const selfEnrolmentSchema = z.object({
 export const updateEnrolmentSchema = z.object({
 	dueAt: z.string().datetime().nullable(),
 });
+
+
+export const markProgressSchema = z.object({
+	contentItemId: z.string().uuid(),
+});

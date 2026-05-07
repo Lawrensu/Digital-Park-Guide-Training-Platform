@@ -42,7 +42,8 @@ const GuideModuleDetail = () => {
 		queryFn: async () => {
 			try {
 				const res = await enrolmentsApi.getMyEnrolmentForModule(id)
-				return res.data.data
+				const rows = res.data.data ?? []
+				return rows[0] ?? null
 			} catch (err) {
 				if (err.response?.status === 404) return null
 				throw err
@@ -59,15 +60,21 @@ const GuideModuleDetail = () => {
 		},
 	})
 
-	const items       = contentItems ?? []
-	const progress    = enrolment?.progressPct ?? 0
-	const totalItems  = items.length
-	const doneItems   = Math.round((progress / 100) * totalItems)
-	const isEnrolled  = !!enrolment
+	const items      = contentItems ?? []
+	const progress   = enrolment?.progressPct ?? 0
+	const totalItems = items.length
+	const isEnrolled = !!enrolment
+
+	// build a set of completed contentItemIds from the enrolment's progress records
+	const completedIds = new Set(
+		(enrolment?.contentItemProgresses ?? []).map(p => p.contentItemId)
+	)
 
 	const handleItemClick = (item) => {
 		if (!isEnrolled) return
 		if (item.type === 'QUIZ' && item.quizId) {
+			// mark the quiz content item as visited before navigating
+			enrolmentsApi.markProgress(item.id).catch(() => {})
 			navigate(`/guide/quiz/${item.quizId}`)
 		} else {
 			navigate(`/guide/modules/${id}/content/${item.id}`)
@@ -116,7 +123,7 @@ const GuideModuleDetail = () => {
 					<div className="bg-white py-6 px-8 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.05)] mb-8">
 						<div className="flex justify-between items-center mb-4">
 							<div className="text-[1.1rem] font-semibold text-[#333333]">Your Progress</div>
-							<div className="text-[0.95rem] text-[#666666]">{doneItems} of {totalItems} items completed</div>
+							<div className="text-[0.95rem] text-[#666666]">{completedIds.size} of {totalItems} items completed</div>
 						</div>
 						<div className="w-full h-3 bg-[#E0E0E0] rounded-md overflow-hidden mb-3">
 							<div className="h-full bg-[#2E7D32] rounded-md" style={{ width: `${progress}%` }}></div>
@@ -137,9 +144,9 @@ const GuideModuleDetail = () => {
 							</div>
 						)}
 
-						{items.map((item, index) => {
-							const isDone   = isEnrolled && index < doneItems
-							const isActive = isEnrolled && index === doneItems
+						{items.map((item) => {
+							const isDone   = isEnrolled && completedIds.has(item.id)
+							const isActive = isEnrolled && !isDone
 							const isLocked = !isEnrolled
 
 							return (

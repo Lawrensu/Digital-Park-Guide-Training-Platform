@@ -1,7 +1,9 @@
+import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import GuideNavbar from '../../../components/GuideNavbar/GuideNavbar'
 import * as contentItemsApi from '../../../api/contentItems.js'
+import * as enrolmentsApi from '../../../api/enrolments.js'
 
 
 const ITEM_TYPE_ICON = {
@@ -32,6 +34,13 @@ export default function GuideContentViewer() {
 		},
 		enabled: !!itemId,
 	})
+
+	// fire-and-forget: mark this item complete once it loads
+	useEffect(() => {
+		if (item && item.type !== 'QUIZ') {
+			enrolmentsApi.markProgress(itemId).catch(() => {})
+		}
+	}, [item?.id])
 
 	if (isLoading) {
 		return (

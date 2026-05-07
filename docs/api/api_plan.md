@@ -55,7 +55,7 @@ For every new domain you build, add three files: `routes/<domain>.js`, `controll
 **URLs:** plural nouns, kebab-case, no verbs.
 ```
 ✅ GET  /api/modules
-✅ POST /api/modules/:id/enrolments
+✅ POST /api/enrolments
 ❌ POST /api/createModule
 ```
 
@@ -311,9 +311,10 @@ Content item types and their required fields:
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| GET | /api/enrolments | Auth | List enrolments; guides see only their own |
+| GET | /api/enrolments | Auth | List enrolments; guides see only their own; includes `contentItemProgresses` array |
 | POST | /api/enrolments | Admin | Enrol a specific guide in a module |
 | POST | /api/enrolments/me | Guide | Guide self-enrolls in a PUBLISHED module |
+| POST | /api/enrolments/me/progress | Guide | Mark a content item as viewed; idempotent upsert; recalculates `progressPct` and sets `completedAt` when 100% |
 | PATCH | /api/enrolments/:id | Admin | Update due date on an enrolment |
 | DELETE | /api/enrolments/:id | Admin | Remove an enrolment |
 
