@@ -79,7 +79,6 @@ function StatusBadge({ status }) {
 
 function RegistrationCard({ reg }) {
   const navigation = useNavigation();
-  const { isOnline } = useNetworkStatus();
   const initial    = reg.name.charAt(0).toUpperCase();
   const isPending  = reg.status === 'PENDING';
 
@@ -137,6 +136,7 @@ function RegistrationCard({ reg }) {
 }
 
 export default function RegistrationsScreen() {
+  const { isOnline }        = useNetworkStatus();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('All');
   const [regs,   setRegs]   = useState(REGISTRATIONS);

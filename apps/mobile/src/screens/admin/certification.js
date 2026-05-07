@@ -289,6 +289,13 @@ export default function Certifications() {
         )}
       </ScrollView>
 
+      <CertIssueModal
+        visible={issuingCert !== null}
+        cert={issuingCert}
+        onClose={() => setIssuingCert(null)}
+        onIssued={handleIssue}
+      />
+
     </View>
   );
 }

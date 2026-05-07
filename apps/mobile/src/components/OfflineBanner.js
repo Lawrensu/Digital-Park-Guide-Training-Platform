@@ -21,7 +21,7 @@ export default function OfflineBanner({ visible = false, message }) {
       gap: 8,
     }}>
       <Ionicons name="cloud-offline-outline" size={16} color="#fef3c7" />
-      <Text style={{ fontSize: 12, color: '#fef3c7', fontWeight: '600', flex: 1, fontFamily: FONTS.body }}>
+      <Text style={{ fontSize: 12, color: '#ffffff', fontWeight: '600', flex: 1, fontFamily: FONTS.body }}>
         {message || "You're offline — progress is saved locally and will sync on reconnect."}
       </Text>
     </View>
