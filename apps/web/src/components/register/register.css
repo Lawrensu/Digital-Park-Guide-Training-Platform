@@ -1,94 +1,347 @@
 @reference "tailwindcss";
 
-/* --- Page Layout --- */
-.reg-page-container {
-  @apply min-h-screen bg-[#f5f5f0] flex flex-col;
+/* ─────────────────────────────────────────
+   TOKENS  (mirrors login.css)
+───────────────────────────────────────── */
+:root {
+  --green-dark:   #1b3a2d;
+  --green-mid:    #2d6a4f;
+  --green-accent: #3a7d5a;
+  --cream:        #f0efe9;
+  --white:        #ffffff;
+  --text-dark:    #1a1a1a;
+  --text-muted:   #6b7280;
+  --text-light:   #9ca3af;
+  --border:       #e2e2dc;
+  --input-bg:     #f9f9f7;
+  --shadow-card:  0 4px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* --- Navbar --- */
-.reg-navbar {
-  @apply flex items-center justify-between px-8 h-14 bg-[#1c3320];
+/* ─────────────────────────────────────────
+   LAYOUT
+───────────────────────────────────────── */
+.reg-layout {
+  @apply flex min-h-screen [font-family:'Segoe_UI',system-ui,sans-serif];
 }
 
-.reg-navbar-brand {
-  @apply text-white text-[0.95rem] font-medium;
+/* ─────────────────────────────────────────
+   LEFT PANEL
+───────────────────────────────────────── */
+.reg-left-panel {
+  @apply relative [flex:0_0_42%] bg-[var(--green-dark)] flex flex-col justify-between py-[40px] px-[48px] overflow-hidden text-white;
 }
 
-.reg-signin-btn {
-  @apply text-white bg-transparent border-none text-sm cursor-pointer hover:underline;
+.reg-deco-circle {
+  @apply absolute rounded-full pointer-events-none;
 }
 
-/* --- Main Area --- */
-.reg-main {
-  @apply flex-1 flex flex-col justify-center items-center py-10 px-4;
+.reg-deco-circle--1 {
+  @apply w-[380px] h-[380px] -top-[120px] -right-[60px] bg-[radial-gradient(circle_at_42%_40%,rgba(120,180,140,0.35)_0%,rgba(80,140,100,0.18)_40%,rgba(50,100,70,0.08)_65%,transparent_85%)];
 }
 
-/* --- Form Card --- */
+.reg-deco-circle--2 {
+  @apply w-[380px] h-[380px] -bottom-[120px] -left-[80px] bg-[radial-gradient(circle_at_55%_42%,rgba(120,180,140,0.30)_0%,rgba(80,140,100,0.14)_40%,rgba(50,100,70,0.06)_65%,transparent_85%)];
+}
+
+.reg-deco-circle--3 {
+  @apply w-[260px] h-[260px] bottom-[60px] -right-[30px] bg-[radial-gradient(circle_at_40%_38%,rgba(120,180,140,0.28)_0%,rgba(80,140,100,0.12)_45%,rgba(50,100,70,0.05)_65%,transparent_85%)];
+}
+
+.reg-left-content {
+  @apply relative z-[1] flex-1 flex flex-col justify-center gap-8;
+}
+
+.reg-brand {
+  @apply flex items-center gap-3;
+}
+
+.reg-brand-logo {
+  @apply w-10 h-10 bg-[var(--green-mid)] rounded-[8px] flex items-center justify-center font-bold text-[13px] tracking-[0.5px] text-white shrink-0;
+}
+
+.reg-brand-text {
+  @apply flex flex-col;
+}
+
+.reg-brand-name {
+  @apply text-[15px] font-semibold text-white leading-[1.2];
+}
+
+.reg-brand-sub {
+  @apply text-[12px] text-white/60;
+}
+
+.reg-hero-text h1 {
+  @apply text-[32px] font-bold leading-[1.25] text-white tracking-[-0.5px] mb-3;
+}
+
+.reg-hero-accent {
+  @apply text-[#6fcf97];
+}
+
+.reg-hero-desc {
+  @apply text-[14px] leading-[1.65] text-white/65 max-w-[340px];
+}
+
+.reg-feature-list {
+  @apply flex flex-col gap-3;
+}
+
+.reg-feature-item {
+  @apply flex items-center gap-3 text-[13px] text-white/80;
+}
+
+.reg-feature-icon {
+  @apply w-[22px] h-[22px] rounded-full bg-[#6fcf97]/20 flex items-center justify-center shrink-0 text-[#6fcf97];
+}
+
+.reg-stats-row {
+  @apply flex items-center gap-8 pt-2 border-t border-white/15;
+}
+
+.reg-stat {
+  @apply flex flex-col gap-0.5;
+}
+
+.reg-stat-value {
+  @apply text-[26px] font-bold text-white leading-none;
+}
+
+.reg-stat-label {
+  @apply text-[12px] text-white/55;
+}
+
+.reg-stat-sep {
+  @apply w-px h-9 bg-white/20;
+}
+
+.reg-left-footer {
+  @apply relative z-[1] text-[12px] text-white/40;
+}
+
+/* ─────────────────────────────────────────
+   RIGHT PANEL
+───────────────────────────────────────── */
+.reg-right-panel {
+  @apply flex-1 bg-[var(--cream)] flex flex-col items-center justify-start py-[40px] px-8 gap-4 overflow-y-auto;
+}
+
+/* ─────────────────────────────────────────
+   FORM CARD
+───────────────────────────────────────── */
 .reg-card {
-  @apply bg-white rounded-xl border border-[#d1d5db] w-full max-w-[620px] px-10 py-10 shadow-sm;
+  @apply bg-[var(--white)] rounded-[16px] shadow-[var(--shadow-card)] w-full max-w-[560px] px-[40px] py-[36px];
 }
 
-.reg-card-title {
-  @apply text-2xl font-bold text-[#111827] mb-1;
+.reg-card-header {
+  @apply mb-7;
 }
 
-.reg-card-subtitle {
-  @apply text-sm text-[#6b7280] mb-8;
+.reg-card-header h2 {
+  @apply text-[22px] font-bold text-[var(--text-dark)] mb-1;
 }
 
-/* --- Sections --- */
+.reg-card-header p {
+  @apply text-[14px] text-[var(--text-muted)];
+}
+
+.reg-form {
+  @apply flex flex-col gap-6;
+}
+
+/* ─────────────────────────────────────────
+   SECTIONS
+───────────────────────────────────────── */
 .reg-section {
-  @apply mb-6;
+  @apply flex flex-col gap-3;
 }
 
 .reg-section-title {
-  @apply text-[0.95rem] font-semibold text-[#2E7D32] mb-2;
+  @apply flex items-center gap-2 text-[13px] font-semibold text-[var(--text-dark)] uppercase tracking-[0.6px];
 }
 
-.reg-divider {
-  @apply border-t border-[#e5e7eb] mb-5;
+.reg-section-num {
+  @apply w-[20px] h-[20px] rounded-full bg-[var(--green-dark)] text-white text-[11px] font-bold flex items-center justify-center shrink-0;
 }
 
-/* --- Field Layouts --- */
+.reg-section-body {
+  @apply flex flex-col gap-4 pl-[28px];
+}
+
+/* ─────────────────────────────────────────
+   FIELD LAYOUTS
+───────────────────────────────────────── */
 .reg-field-row {
-  @apply grid grid-cols-2 gap-4 mb-4;
-}
-
-.reg-field-single {
-  @apply flex flex-col gap-1 mb-4;
+  @apply grid grid-cols-2 gap-3;
 }
 
 .reg-field {
-  @apply flex flex-col gap-1;
+  @apply flex flex-col gap-[6px];
 }
 
-/* --- Labels & Inputs --- */
+/* ─────────────────────────────────────────
+   LABELS
+───────────────────────────────────────── */
 .reg-label {
-  @apply text-sm text-[#374151] font-medium;
+  @apply text-[13px] font-medium text-[var(--text-dark)] flex items-center gap-1;
+}
+
+.reg-label-hint {
+  @apply text-[12px] text-[var(--text-light)] font-normal;
+}
+
+/* ─────────────────────────────────────────
+   INPUTS
+───────────────────────────────────────── */
+.reg-input-wrap {
+  @apply relative flex items-center;
+}
+
+.reg-input-icon {
+  @apply absolute left-3 text-[var(--text-light)] flex items-center pointer-events-none;
 }
 
 .reg-input {
-  @apply border border-[#d1d5db] rounded-lg px-3 py-2 text-sm text-[#374151] outline-none transition-colors duration-200 placeholder:text-[#9ca3af] focus:border-[#2E7D32] focus:ring-1 focus:ring-[#2E7D32];
+  @apply w-full py-[10px] pl-[34px] pr-3 border border-[var(--border)] rounded-[8px] bg-[var(--input-bg)] text-[14px] text-[var(--text-dark)] outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-[var(--text-light)];
+}
+
+.reg-input:focus {
+  @apply border-[var(--green-mid)] shadow-[0_0_0_3px_rgba(45,106,79,0.08)];
+}
+
+/* ─────────────────────────────────────────
+   TEXTAREAS
+───────────────────────────────────────── */
+.reg-textarea-wrap {
+  @apply relative;
+}
+
+.reg-textarea-icon {
+  @apply absolute left-3 top-[11px] text-[var(--text-light)] flex items-center pointer-events-none;
 }
 
 .reg-textarea {
-  @apply border border-[#d1d5db] rounded-lg px-3 py-2 text-sm text-[#374151] outline-none resize-none w-full transition-colors duration-200 placeholder:text-[#9ca3af] focus:border-[#2E7D32] focus:ring-1 focus:ring-[#2E7D32];
+  @apply w-full py-[10px] pl-[34px] pr-3 border border-[var(--border)] rounded-[8px] bg-[var(--input-bg)] text-[14px] text-[var(--text-dark)] outline-none resize-none transition-[border-color,box-shadow] duration-200 placeholder:text-[var(--text-light)];
 }
 
-/* --- Checkbox --- */
+.reg-textarea:focus {
+  @apply border-[var(--green-mid)] shadow-[0_0_0_3px_rgba(45,106,79,0.08)];
+}
+
+/* ─────────────────────────────────────────
+   FILE DROPZONE
+───────────────────────────────────────── */
+.reg-dropzone {
+  @apply border-2 border-dashed border-[var(--border)] rounded-[10px] bg-[var(--input-bg)] transition-[border-color,background] duration-200 cursor-pointer;
+}
+
+.reg-dropzone:hover,
+.reg-dropzone--active {
+  @apply border-[var(--green-mid)] bg-[rgba(45,106,79,0.03)];
+}
+
+.reg-dropzone--filled {
+  @apply border-[var(--green-mid)] bg-[rgba(45,106,79,0.04)];
+}
+
+.reg-dropzone-label {
+  @apply flex flex-col items-center gap-1.5 py-6 px-4 cursor-pointer;
+}
+
+.reg-dropzone-icon {
+  @apply text-[var(--text-light)] mb-1;
+}
+
+.reg-dropzone-icon--success {
+  @apply text-[var(--green-mid)];
+}
+
+.reg-dropzone-text {
+  @apply text-[13px] text-[var(--text-muted)];
+}
+
+.reg-dropzone-filename {
+  @apply text-[13px] font-medium text-[var(--green-mid)];
+}
+
+.reg-dropzone-change {
+  @apply text-[12px] text-[var(--text-light)];
+}
+
+.reg-dropzone-hint {
+  @apply text-[12px] text-[var(--text-light)];
+}
+
+.reg-file-input {
+  @apply hidden;
+}
+
+/* ─────────────────────────────────────────
+   CHECKBOX
+───────────────────────────────────────── */
 .reg-checkbox-row {
-  @apply flex items-center gap-3 mb-2;
+  @apply flex items-start gap-3 cursor-pointer;
 }
 
 .reg-checkbox {
-  @apply w-4 h-4 accent-[#2E7D32] cursor-pointer shrink-0;
+  @apply w-[15px] h-[15px] mt-[2px] accent-[var(--green-dark)] cursor-pointer shrink-0;
 }
 
 .reg-checkbox-label {
-  @apply text-sm text-[#374151];
+  @apply text-[13px] text-[var(--text-muted)] leading-[1.6] cursor-pointer select-none;
 }
 
-/* --- Submit Button --- */
+/* ─────────────────────────────────────────
+   SUBMIT BUTTON
+───────────────────────────────────────── */
 .reg-submit-btn {
-  @apply w-full bg-[#1c3320] text-white py-3 rounded-lg text-[0.95rem] font-medium cursor-pointer border-none hover:bg-[#111] transition-colors duration-200 mt-2;
+  @apply flex items-center justify-center gap-2 w-full py-[13px] bg-[var(--green-dark)] text-white border-0 rounded-[8px] text-[15px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[var(--green-mid)];
+}
+
+/* ─────────────────────────────────────────
+   FOOTER NOTE
+───────────────────────────────────────── */
+.reg-footer-note {
+  @apply text-[12.5px] text-[var(--text-muted)] text-center;
+}
+
+.reg-signin-link {
+  @apply text-[var(--green-mid)] bg-transparent border-0 cursor-pointer text-[12.5px] hover:underline p-0;
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media (max-width: 860px) {
+  .reg-layout {
+    @apply flex-col;
+  }
+
+  .reg-left-panel {
+    @apply [flex:0_0_auto] py-8 px-6 min-h-[260px];
+  }
+
+  .reg-hero-text h1 {
+    @apply text-[24px];
+  }
+
+  .reg-stats-row {
+    @apply hidden;
+  }
+
+  .reg-right-panel {
+    @apply py-8 px-5;
+  }
+
+  .reg-card {
+    @apply px-6 py-7;
+  }
+
+  .reg-field-row {
+    @apply grid-cols-1;
+  }
+
+  .reg-section-body {
+    @apply pl-0;
+  }
 }
