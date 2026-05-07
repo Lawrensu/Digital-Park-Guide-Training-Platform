@@ -1,9 +1,10 @@
-# Lawrence — Software Development Enhancements
+# Software Development Enhancement
+
+This document aims to describe the Major Specific Contribution/Enhancement that I did as a Software Development Major. 
 
 ## Full-Stack System Architecture and Implementation
 
-As the software development lead, the core responsibility was designing and
-implementing the platform's technical foundation — the API architecture, real-time
+Designing and implementing the platform's technical foundation, the API architecture, real-time
 event pipeline, payment integration, offline sync strategy, and session security.
 The decisions below reflect the trade-offs made and the reasoning behind each.
 
@@ -66,10 +67,10 @@ Conflict detection compares the device-side state against the server at submissi
 time and rejects or flags divergent submissions. For this domain it adds complexity
 without meaningful benefit: quiz attempts are append-only so there is no conflicting
 server state; module content is read-only for guides so they cannot diverge; the
-main edge case — a module archived while a guide is offline — should accept the
+main edge case is when a module archived while a guide is offline should accept the
 submission anyway since the guide completed the work in good faith.
 
-LWW is the correct policy here. Conflict detection is appropriate for systems where
+LWW is the chosen policy here. Conflict detection is appropriate for systems where
 multiple users edit shared documents, which this is not. Each offline item carries a
 device-side `completedAt` timestamp so recorded completion time reflects when the
 work was done, not when connectivity returned.
@@ -78,13 +79,13 @@ work was done, not when connectivity returned.
 
 ### BillPlz Payment Integration
 
-The payment gate is enforced server-side in the quiz-attempts controller — not in
-the frontend — because a frontend-only gate is trivially bypassed by calling the
+The payment gate is enforced server-side in the quiz-attempts controller, not in
+the frontend because a frontend-only gate is trivially bypassed by calling the
 API directly. For any attempt beyond the first, the controller checks for a `PAID`
 Payment row before creating the attempt.
 
-BillPlz was chosen over Stripe because it provides native FPX support — the dominant
-online banking method in Malaysia — with no SDK dependency. Stripe does not support
+BillPlz was chosen over Stripe because it provides native FPX support, the dominant
+online banking method in Malaysia too with no SDK dependency. Stripe does not support
 FPX natively and introduces unnecessary complexity for a domestic deployment.
 
 The webhook callback verifies the `X-Signature` HMAC-SHA256 header before trusting
@@ -99,11 +100,11 @@ without code changes. Live credentials are pending; the integration is complete.
 The silent JWT refresh mechanism means an authenticated session persists
 indefinitely as long as the tab stays open. For the admin role this is a real
 exposure. A transparent `IdleGuard` wrapper component was added to every
-authenticated route — after 14 minutes of inactivity a countdown modal gives the
+authenticated route, after 14 minutes of inactivity a countdown modal gives the
 user 60 seconds to stay logged in before automatic logout.
 
 Client-side idle detection via DOM events is accurate and zero-cost on the server,
 keeping the stateless JWT architecture intact. The 14-minute threshold aligns the
 warning with the token lifecycle. `useRef` holds the logout callback so listeners
-are registered once on mount without re-subscribing — avoiding the stale-closure
+are registered once on mount without re-subscribing, avoiding the stale-closure
 problem that a plain `useEffect` dependency would cause.

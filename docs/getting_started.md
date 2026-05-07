@@ -145,7 +145,7 @@ pnpm --filter @sfc/api exec prisma db seed
 This creates 4 stations, your primary admin account, 4 test admins, and 10 test guides.
 The test password for all seeded test accounts (not your primary admin) is `TestPass123!`.
 
-Re-running seed is safe — it uses upsert and will not create duplicates.
+Re-running seed is safe, it uses upsert and will not create duplicates.
 
 ### 7. Start the development servers
 
@@ -186,7 +186,7 @@ dev-name    ← your personal working branch, cut from dev
 1. Cut your branch from `dev`: `git checkout -b dev-yourname dev`
 2. Work and commit on your branch
 3. Push your branch and let Law know when it is ready
-4. Law will review and merge — you do not need to do anything else
+4. Law will review and merge, you do not need to do anything else
 
 ---
 
