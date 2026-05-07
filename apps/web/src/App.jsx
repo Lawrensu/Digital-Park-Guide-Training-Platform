@@ -7,6 +7,7 @@ import ResetPassword from './pages/auth/ResetPassword'
 import Activate from './pages/auth/Activate'
 
 import Dashboard from './pages/admin/Dashboard/Dashboard'
+import Analytics from './pages/admin/Analytics/Analytics'
 import Modules from './pages/admin/Module/Module'
 import RegistrationPage from './pages/admin/Registration/Registration'
 import QuizReviews from './pages/admin/Quizzes/Quizzes'
@@ -56,6 +57,9 @@ function App() {
                     {/* Admin routes */}
                     <Route path="/dashboard" element={
                         <ProtectedRoute allowedRoles={['ADMIN']}><Dashboard /></ProtectedRoute>
+                    } />
+                    <Route path="/analytics" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}><Analytics /></ProtectedRoute>
                     } />
                     <Route path="/registrations" element={
                         <ProtectedRoute allowedRoles={['ADMIN']}><RegistrationPage /></ProtectedRoute>
