@@ -1,21 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  View, Text, ScrollView, TouchableOpacity, Platform, Modal,
+  View, Text, ScrollView, TouchableOpacity, Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../services/AuthContext';
+import { iotAlertsApi } from '../../api/iotAlerts';
 import useNetworkStatus from '../../services/connectivityService';
-
-const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
-const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
+import { FONTS } from '../../theme/fonts';
 
 const T = {
-  h1:      { fontFamily: sans,  fontSize: 30, fontWeight: '600' },
-  h4:      { fontFamily: sans,  fontSize: 16, fontWeight: '600' },
-  label:   { fontFamily: sans,  fontSize: 14, fontWeight: '500' },
-  caption: { fontFamily: sans,  fontSize: 12, fontWeight: '500' },
-  body:    { fontFamily: serif, fontSize: 16, fontWeight: '400' },
+  h1:      { fontFamily: FONTS.label, fontSize: 30, fontWeight: '600' },
+  h4:      { fontFamily: FONTS.label, fontSize: 16, fontWeight: '600' },
+  label:   { fontFamily: FONTS.label, fontSize: 14, fontWeight: '500' },
+  caption: { fontFamily: FONTS.label, fontSize: 12, fontWeight: '500' },
+  body:    { fontFamily: FONTS.body,  fontSize: 16, fontWeight: '400' },
 };
 
 const SECTIONS = [
@@ -69,7 +68,7 @@ const SECTIONS = [
         iconColor: '#f59e0b',
         iconBg: '#fef3c7',
         label: 'Live Alerts',
-        badge: { label: '3 pending', color: '#dc2626', bg: '#fee2e2' },
+        badgeKey: 'iotPending',
         route: 'IoTAlert',
       },
     ],
@@ -156,7 +155,14 @@ export default function SettingsScreen() {
   const navigation            = useNavigation();
   const { isOnline }          = useNetworkStatus();
   const { logout }            = useAuth();
-  const [showLogout, setShowLogout] = useState(false);
+  const [showLogout,    setShowLogout]    = useState(false);
+  const [pendingAlerts, setPendingAlerts] = useState(null);
+
+  useEffect(() => {
+    iotAlertsApi.getAll({ status: 'PENDING', limit: 100 })
+      .then((data) => setPendingAlerts(Array.isArray(data) ? data.length : 0))
+      .catch(() => setPendingAlerts(0));
+  }, []);
 
   const handleSignOut = () => {
     setShowLogout(false);
@@ -192,16 +198,23 @@ export default function SettingsScreen() {
               shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.06, shadowRadius: 6, elevation: 2,
             }}>
-              {section.items.map((item, i) => (
-                <SettingRow
-                  key={item.label}
-                  item={item}
-                  isLast={i === section.items.length - 1}
-                  onPress={item.route
-                    ? () => navigation.navigate(item.route)
-                    : undefined}
-                />
-              ))}
+              {section.items.map((item, i) => {
+                const badge = item.badge ?? (
+                  item.badgeKey === 'iotPending' && pendingAlerts !== null && pendingAlerts > 0
+                    ? { label: `${pendingAlerts} pending`, color: '#dc2626', bg: '#fee2e2' }
+                    : null
+                );
+                return (
+                  <SettingRow
+                    key={item.label}
+                    item={{ ...item, badge }}
+                    isLast={i === section.items.length - 1}
+                    onPress={item.route
+                      ? () => navigation.navigate(item.route)
+                      : undefined}
+                  />
+                );
+              })}
             </View>
           </View>
         ))}

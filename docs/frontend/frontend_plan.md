@@ -495,18 +495,13 @@ These are not pages but must be built and shared across all pages:
 
 ---
 
-## Mobile App — Park Guide Application
+## Mobile App — Admin/Trainer and Park Guide
 
-**Tech:** React Native + Expo, NativeWind, Expo SQLite, TanStack Query, Expo Push Notifications, Expo SecureStore
+**Tech:** React Native + Expo, NativeWind, Expo Push Notifications, Expo SecureStore, Socket.io client, `@react-native-community/netinfo`
 
-### Key Principle: Offline-First
+> **Note on offline sync:** The Expo SQLite offline-first sync engine is deferred to a later sprint. Phase 1 connects all screens to the live API. The SQLite layer (offline caching + `POST /api/sync` batch) is added on top after all screens are fully working online.
 
-The mobile app must work **fully offline**. This means:
-- All content the guide has downloaded is stored in Expo SQLite
-- All progress (quiz answers, content completion) is written to SQLite first, then synced to the API when connectivity returns
-- The app must detect connectivity using `@react-native-community/netinfo`
-- On reconnect: call `POST /api/sync` with batched progress payload
-- Never assume connectivity. Every action that would normally hit the API must have an offline fallback that queues to SQLite
+Both roles — Admin/Trainer and Park Guide — use the mobile app. Role-based access control (the `role` field in the JWT payload: `ADMIN` or `GUIDE`) determines which navigator is shown after login.
 
 ---
 
@@ -516,53 +511,61 @@ The mobile app must work **fully offline**. This means:
 (Auth)
   LoginScreen
 
-(Main — Tab Navigation)
+(Park Guide — Tab Navigation)
   HomeScreen (tab)
   ModulesScreen (tab)
   NotificationsScreen (tab)
   ProfileScreen (tab)
 
-(Module flow — Stack within Modules tab)
-  ModuleDetailScreen
-  ContentViewerScreen
-  QuizScreen
-  QuizResultScreen
+  (Module flow — Stack within Modules tab)
+    ModuleDetailScreen
+    ContentViewerScreen
+    QuizScreen
+    QuizResultScreen
+    PaymentScreen        ← BillPlz retake payment
 
-(Profile sub-screens)
-  CertificationsScreen
-  CertificationDetailScreen
-  BadgesScreen
+  (Profile sub-screens)
+    CertificationsScreen
+    CertificationDetailScreen
+    BadgesScreen
+
+(Admin/Trainer — Tab Navigation)
+  AdminDashboardScreen (tab)     ← Socket.io IoT alerts + live stats
+  CoursesScreen (tab)            ← module + content + quiz management
+  RegistrationsScreen (tab)
+  NotificationsScreen (tab)      ← admin inbox + send custom
+  SettingsScreen (tab)           ← stations, admins, guide management, IoT alerts
 ```
 
 ---
 
-### Screen-by-Screen Breakdown
+### Park Guide Screen Breakdown
 
 ---
 
 #### `LoginScreen`
 
 **What it does:**
-- Username + password input
+- Email + password input
 - `POST /api/auth/login`
-- On success: store refresh token in Expo SecureStore, store access token in memory, navigate to Home
-- "Resend activation link" option — navigates to a simple email input screen that calls `POST /api/auth/resend-activation`
+- On success: store refresh token in Expo SecureStore, store access token in memory, navigate based on role — `ADMIN` → AdminDashboard, `GUIDE` → HomeScreen
+- "Resend activation link" option calls `POST /api/auth/resend-activation`
 
 ---
 
 #### `HomeScreen`
 
 **What it shows:**
-- Welcome message with guide's name
-- "Continue Learning" card — most recently active enrolment, with progress bar
-- Upcoming deadlines — list of enrolments with `due_at` within the next 7 days
+- Welcome message with guide's name (from `GET /api/users/me`)
+- "Continue Learning" card — most recently active enrolment with progress bar
+- Upcoming deadlines — enrolments with `due_at` within the next 7 days
 - Recent notifications — last 3 unread
 
-**API calls (cached in SQLite for offline):**
+**API calls:**
 - `GET /api/users/me`
-- `GET /api/enrolments/me?limit=1&sort=lastActive`
-- `GET /api/enrolments/me?dueSoon=true`
-- `GET /api/notifications/me?unread=true&limit=3`
+- `GET /api/enrolments/me` — sorted by last activity, take first for "Continue Learning"
+- `GET /api/enrolments/me` — filtered for due soon
+- `GET /api/notifications/me?limit=3`
 
 ---
 
@@ -570,126 +573,112 @@ The mobile app must work **fully offline**. This means:
 
 **What it shows:**
 - List of all PUBLISHED modules
-- Each card: title, description snippet, enrolment status (Enrolled / Not Enrolled), progress if enrolled
-- Search bar to filter by title
-- Tap a module → `ModuleDetailScreen`
+- Each card: title, description snippet, enrolment status, progress if enrolled
+- Search bar (client-side filter)
+- Tap → `ModuleDetailScreen`
 
 **API calls:**
 - `GET /api/modules?status=PUBLISHED`
-
-**Offline behaviour:** If offline and no cached data, show last-fetched list from SQLite with a "You're offline" banner. If never fetched, show empty state.
+- `GET /api/enrolments/me` — to cross-reference enrolment status per module
 
 ---
 
 #### `ModuleDetailScreen`
 
 **What it shows:**
-- Module title and full description
-- List of content items (ordered) — each shows type icon and title
-- Enrol button (if not enrolled) → `POST /api/enrolments`
-- Due date if enrolled
-- Progress indicator (X of Y items completed)
-- Start / Continue button → navigates to `ContentViewerScreen` at next incomplete item
+- Module title and description
+- Ordered list of content items (type icon + title)
+- Enrol button if not enrolled → `POST /api/enrolments/me`
+- Progress (X of Y items completed) via `contentItemProgresses` on the enrolment
+- Start / Continue button → `ContentViewerScreen` at next incomplete item
 
 **API calls:**
 - `GET /api/modules/:id`
-- `GET /api/modules/:id/content` — fetches and caches all content items to SQLite on enrolment
-- `GET /api/enrolments/me/:moduleId` — enrolment status and progress
+- `GET /api/modules/:id/content`
+- `GET /api/enrolments/me` filtered by `moduleId` — returns enrolment with `contentItemProgresses`
 
 ---
 
 #### `ContentViewerScreen`
 
-**What it is:** The core learning screen. Renders the current content item and handles navigation between items.
+**What it is:** Core learning screen. Renders the content item by type, tracks progress.
 
 **Rendering by type:**
 
 | Type | How to render |
 |------|--------------|
-| `TEXT` | Render HTML string using `react-native-render-html` |
-| `IMAGE` | Full-width WebP image with pinch-to-zoom |
-| `VIDEO` (S3, allow_offline=true) | Cached video via Expo AV |
-| `VIDEO` (YouTube or allow_offline=false) | WebView embed; show "unavailable offline" banner when offline |
-| `INFOGRAPHIC` (HOTSPOT) | Image with tappable coordinate regions, popup on tap |
-| `INFOGRAPHIC` (SCENARIO) | Decision tree: render question, show choices as buttons, walk to next node on choice |
-| `INFOGRAPHIC` (STEPPER) | Step-by-step with Next/Back navigation, optional image per step |
-| `QUIZ` | Navigate to `QuizScreen` |
+| `TEXT` | `react-native-render-html` — parses the `textContent` HTML string into native RN components |
+| `IMAGE` | Full-width WebP image loaded from presigned URL via `GET /api/content-items/:id/image-url` |
+| `INFOGRAPHIC` | Same as IMAGE for the base image; HOTSPOT/SCENARIO/STEPPER interactivity rendered from the JSON data in `textContent` |
+| `VIDEO` (S3) | `expo-av` Video component with the presigned URL from `GET /api/content-items/:id/image-url` (or a dedicated video-url endpoint) |
+| `VIDEO` (YouTube) | `react-native-webview` iframe embed using `videoUrl` |
+| `QUIZ` | Navigate to `QuizScreen` with the `quizId` from the content item |
 
 **Progress tracking:**
-- When guide reaches the end of a content item (scrolls to bottom / video ends / stepper completes), mark it as complete
-- Write completion to SQLite immediately with device-side `completedAt` timestamp
-- If online: also call `POST /api/progress` immediately
-- If offline: queue in SQLite sync table, send on reconnect
+- On reaching end of item (scroll bottom / video end / stepper finish): call `POST /api/enrolments/me/progress` with `contentItemId`
+- This updates `progressPct` and `completedAt` on the enrolment
 
 **Navigation:**
-- "Next" button moves to the next content item
-- "Back" button goes to previous
-- Last item → show module completion screen, trigger sync
+- "Next" → next content item in order
+- "Back" → previous item
+- Last item → module completion message
 
 ---
 
 #### `QuizScreen`
 
-**What it is:** The quiz-taking experience.
-
 **What it shows:**
-- One question at a time (or scrollable list — your choice for UX)
-- Timer countdown if time limit is set (show remaining time in header)
-- Question type rendering:
-  - MCQ: radio button options
-  - TRUE_FALSE: two large buttons (True / False)
-  - SHORT_ANSWER: single-line text input
-  - LONG_ANSWER: multi-line text input
-- Progress indicator (Question X of Y)
-- "Submit Quiz" button on last question
+- Questions fetched from `GET /api/quizzes/:quizId` (includes questions array)
+- Timer countdown from quiz's `timeLimit` (auto-submits on expiry)
+- MCQ: radio buttons; TRUE_FALSE: two large buttons; SHORT/LONG: text inputs
+- Progress indicator (X of Y)
+- "Submit" on last question
 
 **On submit:**
-- Write all answers to SQLite first
-- If online: `POST /api/quiz-attempts` with all question responses
-- If offline: queue in SQLite sync table
-- Navigate to `QuizResultScreen`
-
-**Important:** If the timer runs out, auto-submit whatever has been answered.
+- `POST /api/quiz-attempts` with `{ quizId, answers: [{ questionId, value }] }`
+- Navigate to `QuizResultScreen` with `attemptId`
 
 ---
 
 #### `QuizResultScreen`
 
-**What it shows (online flow):**
-- If `show_score_to_guide = true` and attempt is GRADED: show score, pass/fail message
-- If attempt is PENDING_REVIEW (has short/long questions): show "Your answers have been submitted and are under review. You will be notified when graded."
-- If failed: show "Would you like to retake?" button (Billplz payment flow — deferred, placeholder for now)
-
-**What it shows (offline flow):**
-- "Your quiz has been saved. It will be submitted when you reconnect."
+**What it shows:**
+- Fetch attempt: `GET /api/quiz-attempts/:attemptId`
+- If `GRADED` and `showScoreToGuide`: score, pass/fail message
+- If `PENDING_REVIEW`: "Your answers are under review. You will be notified when graded."
+- If failed and quiz has `retakePriceMyr` set: "Retake for RM X.XX" button → navigate to `PaymentScreen`
 
 ---
 
-#### `NotificationsScreen`
+#### `PaymentScreen`
+
+**What it does:**
+- Shows quiz name and retake price
+- "Pay to Retake" button → `POST /api/payments/initiate` with `{ quizId }`
+- Opens returned `bill.url` with `Linking.openURL()` — launches device browser, BillPlz payment page
+- On return to app: `GET /api/payments/me?quizId=:id` polls until status is `PAID` or `FAILED`
+- On `PAID`: navigate to `QuizScreen` for the retake
+- On `FAILED`: show error message, allow retry
+
+> **Backend addition required:** `GET /api/payments/me?quizId=:id` — returns the latest payment record for the logged-in guide for a given quiz. Does not exist yet; add to the payments router before implementing PaymentScreen.
+
+---
+
+#### `NotificationsScreen` (Guide)
 
 **What it shows:**
-- Chronological list of all in-app notifications for the guide
-- Unread items visually distinct
-- Tap to mark as read: `PATCH /api/notifications/:id/read`
-- Notification types and their display:
-  - `MODULE_PUBLISHED` → "New module available: [title]" → tap navigates to ModuleDetailScreen
-  - `DEADLINE_REMINDER` → "Deadline in 24 hours: [module]" → tap navigates to ModuleDetailScreen
-  - `QUIZ_RESULT` → "Your result for [quiz]: [pass/fail]" → tap navigates to QuizResultScreen
-  - `CERTIFICATE_APPROVED` → "Certificate issued for [module]" → tap navigates to CertificationDetailScreen
-  - `CUSTOM` → admin message: show title + body
-
-**API calls:**
-- `GET /api/notifications/me`
+- All notifications: `GET /api/notifications/me`
+- Unread items visually distinct; tap to mark read: `PATCH /api/notifications/:id/read`
+- Tap navigation by type: MODULE_PUBLISHED → ModuleDetail, QUIZ_RESULT → QuizResult, CERTIFICATE_APPROVED → CertDetail, DEADLINE_REMINDER → ModuleDetail, CUSTOM → inline display
 
 ---
 
 #### `ProfileScreen`
 
 **What it shows:**
-- Guide info: name, username, email, station, start date
-- Badges row (horizontally scrollable) → tap navigates to `BadgesScreen`
-- Certifications section → tap navigates to `CertificationsScreen`
-- Stats: total modules completed, total certifications
+- Guide info from `GET /api/users/me`
+- Badges row (scroll) → `BadgesScreen`
+- Certifications section → `CertificationsScreen`
 - Logout button
 
 ---
@@ -697,19 +686,16 @@ The mobile app must work **fully offline**. This means:
 #### `CertificationsScreen`
 
 **What it shows:**
-- List of all earned certifications
-- Each: module title, issue date, expiry date (if set), "Download" button
-
-**Download flow:**
-- Tap "Download" → `GET /api/certifications/:id/download-url` → receives pre-signed URL → open in device browser or use Expo FileSystem to download PDF
+- `GET /api/certifications/me` — list of earned certs
+- Download button: `GET /api/certifications/:id/download-url` → open presigned URL
 
 ---
 
 #### `CertificationDetailScreen`
 
 **What it shows:**
-- Full certificate metadata: company name, issuer, issue date, expiry date, certification ID
-- QR code (the verify URL is on the certificate itself — display as static info)
+- Full cert metadata: company, issuer, dates, cert ID
+- QR code (verify URL static display)
 - Download button
 
 ---
@@ -717,18 +703,91 @@ The mobile app must work **fully offline**. This means:
 #### `BadgesScreen`
 
 **What it shows:**
-- Grid of all earned badges
-- Each: badge image, name, description, date earned
-- Visual treatment: unearned badges shown greyed out if you want to motivate (optional)
+- Earned badges: `GET /api/badges/users/:userId`
+- All badge definitions: `GET /api/badges` — show unearned greyed out
+- Each badge: image, name, description, date earned
+
+---
+
+### Admin Screen Breakdown
+
+---
+
+#### `AdminDashboardScreen`
+
+**What it shows:**
+- Stat cards (same as web dashboard):
+  - `GET /api/registrations?limit=1` → `pagination.total`
+  - `GET /api/users?role=GUIDE&status=ACTIVE&limit=1` → `pagination.total`
+  - `GET /api/quiz-attempts?status=PENDING_REVIEW&limit=1` → `pagination.total`
+  - `GET /api/certifications?limit=1` → `pagination.total`
+- Recent activity: `GET /api/notifications/me?limit=4`
+
+**Socket.io:** Connect on mount. Listen for `iot:alert` event — show toast, increment IoT alert badge. Disconnect on unmount. Same `socket.io-client` setup as web.
+
+---
+
+#### `CoursesScreen` (module management tab)
+
+Nested stack:
+- **ModuleList** — `GET /api/modules`, filter by status, tap → ModuleView
+- **ModuleEdit** — create: `POST /api/modules`; edit: `PATCH /api/modules/:id`
+- **ModuleView** — module detail with enrolment count
+- **ContentBuild** — `GET/POST /api/modules/:id/content`, `PATCH/DELETE /api/content-items/:id`, reorder `PATCH /api/modules/:id/content/reorder`; quiz builder `POST /api/quizzes`, `POST /api/quizzes/:id/questions`; image/video upload via `POST /api/uploads/presign`
+- **QuizGrading** — list: `GET /api/quiz-attempts?status=PENDING_REVIEW`; grade: `GET /api/quiz-attempts/:id`, `PATCH /api/quiz-attempts/:id/grade`; on pass → CertIssue
+- **CertIssue** — `POST /api/certifications` with all required fields (guideId, quizAttemptId, moduleId, companyName, issuerName, issuerTitle, issueDate, expiryDate)
+- **Certification** (admin list) — `GET /api/certifications`, download URL per cert
+
+---
+
+#### `RegistrationsScreen`
+
+Nested stack:
+- **RegistrationList** — `GET /api/registrations?status=...`, filter tabs
+- **RegistrationDetails** — `GET /api/registrations/:id`; CV download via `GET /api/registrations/:id/cv-url`; approve `POST /api/registrations/:id/approve`; reject `POST /api/registrations/:id/reject`
+
+---
+
+#### `NotificationsScreen` (Admin)
+
+- Admin inbox: `GET /api/notifications/me`
+- Mark read, mark all read
+- Send custom notification modal: `POST /api/notifications/custom`
+
+---
+
+#### `SettingsScreen`
+
+Nested stack:
+- **StationManagement** — `GET/POST/PATCH/DELETE /api/stations`
+- **AdminList** — `GET /api/users?role=ADMIN`; create: `POST /api/users/admins`
+- **GuideList** — `GET /api/users?role=GUIDE` + station filter from `GET /api/stations`
+- **GuideDetails** — full profile: users, enrolments, quiz attempts, certifications, badges; suspend/reactivate `PATCH /api/users/:id/status`; send custom notification
+- **IoTAlertList** — `GET /api/iot-alerts`, filter by status; new alerts via Socket.io
+- **IoTAlertDetail** — `GET /api/iot-alerts/:id`; evidence image via `GET /api/iot-alerts/:id/evidence-url`; flag: `PATCH /api/iot-alerts/:id/flag`
 
 ---
 
 ### Mobile App — Global Concerns
 
-- **Offline sync manager:** A background service that watches `NetInfo`, and on transition from offline → online, calls `POST /api/sync` with all queued SQLite progress rows. Show a subtle "Syncing..." indicator while this runs.
-- **Push notification handler:** Use `expo-notifications`. On app foreground, update notification badge count. On background tap, navigate to the relevant screen based on notification type.
-- **Auth persistence:** On app launch, read refresh token from Expo SecureStore. If present, silently call `POST /api/auth/refresh` to get a new access token before showing the main app. If it fails, show login screen.
-- **Connectivity banner:** When offline, show a persistent non-blocking banner at the top of the screen ("You're offline — progress is saved locally").
+- **Auth persistence:** On app launch, read refresh token from Expo SecureStore. Silently call `POST /api/auth/refresh`. On success: hydrate auth state, show app. On failure or offline: show login.
+- **401 handling:** API client intercepts 401, calls `POST /api/auth/refresh`, retries original request. On second 401: force logout.
+- **Push notifications:** `expo-notifications`. Register on login, handle foreground (update badge count), handle background tap (navigate to relevant screen by notification type).
+- **Connectivity banner:** `@react-native-community/netinfo` monitors connectivity. When offline: show persistent banner "You're offline". Does not block navigation; only affects live API calls.
+- **Socket.io:** Admin only. Connect on admin login, disconnect on logout. Events: `iot:alert` for dashboard toast and IoT alert list prepend.
+
+---
+
+### Backend Additions Required Before Mobile Can Complete
+
+Two small endpoints that do not yet exist. Both are trivial to add to existing controllers.
+
+| Endpoint | Why needed |
+|---|---|
+| `GET /api/payments/me?quizId=:id` | Mobile polls this after returning from BillPlz browser to check if payment succeeded (PAID/FAILED/PENDING) |
+| `GET /api/content-items/:id/image-url` | Returns a 15-min presigned GET URL for `imageS3Key`. Required for IMAGE and INFOGRAPHIC content items. AWS is now active. Auth required; guide must be enrolled or role is ADMIN. |
+
+Both should be added to the API before those mobile screens are implemented.
 
 ---
 
@@ -738,7 +797,7 @@ To avoid confusion — these are explicitly out of scope for the frontend:
 
 - PDF certificate generation — this happens server-side, you only display/download the result
 - Push notification delivery — Expo handles this, you only handle receiving and displaying them
-- Payment flow (Billplz) — deferred, do not implement until confirmed
+- BillPlz webhook verification — handled server-side; mobile only opens the URL and polls for status
 
 ---
 

@@ -1,189 +1,193 @@
-import React from 'react';
-import {
-  View, Text, ScrollView, TouchableOpacity, Platform,
-} from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../../services/AuthContext';
 import useNetworkStatus from '../../services/connectivityService';
+import { FONTS } from '../../theme/fonts';
+import { badgesApi } from '../../api/badges';
 
-const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
-const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
+function formatDate(dateStr) {
+	if (!dateStr) return '';
+	return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
 
-const T = {
-  h1:      { fontFamily: sans,  fontSize: 30, fontWeight: '600' },
-  h3:      { fontFamily: sans,  fontSize: 20, fontWeight: '500' },
-  h4:      { fontFamily: sans,  fontSize: 16, fontWeight: '600' },
-  bodySm:  { fontFamily: serif, fontSize: 14, fontWeight: '400' },
-  label:   { fontFamily: sans,  fontSize: 14, fontWeight: '500' },
-  caption: { fontFamily: sans,  fontSize: 12, fontWeight: '500' },
-};
-
-const EARNED = [
-  {
-    id: 1,
-    label: 'First Steps',
-    date: '2026-03-15',
-    icon: 'footsteps',
-    iconColor: '#15803d',
-    borderColor: '#15803d',
-    iconBg: '#dcfce7',
-  },
-  {
-    id: 2,
-    label: 'Quiz Master',
-    date: '2026-04-22',
-    icon: 'trophy',
-    iconColor: '#d97706',
-    borderColor: '#d97706',
-    iconBg: '#fef3c7',
-  },
-  {
-    id: 3,
-    label: 'Conservation Pro',
-    date: '2026-04-28',
-    icon: 'leaf',
-    iconColor: '#0891b2',
-    borderColor: '#0891b2',
-    iconBg: '#e0f2fe',
-  },
-];
-
-const LOCKED = [
-  { id: 4, label: 'Safety Expert',      desc: 'Master all safety protocols'           },
-  { id: 5, label: 'Field Ready',        desc: 'Complete 20 field exercises'           },
-  { id: 6, label: 'Top Guide',          desc: 'Maintain 95%+ average across all courses' },
-  { id: 7, label: 'Biodiversity Expert', desc: 'Complete all biodiversity modules'    },
-  { id: 8, label: 'Eco Champion',       desc: 'Finish all eco-tourism training'       },
-  { id: 9, label: 'Law Keeper',         desc: 'Pass all legislation assessments'      },
-];
-
-const TOTAL   = EARNED.length + LOCKED.length;
-const EARNED_COUNT = EARNED.length;
 
 function EarnedBadge({ badge }) {
-  return (
-    <View style={{ alignItems: 'center', flex: 1 }}>
-      <View style={{ position: 'relative', marginBottom: 10 }}>
-        <View style={{
-          width: 80, height: 80, borderRadius: 40,
-          borderWidth: 3, borderColor: badge.borderColor,
-          backgroundColor: badge.iconBg,
-          alignItems: 'center', justifyContent: 'center',
-        }}>
-          <Ionicons name={badge.icon} size={32} color={badge.iconColor} />
-        </View>
-        {/* Earned indicator dot */}
-        <View style={{
-          position: 'absolute', top: 2, right: 2,
-          width: 16, height: 16, borderRadius: 8,
-          backgroundColor: '#15803d',
-          borderWidth: 2, borderColor: '#fff',
-          alignItems: 'center', justifyContent: 'center',
-        }}>
-          <Ionicons name="checkmark" size={9} color="#fff" />
-        </View>
-      </View>
-      <Text style={[T.label, { color: '#111827', textAlign: 'center', marginBottom: 3 }]}>
-        {badge.label}
-      </Text>
-      <Text style={[T.caption, { color: '#9ca3af' }]}>{badge.date}</Text>
-    </View>
-  );
+	return (
+		<View style={{ alignItems: 'center', flex: 1 }}>
+			<View style={{ position: 'relative', marginBottom: 10 }}>
+				<View style={{
+					width: 80, height: 80, borderRadius: 40,
+					borderWidth: 3, borderColor: '#15803d',
+					backgroundColor: '#dcfce7',
+					alignItems: 'center', justifyContent: 'center',
+				}}>
+					<Ionicons name={badge.icon ?? 'ribbon'} size={32} color="#15803d" />
+				</View>
+				<View style={{
+					position: 'absolute', top: 2, right: 2,
+					width: 16, height: 16, borderRadius: 8, backgroundColor: '#15803d',
+					borderWidth: 2, borderColor: '#fff', alignItems: 'center', justifyContent: 'center',
+				}}>
+					<Ionicons name="checkmark" size={9} color="#fff" />
+				</View>
+			</View>
+			<Text style={{ fontFamily: FONTS.label, fontSize: 14, color: '#111827', textAlign: 'center', marginBottom: 3 }}>
+				{badge.name}
+			</Text>
+			{badge.earnedAt && (
+				<Text style={{ fontFamily: FONTS.label, fontSize: 12, color: '#9ca3af' }}>
+					{formatDate(badge.earnedAt)}
+				</Text>
+			)}
+		</View>
+	);
 }
 
 function LockedBadge({ badge }) {
-  return (
-    <View style={{ alignItems: 'center', flex: 1, paddingHorizontal: 4 }}>
-      <View style={{
-        width: 80, height: 80, borderRadius: 40,
-        backgroundColor: '#f3f4f6',
-        borderWidth: 2, borderColor: '#e5e7eb',
-        alignItems: 'center', justifyContent: 'center',
-        marginBottom: 10,
-      }}>
-        <Ionicons name="lock-closed" size={28} color="#d1d5db" />
-      </View>
-      <Text style={[T.label, { color: '#374151', textAlign: 'center', marginBottom: 4 }]}>
-        {badge.label}
-      </Text>
-      <Text style={[T.caption, { color: '#9ca3af', textAlign: 'center', lineHeight: 16 }]}>
-        {badge.desc}
-      </Text>
-    </View>
-  );
+	return (
+		<View style={{ alignItems: 'center', flex: 1, paddingHorizontal: 4 }}>
+			<View style={{
+				width: 80, height: 80, borderRadius: 40,
+				backgroundColor: '#f3f4f6', borderWidth: 2, borderColor: '#e5e7eb',
+				alignItems: 'center', justifyContent: 'center', marginBottom: 10,
+			}}>
+				<Ionicons name="lock-closed" size={28} color="#d1d5db" />
+			</View>
+			<Text style={{ fontFamily: FONTS.label, fontSize: 14, color: '#374151', textAlign: 'center', marginBottom: 4 }}>
+				{badge.name}
+			</Text>
+			{badge.description && (
+				<Text style={{ fontFamily: FONTS.label, fontSize: 12, color: '#9ca3af', textAlign: 'center', lineHeight: 16 }}>
+					{badge.description}
+				</Text>
+			)}
+		</View>
+	);
 }
 
+
 export default function BadgeScreen() {
-  const navigation = useNavigation();
-  const { isOnline } = useNetworkStatus();
-  const progress   = EARNED_COUNT / TOTAL;
+	const navigation   = useNavigation();
+	const { isOnline } = useNetworkStatus();
+	const { user }     = useAuth();
 
-  return (
-    <View style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+	const [allBadges,    setAllBadges]    = useState([]);
+	const [earnedBadges, setEarnedBadges] = useState([]);
+	const [loading,      setLoading]      = useState(true);
 
-      {/* ── Green header ── */}
-      <View style={{
-        backgroundColor: '#15803d',
-        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 20, paddingHorizontal: 20,
-      }}>
-        {/* Title row */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 14 }}>
-            <Ionicons name="arrow-back" size={22} color="#fff" />
-          </TouchableOpacity>
-          <Text style={[T.h1, { color: '#fff' }]}>My Badges</Text>
-        </View>
+	const load = useCallback(async () => {
+		if (!user?.id) return;
+		try {
+			const [allData, earnedData] = await Promise.allSettled([
+				badgesApi.getAll(),
+				badgesApi.getEarned(user.id),
+			]);
+			if (allData.status    === 'fulfilled') setAllBadges(Array.isArray(allData.value) ? allData.value : []);
+			if (earnedData.status === 'fulfilled') setEarnedBadges(Array.isArray(earnedData.value) ? earnedData.value : []);
+		} catch {
+			// keep empty
+		} finally {
+			setLoading(false);
+		}
+	}, [user?.id]);
 
-        {/* Progress subtitle */}
-        <Text style={[T.caption, { color: 'rgba(255,255,255,0.8)', marginBottom: 10 }]}>
-          {EARNED_COUNT} of {TOTAL} badges earned
-        </Text>
+	useEffect(() => { load(); }, [load]);
 
-        {/* Progress bar */}
-        <View style={{
-          height: 6, backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: 3, overflow: 'hidden',
-        }}>
-          <View style={{
-            height: '100%', borderRadius: 3,
-            backgroundColor: '#fff',
-            width: `${Math.round(progress * 100)}%`,
-          }} />
-        </View>
-      </View>
+	const earnedIds = new Set(earnedBadges.map((e) => e.badgeId ?? e.id));
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
-      >
+	const earned = earnedBadges.map((e) => ({
+		...(e.badge ?? {}),
+		id: e.badgeId ?? e.id,
+		name: e.badge?.name ?? e.name ?? 'Badge',
+		icon: e.badge?.icon ?? e.icon ?? 'ribbon',
+		earnedAt: e.earnedAt ?? e.createdAt,
+	}));
 
-        {/* ── Earned section ── */}
-        <Text style={[T.h3, { color: '#111827', marginBottom: 20 }]}>
-          Earned ({EARNED_COUNT})
-        </Text>
-        <View style={{ flexDirection: 'row', marginBottom: 36 }}>
-          {EARNED.map((b) => (
-            <EarnedBadge key={b.id} badge={b} />
-          ))}
-        </View>
+	const locked = allBadges.filter((b) => !earnedIds.has(b.id));
 
-        {/* ── Keep Going section ── */}
-        <Text style={[T.h3, { color: '#111827', marginBottom: 20 }]}>
-          Keep Going ({LOCKED.length} remaining)
-        </Text>
+	const total    = (allBadges.length > 0 ? allBadges.length : earned.length + locked.length) || 1;
+	const progress = earned.length / total;
 
-        {/* 2-column rows of locked badges */}
-        {[0, 1].map((rowIdx) => (
-          <View
-            key={rowIdx}
-            style={{ flexDirection: 'row', marginBottom: 28 }}
-          >
-            {LOCKED.slice(rowIdx * 3, rowIdx * 3 + 3).map((b) => (
-              <LockedBadge key={b.id} badge={b} />
-            ))}
-          </View>
-        ))}
+	const rows = (arr, cols) => {
+		const result = [];
+		for (let i = 0; i < arr.length; i += cols) {
+			result.push(arr.slice(i, i + cols));
+		}
+		return result;
+	};
 
-      </ScrollView>
-    </View>
-  );
+	return (
+		<View style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+
+			<View style={{
+				backgroundColor: '#15803d',
+				paddingTop: isOnline === false ? 12 : 52, paddingBottom: 20, paddingHorizontal: 20,
+			}}>
+				<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+					<TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 14 }}>
+						<Ionicons name="arrow-back" size={22} color="#fff" />
+					</TouchableOpacity>
+					<Text style={{ fontFamily: FONTS.title, fontSize: 28, fontWeight: '600', color: '#fff' }}>My Badges</Text>
+				</View>
+
+				<Text style={{ fontFamily: FONTS.label, fontSize: 12, color: 'rgba(255,255,255,0.8)', marginBottom: 10 }}>
+					{earned.length} of {total} badges earned
+				</Text>
+
+				<View style={{ height: 6, backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: 3, overflow: 'hidden' }}>
+					<View style={{ height: '100%', borderRadius: 3, backgroundColor: '#fff', width: `${Math.round(progress * 100)}%` }} />
+				</View>
+			</View>
+
+			{loading ? (
+				<ActivityIndicator color="#15803d" style={{ marginTop: 40 }} />
+			) : (
+				<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
+					{earned.length > 0 && (
+						<>
+							<Text style={{ fontFamily: FONTS.title, fontSize: 20, fontWeight: '500', color: '#111827', marginBottom: 20 }}>
+								Earned ({earned.length})
+							</Text>
+							{rows(earned, 3).map((row, ri) => (
+								<View key={ri} style={{ flexDirection: 'row', marginBottom: 28 }}>
+									{row.map((b) => <EarnedBadge key={b.id} badge={b} />)}
+									{row.length < 3 && Array.from({ length: 3 - row.length }).map((_, i) => (
+										<View key={`pad-${i}`} style={{ flex: 1 }} />
+									))}
+								</View>
+							))}
+						</>
+					)}
+
+					{locked.length > 0 && (
+						<>
+							<Text style={{ fontFamily: FONTS.title, fontSize: 20, fontWeight: '500', color: '#111827', marginBottom: 20 }}>
+								Keep Going ({locked.length} remaining)
+							</Text>
+							{rows(locked, 3).map((row, ri) => (
+								<View key={ri} style={{ flexDirection: 'row', marginBottom: 28 }}>
+									{row.map((b) => <LockedBadge key={b.id} badge={b} />)}
+									{row.length < 3 && Array.from({ length: 3 - row.length }).map((_, i) => (
+										<View key={`pad-${i}`} style={{ flex: 1 }} />
+									))}
+								</View>
+							))}
+						</>
+					)}
+
+					{earned.length === 0 && locked.length === 0 && (
+						<View style={{ alignItems: 'center', marginTop: 48 }}>
+							<Ionicons name="ribbon-outline" size={48} color="#d1d5db" />
+							<Text style={{ fontFamily: FONTS.label, fontSize: 14, color: '#9ca3af', marginTop: 12, textAlign: 'center' }}>
+								No badges yet — complete modules to earn badges
+							</Text>
+						</View>
+					)}
+				</ScrollView>
+			)}
+
+		</View>
+	);
 }

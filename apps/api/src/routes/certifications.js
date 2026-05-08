@@ -13,5 +13,6 @@ router.get('/verify/:id', controller.verify);
 router.get('/', requireAuth, controller.list);
 router.post('/', requireAuth, requireRole('ADMIN'), validate(issueCertificationSchema), controller.issue);
 router.get('/:id/download', requireAuth, controller.download);
+router.get('/:id', requireAuth, controller.getOne);
 
 export default router;

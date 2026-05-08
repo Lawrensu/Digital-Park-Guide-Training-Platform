@@ -1,23 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { Platform } from 'react-native';
+import { modulesApi } from '../../api/modules';
+import { quizAttemptsApi } from '../../api/quizAttempts';
 import useNetworkStatus from '../../services/connectivityService';
-
-// Outfit → sans-serif (swap fontFamily to 'Outfit' once installed)
-// Source Serif 4 → serif (swap fontFamily to 'SourceSerif4' once installed)
-const sans   = Platform.select({ ios: 'System', android: 'sans-serif' });
-const serif  = Platform.select({ ios: 'Georgia', android: 'serif' });
+import { FONTS } from '../../theme/fonts';
 
 const T = {
-  h1:          { fontFamily: sans,  fontSize: 30, fontWeight: '600' },
-  h3:          { fontFamily: sans,  fontSize: 20, fontWeight: '500' },
-  h4:          { fontFamily: sans,  fontSize: 16, fontWeight: '600' },
-  bodyDefault: { fontFamily: serif, fontSize: 16, fontWeight: '400' },
-  bodySmall:   { fontFamily: serif, fontSize: 14, fontWeight: '400' },
-  label:       { fontFamily: sans,  fontSize: 14, fontWeight: '500' },
-  caption:     { fontFamily: sans,  fontSize: 12, fontWeight: '500' },
+  h1:          { fontFamily: FONTS.label, fontSize: 30, fontWeight: '600' },
+  h3:          { fontFamily: FONTS.label, fontSize: 20, fontWeight: '500' },
+  h4:          { fontFamily: FONTS.label, fontSize: 16, fontWeight: '600' },
+  bodyDefault: { fontFamily: FONTS.body,  fontSize: 16, fontWeight: '400' },
+  bodySmall:   { fontFamily: FONTS.body,  fontSize: 14, fontWeight: '400' },
+  label:       { fontFamily: FONTS.label, fontSize: 14, fontWeight: '500' },
+  caption:     { fontFamily: FONTS.label, fontSize: 12, fontWeight: '500' },
 };
 
 const MENU_ITEMS = [
@@ -64,8 +61,23 @@ const MENU_ITEMS = [
 ];
 
 export default function CourseManagement() {
-  const navigation = useNavigation();
+  const navigation   = useNavigation();
   const { isOnline } = useNetworkStatus();
+  const [activeModules,  setActiveModules]  = useState(null);
+  const [pendingGrades,  setPendingGrades]  = useState(null);
+
+  useEffect(() => {
+    modulesApi.getAll({ limit: 200 })
+      .then((data) => {
+        const mods = Array.isArray(data) ? data : [];
+        setActiveModules(mods.filter((m) => m.status === 'PUBLISHED').length);
+      })
+      .catch(() => setActiveModules(0));
+
+    quizAttemptsApi.getAll({ status: 'PENDING_REVIEW', limit: 200 })
+      .then((data) => setPendingGrades(Array.isArray(data) ? data.length : 0))
+      .catch(() => setPendingGrades(0));
+  }, []);
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f3f4f6' }}>
@@ -133,7 +145,9 @@ export default function CourseManagement() {
               shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.06, shadowRadius: 6, elevation: 2,
             }}>
-              <Text style={[T.h1, { color: '#16a34a', marginBottom: 4 }]}>11</Text>
+              <Text style={[T.h1, { color: '#16a34a', marginBottom: 4 }]}>
+                {activeModules ?? '—'}
+              </Text>
               <Text style={[T.caption, { color: '#6b7280' }]}>Active Modules</Text>
             </View>
             <View style={{
@@ -142,7 +156,9 @@ export default function CourseManagement() {
               shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.06, shadowRadius: 6, elevation: 2,
             }}>
-              <Text style={[T.h1, { color: '#d97706', marginBottom: 4 }]}>5</Text>
+              <Text style={[T.h1, { color: '#d97706', marginBottom: 4 }]}>
+                {pendingGrades ?? '—'}
+              </Text>
               <Text style={[T.caption, { color: '#6b7280' }]}>Pending Grades</Text>
             </View>
           </View>

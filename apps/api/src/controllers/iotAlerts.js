@@ -1,4 +1,5 @@
 import prisma from '../lib/prisma.js';
+import { getPresignedDownloadUrl } from '../lib/s3.js';
 import { notifyAllAdmins } from '../lib/notifications.js';
 
 
@@ -110,6 +111,25 @@ export const getOne = async (req, res) => {
 			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Alert not found' } });
 		}
 		return res.status(200).json({ success: true, data: alert });
+	} catch (err) {
+		return res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+	}
+};
+
+
+
+export const getEvidenceUrl = async (req, res) => {
+	try {
+		const alert = await prisma.ioTAlert.findUnique({ where: { id: req.params.id } });
+		if (!alert) {
+			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Alert not found' } });
+		}
+		if (!alert.evidenceS3Key) {
+			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'No evidence image for this alert' } });
+		}
+
+		const url = await getPresignedDownloadUrl(alert.evidenceS3Key, 900);
+		return res.status(200).json({ success: true, data: { url } });
 	} catch (err) {
 		return res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
 	}

@@ -128,6 +128,29 @@ export const list = async (req, res) => {
 
 
 
+export const getOne = async (req, res) => {
+	try {
+		const cert = await prisma.certification.findUnique({
+			where: { id: req.params.id },
+			include: {
+				module: { select: { id: true, title: true } },
+				guide: { select: { id: true, username: true } },
+			},
+		});
+		if (!cert) {
+			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Certification not found' } });
+		}
+		if (req.user.role === 'GUIDE' && cert.guideId !== req.user.id) {
+			return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Insufficient permissions' } });
+		}
+		return res.status(200).json({ success: true, data: cert });
+	} catch (err) {
+		return res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+	}
+};
+
+
+
 export const download = async (req, res) => {
 	try {
 		const cert = await prisma.certification.findUnique({ where: { id: req.params.id } });

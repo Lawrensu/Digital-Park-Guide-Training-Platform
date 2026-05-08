@@ -30,12 +30,10 @@ function ModulesStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="CourseList" component={CourseListScreen} />
-      <Stack.Screen name="Lesson"        component={LessonScreen} />
-      <Stack.Screen name="Content"       component={ContentScreen} />
-      {/* registered but not yet triggered from any screen */}
-      <Stack.Screen name="Quiz"          component={QuizScreen} />
-      <Stack.Screen name="QuizResult"    component={QuizResultScreen} />
-      <Stack.Screen name="Certification" component={CertificationScreen} />
+      <Stack.Screen name="Lesson"     component={LessonScreen} />
+      <Stack.Screen name="Content"    component={ContentScreen} />
+      <Stack.Screen name="Quiz"       component={QuizScreen} />
+      <Stack.Screen name="QuizResult" component={QuizResultScreen} />
     </Stack.Navigator>
   );
 }

@@ -219,6 +219,12 @@ The presign endpoint is `POST /api/uploads/presign`. It receives `{ purpose, con
 
 **Badge award** — badges are for park guides only. When the certification count for a guide meets a badge threshold, create a `UserBadge` row. Never create a `UserBadge` for a user with `role = ADMIN`. Enforce this check before the insert, not after.
 
+**Content image presign** — `GET /api/modules/:moduleId/content-items/:id/image-url` uses `getPresignedDownloadUrl(item.imageS3Key, 900)` from `lib/s3.js`. Only applies to items of type `IMAGE` or `INFOGRAPHIC` (which have an `imageS3Key`). Items of type `VIDEO` with `videoSource: S3` use `videoUrl` directly (not an S3 key). Return 400 with `NO_IMAGE` error code if the item has no `imageS3Key`. Enrolment check: `req.user.role === 'ADMIN'` OR a matching `Enrolment` row with `guideId = req.user.id` and `moduleId = :moduleId`. Return 403 if enrolled check fails.
+
+**Payment status poll** — `GET /api/payments/me?quizId=:id` returns the most recent `Payment` row for `(guideId = req.user.id, quizId)` ordered by `createdAt desc`. If none exists, return `{ success: true, data: { status: null } }` (200, not 404) so the mobile client can distinguish "no payment" from "network error". Return the full payment shape when a row exists: `{ id, status, amount, billplzBillId, createdAt }`.
+
+**Certification getOne** — `GET /api/certifications/:id` returns the cert with `module: { id, title }` and `guide: { id, username }` includes. Ownership check: if `req.user.role === 'GUIDE'` and `cert.guideId !== req.user.id`, return 403. Admins may view any cert.
+
 ---
 
 ## When You're Stuck
@@ -299,6 +305,7 @@ Content items are nested under a module. Base path: `/api/modules/:moduleId/cont
 | PATCH | /api/modules/:moduleId/content-items/reorder | Admin | Reorder items by providing an array of id plus order pairs |
 | PATCH | /api/modules/:moduleId/content-items/:id | Admin | Update a content item |
 | DELETE | /api/modules/:moduleId/content-items/:id | Admin | Remove a content item |
+| GET | /api/modules/:moduleId/content-items/:id/image-url | Auth | Get a 15-min presigned GET URL for the item's imageS3Key; guide must be enrolled in the module or role is ADMIN; 400 if item has no imageS3Key |
 
 Content item types and their required fields:
 - VIDEO: videoSource (S3 or YOUTUBE), videoUrl
@@ -350,6 +357,7 @@ Retake gate: if attemptNumber is greater than 1 and retakePriceMyr is set, a PAI
 |--------|------|------|-------------|
 | POST | /api/payments/initiate | Guide | Initiate a BillPlz retake payment; returns redirect URL |
 | POST | /api/payments/callback | Public | BillPlz webhook; updates Payment status to PAID or FAILED |
+| GET | /api/payments/me | Guide | Get the guide's most recent payment for a quiz; requires quizId query param (UUID); returns `{ status: null }` if no payment exists for that quiz |
 
 The callback verifies the X Signature header before trusting the payload. Always returns 200 to prevent BillPlz retries.
 
@@ -359,8 +367,9 @@ The callback verifies the X Signature header before trusting the payload. Always
 |--------|------|------|-------------|
 | GET | /api/certifications | Auth | List certifications; guides see only their own |
 | POST | /api/certifications | Admin | Issue a certification for a passed, graded attempt |
-| GET | /api/certifications/:id/download | Own | Get a pre-signed S3 download URL (15 min expiry) |
-| GET | /api/certifications/verify/:certId | Public | Verify certificate validity; returns VALID or EXPIRED |
+| GET | /api/certifications/:id | Own | Get a single certification with module and guide details; guides may only view their own |
+| GET | /api/certifications/:id/download | Own | Get a 15-min presigned S3 download URL for the certificate PDF; guides may only download their own |
+| GET | /api/certifications/verify/:certId | Public | Verify certificate validity; returns status VALID or EXPIRED with cert metadata |
 
 ### Badges
 
@@ -390,7 +399,8 @@ Admin-facing routes under /api/:
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | GET | /api/iot-alerts | Admin | List alerts with filters: deviceId, guideId, status, detectionType |
-| GET | /api/iot-alerts/:id | Admin | Get a single alert with device and guide details |
+| GET | /api/iot-alerts/:id | Admin | Get a single alert with device and guide details; response includes evidenceS3Key |
+| GET | /api/iot-alerts/:id/evidence-url | Admin | Get a 15-min presigned GET URL for the alert's evidence image; 404 if alert has no evidenceS3Key |
 | PATCH | /api/iot-alerts/:id/flag | Admin | Flag an alert as CONFIRMED or FALSE_DETECTION |
 
 Internal ingest route (NOT under /api/):

@@ -296,5 +296,47 @@ Deleting a badge definition does not remove earned UserBadge rows from existing 
 
 | Item | Status |
 |------|--------|
-| Billplz integration | Confirmed as payment gateway. `retake_price_myr` on `Quiz` is nullable until active. |
+| BillPlz integration | Live. Sandbox and production URLs both configured via `BILLPLZ_SANDBOX` env var. `retake_price_myr` on `Quiz` is set per quiz by admin; null means retake is not available for that quiz. |
 | Badge threshold values | Count-based confirmed. Specific threshold values (e.g. 3 modules = badge) are set by admin per badge via the dashboard; not hardcoded. |
+
+---
+
+## Pending Backend Work (Sprint 2 — required for mobile and web completeness)
+
+Four endpoints are missing from the backend and must be added. The web app already calls two of them and currently gets 404 responses. All four follow the existing three-file pattern (route + controller + schema where needed).
+
+| Endpoint | Status | Who needs it |
+|----------|--------|-------------|
+| `GET /api/iot-alerts/:id/evidence-url` | Missing — web is already broken | Web `IoTAlertDetail`, mobile `IoTAlertDetail` |
+| `GET /api/certifications/:id` | Missing — web `GuideViewCert` is already broken | Web `GuideViewCert`, mobile `CertificationDetailScreen` |
+| `GET /api/payments/me?quizId=:id` | Missing — needed for mobile retake poll | Mobile `PaymentScreen` |
+| `GET /api/modules/:moduleId/content-items/:id/image-url` | Missing — web shows placeholder, mobile cannot render images | Web `GuideContentViewer`, mobile `ContentViewerScreen` |
+
+**Implementation notes for each:**
+
+`GET /api/iot-alerts/:id/evidence-url`
+- Admin only
+- Look up the `IoTAlert` by id; 404 if not found
+- 404 if `evidenceS3Key` is null or empty
+- Return `{ success: true, data: { url } }` where `url = getPresignedDownloadUrl(alert.evidenceS3Key, 900)`
+
+`GET /api/certifications/:id`
+- Auth: `requireAuth`; ownership check in controller
+- Look up cert with `include: { module: { select: { id, title } }, guide: { select: { id, username } } }`
+- If `req.user.role === 'GUIDE'` and `cert.guideId !== req.user.id` → 403
+- Return `{ success: true, data: cert }`
+
+`GET /api/payments/me?quizId=:id`
+- Auth: `requireAuth` + `requireRole('GUIDE')`
+- `quizId` query param is required (UUID); validate via Zod on `req.query`
+- Find most recent payment: `prisma.payment.findFirst({ where: { userId: req.user.id, quizId }, orderBy: { createdAt: 'desc' } })`
+- If none found: return `{ success: true, data: { status: null } }` (200, not 404)
+- If found: return `{ success: true, data: { id, status, amount, billplzBillId, createdAt } }`
+
+`GET /api/modules/:moduleId/content-items/:id/image-url`
+- Auth: `requireAuth`
+- Enrolment check: `req.user.role === 'ADMIN'` OR `prisma.enrolment.findFirst({ where: { guideId: req.user.id, moduleId: req.params.moduleId } })` is non-null; if neither → 403
+- Look up content item; 404 if not found or does not belong to `:moduleId`
+- 400 with code `NO_IMAGE` if `item.imageS3Key` is null or empty
+- Return `{ success: true, data: { url } }` where `url = getPresignedDownloadUrl(item.imageS3Key, 900)`
+- Add to the existing content items route file, not a new file

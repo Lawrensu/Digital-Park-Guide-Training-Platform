@@ -3,7 +3,6 @@
 // Wires into OfflineBanner and auto-syncs on reconnect
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { syncOfflineData } from './apiService';
 
 const HEALTH_URL = 'https://clients3.google.com/generate_204';
 const POLL_MS    = 15000;
@@ -13,16 +12,7 @@ export default function useNetworkStatus() {
   const [lastSynced, setLastSynced] = useState(null);
   const wasOfflineRef = useRef(false);
 
-  const handleChange = useCallback(async (online) => {
-    // Reconnected — trigger sync
-    if (online && wasOfflineRef.current) {
-      try {
-        const result = await syncOfflineData();
-        if (result.synced > 0) setLastSynced(new Date());
-      } catch (err) {
-        console.warn('Sync on reconnect failed:', err);
-      }
-    }
+  const handleChange = useCallback((online) => {
     wasOfflineRef.current = !online;
     setIsOnline(online);
   }, []);

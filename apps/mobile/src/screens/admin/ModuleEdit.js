@@ -1,389 +1,304 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  View, Text, ScrollView, TouchableOpacity, TextInput,
-  Switch, Platform,
+	View, Text, ScrollView, TouchableOpacity, TextInput,
+	ActivityIndicator, Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { modulesApi } from '../../api/modules';
 import useNetworkStatus from '../../services/connectivityService';
-
-const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
-const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
+import { FONTS } from '../../theme/fonts';
 
 const T = {
-  h1:      { fontFamily: sans,  fontSize: 30, fontWeight: '600' },
-  h4:      { fontFamily: sans,  fontSize: 16, fontWeight: '600' },
-  bodyDef: { fontFamily: serif, fontSize: 16, fontWeight: '400' },
-  bodySm:  { fontFamily: serif, fontSize: 14, fontWeight: '400' },
-  label:   { fontFamily: sans,  fontSize: 14, fontWeight: '500' },
-  caption: { fontFamily: sans,  fontSize: 12, fontWeight: '500' },
+	h1:      { fontFamily: FONTS.label, fontSize: 26, fontWeight: '600' },
+	h4:      { fontFamily: FONTS.label, fontSize: 16, fontWeight: '600' },
+	label:   { fontFamily: FONTS.label, fontSize: 14, fontWeight: '500' },
+	caption: { fontFamily: FONTS.label, fontSize: 12, fontWeight: '500' },
 };
 
-const CATEGORIES  = ['Biodiversity', 'Wildlife', 'Safety', 'Eco-tourism', 'Conservation'];
-const DIFFICULTIES = ['Beginner', 'Intermediate', 'Advanced'];
+const STATUSES = [
+	{ value: 'DRAFT',     label: 'Draft',     color: '#d97706', bg: '#fef3c7' },
+	{ value: 'PUBLISHED', label: 'Published', color: '#16a34a', bg: '#dcfce7' },
+	{ value: 'ARCHIVED',  label: 'Archived',  color: '#6b7280', bg: '#f3f4f6' },
+];
 
 function FieldLabel({ text }) {
-  return (
-    <Text style={[T.caption, {
-      color: '#9ca3af', letterSpacing: 0.5,
-      marginBottom: 6, marginTop: 18,
-    }]}>
-      {text}
-    </Text>
-  );
-}
-
-function StyledInput({ value, onChangeText, placeholder, multiline, minHeight }) {
-  return (
-    <TextInput
-      value={value}
-      onChangeText={onChangeText}
-      placeholder={placeholder}
-      placeholderTextColor="#9ca3af"
-      multiline={multiline}
-      numberOfLines={multiline ? 4 : 1}
-      textAlignVertical={multiline ? 'top' : 'center'}
-      style={[T.bodyDef, {
-        borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10,
-        paddingHorizontal: 14,
-        paddingVertical: 12,
-        color: '#111827',
-        minHeight: minHeight ?? (multiline ? 90 : undefined),
-        lineHeight: 22,
-      }]}
-    />
-  );
-}
-
-function Dropdown({ label, value, options, onSelect }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <View>
-      <TouchableOpacity
-        onPress={() => setOpen(!open)}
-        style={{
-          flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-          borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10,
-          paddingHorizontal: 14, paddingVertical: 13,
-          backgroundColor: '#fff',
-        }}
-      >
-        <Text style={[T.bodyDef, { color: '#111827' }]}>{value}</Text>
-        <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={18} color="#6b7280" />
-      </TouchableOpacity>
-      {open && (
-        <View style={{
-          borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10,
-          marginTop: 4, backgroundColor: '#fff', overflow: 'hidden',
-        }}>
-          {options.map((opt, i) => (
-            <TouchableOpacity
-              key={opt}
-              onPress={() => { onSelect(opt); setOpen(false); }}
-              style={{
-                paddingHorizontal: 14, paddingVertical: 13,
-                borderBottomWidth: i < options.length - 1 ? 1 : 0,
-                borderBottomColor: '#f3f4f6',
-                backgroundColor: value === opt ? '#f0fdf4' : '#fff',
-              }}
-            >
-              <Text style={[T.bodyDef, { color: value === opt ? '#15803d' : '#374151' }]}>
-                {opt}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-    </View>
-  );
+	return (
+		<Text style={[T.caption, { color: '#9ca3af', letterSpacing: 0.5, marginBottom: 6, marginTop: 18 }]}>
+			{text}
+		</Text>
+	);
 }
 
 export default function ModuleEdit() {
-  const navigation = useNavigation();
-  const { isOnline } = useNetworkStatus();
-  const route      = useRoute();
+	const navigation   = useNavigation();
+	const { isOnline } = useNetworkStatus();
+	const route        = useRoute();
+	const { moduleId } = route.params;
 
-  const mod = route.params?.module ?? {
-    id:          1,
-    title:       'Rainforest Biodiversity Fundamentals',
-    description: 'Comprehensive guide to rainforest ecosystems, biodiversity, and conservation principles.',
-    status:      'Published',
-    lessons:     8,
-    duration:    '4h 30m',
-    enrolled:    142,
-    category:    'Biodiversity',
-    difficulty:  'Beginner',
-    instructor:  'Dr. Maria Santos',
-    dueDate:     '30 Apr 2026',
-    tags:        ['Flora', 'Fauna', 'Conservation'],
-    contentItems: 8,
-    quizCount:   1,
-  };
+	const [module,       setModule]       = useState(null);
+	const [loading,      setLoading]      = useState(true);
+	const [saving,       setSaving]       = useState(false);
+	const [deleting,     setDeleting]     = useState(false);
 
-  const [title,       setTitle]       = useState(mod.title);
-  const [category,    setCategory]    = useState(mod.category    ?? 'Biodiversity');
-  const [difficulty,  setDifficulty]  = useState(mod.difficulty  ?? 'Beginner');
-  const [duration,    setDuration]    = useState(mod.duration);
-  const [instructor,  setInstructor]  = useState(mod.instructor  ?? 'Dr. Maria Santos');
-  const [description, setDescription] = useState(mod.description);
-  const [tags,        setTags]        = useState(mod.tags        ?? ['Flora', 'Fauna', 'Conservation']);
-  const [dueDate,     setDueDate]     = useState(mod.dueDate     ?? '30 Apr 2026');
-  const [published,   setPublished]   = useState(mod.status === 'Published');
-  const [addingTag,   setAddingTag]   = useState(false);
-  const [newTag,      setNewTag]      = useState('');
+	// Form fields
+	const [title,       setTitle]       = useState('');
+	const [description, setDescription] = useState('');
+	const [status,      setStatus]      = useState('DRAFT');
 
-  const removeTag = (tag) => setTags((prev) => prev.filter((t) => t !== tag));
-  const confirmTag = () => {
-    const t = newTag.trim();
-    if (t && !tags.includes(t)) setTags((prev) => [...prev, t]);
-    setNewTag('');
-    setAddingTag(false);
-  };
+	useEffect(() => {
+		modulesApi.getOne(moduleId)
+			.then((data) => {
+				setModule(data);
+				setTitle(data.title ?? '');
+				setDescription(data.description ?? '');
+				setStatus(data.status ?? 'DRAFT');
+			})
+			.catch(() => {})
+			.finally(() => setLoading(false));
+	}, [moduleId]);
 
-  return (
-    <View style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+	async function handleSave(targetStatus) {
+		if (!title.trim()) {
+			Alert.alert('Required', 'Please enter a module title.');
+			return;
+		}
+		setSaving(true);
+		try {
+			await modulesApi.update(moduleId, {
+				title: title.trim(),
+				description: description.trim(),
+			});
+			const newStatus = targetStatus ?? status;
+			if (newStatus !== module?.status) {
+				await modulesApi.setStatus(moduleId, newStatus);
+				setStatus(newStatus);
+			}
+			Alert.alert('Saved', 'Module updated successfully.', [
+				{ text: 'OK', onPress: () => navigation.goBack() },
+			]);
+		} catch (e) {
+			Alert.alert('Error', e?.message ?? 'Could not save module.');
+		} finally {
+			setSaving(false);
+		}
+	}
 
-      {/* ── Green header ── */}
-      <View style={{
-        backgroundColor: '#15803d',
-        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 18, paddingHorizontal: 20,
-        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-      }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 14 }}>
-            <Ionicons name="arrow-back" size={22} color="#fff" />
-          </TouchableOpacity>
-          <Text style={[T.h1, { color: '#fff', fontSize: 26 }]}>Module Edit</Text>
-        </View>
-        <TouchableOpacity style={{
-          width: 38, height: 38, borderRadius: 10,
-          backgroundColor: 'rgba(255,255,255,0.2)',
-          alignItems: 'center', justifyContent: 'center',
-        }}>
-          <Ionicons name="save" size={20} color="#fff" />
-        </TouchableOpacity>
-      </View>
+	function handleDelete() {
+		Alert.alert(
+			'Delete Module',
+			'This will permanently delete the module and all its content. This action cannot be undone.',
+			[
+				{ text: 'Cancel', style: 'cancel' },
+				{
+					text: 'Delete',
+					style: 'destructive',
+					onPress: async () => {
+						setDeleting(true);
+						try {
+							await modulesApi.remove(moduleId);
+							navigation.goBack();
+						} catch (e) {
+							Alert.alert('Error', e?.message ?? 'Could not delete module.');
+						} finally {
+							setDeleting(false);
+						}
+					},
+				},
+			]
+		);
+	}
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
-        keyboardShouldPersistTaps="handled"
-      >
+	if (loading) {
+		return (
+			<View style={{ flex: 1, backgroundColor: '#f3f4f6', alignItems: 'center', justifyContent: 'center' }}>
+				<ActivityIndicator size="large" color="#15803d" />
+			</View>
+		);
+	}
 
-        {/* ── Photo area ── */}
-        <TouchableOpacity style={{
-          backgroundColor: '#f3f4f6',
-          borderRadius: 14, height: 160,
-          alignItems: 'center', justifyContent: 'center',
-          marginBottom: 4,
-          borderWidth: 1, borderColor: '#e5e7eb',
-        }}>
-          <Ionicons name="camera" size={36} color="#9ca3af" />
-          <Text style={[T.caption, { color: '#9ca3af', marginTop: 8 }]}>Change Photo</Text>
-        </TouchableOpacity>
+	if (!module) {
+		return (
+			<View style={{ flex: 1, backgroundColor: '#f3f4f6', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+				<Ionicons name="alert-circle-outline" size={44} color="#dc2626" />
+				<Text style={[T.label, { color: '#6b7280', marginTop: 12 }]}>Could not load module.</Text>
+				<TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 16 }}>
+					<Text style={[T.label, { color: '#15803d', fontWeight: '700' }]}>Go Back</Text>
+				</TouchableOpacity>
+			</View>
+		);
+	}
 
-        {/* ── TITLE ── */}
-        <FieldLabel text="TITLE" />
-        <StyledInput value={title} onChangeText={setTitle} placeholder="Module title" />
+	return (
+		<View style={{ flex: 1, backgroundColor: '#f9fafb' }}>
 
-        {/* ── CATEGORY ── */}
-        <FieldLabel text="CATEGORY" />
-        <Dropdown
-          value={category}
-          options={CATEGORIES}
-          onSelect={setCategory}
-        />
+			{/* Green header */}
+			<View style={{
+				backgroundColor: '#15803d',
+				paddingTop: isOnline === false ? 12 : 52, paddingBottom: 18, paddingHorizontal: 20,
+				flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+			}}>
+				<View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, gap: 14 }}>
+					<TouchableOpacity onPress={() => navigation.goBack()}>
+						<Ionicons name="arrow-back" size={22} color="#fff" />
+					</TouchableOpacity>
+					<Text style={[T.h1, { color: '#fff' }]}>Edit Module</Text>
+				</View>
+			</View>
 
-        {/* ── DIFFICULTY ── */}
-        <FieldLabel text="DIFFICULTY" />
-        <Dropdown
-          value={difficulty}
-          options={DIFFICULTIES}
-          onSelect={setDifficulty}
-        />
+			<ScrollView
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+				keyboardShouldPersistTaps="handled"
+			>
 
-        {/* ── DURATION ── */}
-        <FieldLabel text="DURATION" />
-        <StyledInput value={duration} onChangeText={setDuration} placeholder="e.g. 4h 30m" />
+				{/* TITLE */}
+				<FieldLabel text="TITLE" />
+				<TextInput
+					value={title}
+					onChangeText={setTitle}
+					placeholder="Module title"
+					placeholderTextColor="#9ca3af"
+					style={{
+						borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10,
+						paddingHorizontal: 14, paddingVertical: 12,
+						fontSize: 15, color: '#111827', backgroundColor: '#fff',
+					}}
+				/>
 
-        {/* ── INSTRUCTOR ── */}
-        <FieldLabel text="INSTRUCTOR" />
-        <StyledInput value={instructor} onChangeText={setInstructor} placeholder="Instructor name" />
+				{/* DESCRIPTION */}
+				<FieldLabel text="DESCRIPTION" />
+				<TextInput
+					value={description}
+					onChangeText={setDescription}
+					placeholder="Module description..."
+					placeholderTextColor="#9ca3af"
+					multiline
+					numberOfLines={4}
+					textAlignVertical="top"
+					style={{
+						borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10,
+						paddingHorizontal: 14, paddingVertical: 12,
+						fontSize: 15, color: '#111827', minHeight: 100, lineHeight: 22,
+						backgroundColor: '#fff',
+					}}
+				/>
 
-        {/* ── DESCRIPTION ── */}
-        <FieldLabel text="DESCRIPTION" />
-        <StyledInput
-          value={description}
-          onChangeText={setDescription}
-          placeholder="Module description..."
-          multiline
-        />
+				{/* STATUS */}
+				<FieldLabel text="STATUS" />
+				<View style={{ flexDirection: 'row', gap: 8 }}>
+					{STATUSES.map((s) => (
+						<TouchableOpacity
+							key={s.value}
+							onPress={() => setStatus(s.value)}
+							style={{
+								flex: 1, paddingVertical: 11, borderRadius: 10,
+								alignItems: 'center',
+								backgroundColor: status === s.value ? s.bg : '#fff',
+								borderWidth: 1.5,
+								borderColor: status === s.value ? s.color : '#e5e7eb',
+							}}
+						>
+							<Text style={[T.caption, {
+								color: status === s.value ? s.color : '#6b7280',
+								fontWeight: '700',
+							}]}>
+								{s.label}
+							</Text>
+						</TouchableOpacity>
+					))}
+				</View>
 
-        {/* ── TAGS ── */}
-        <FieldLabel text="TAGS" />
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
-          {tags.map((tag) => (
-            <View key={tag} style={{
-              flexDirection: 'row', alignItems: 'center',
-              borderWidth: 1, borderColor: '#d1d5db', borderRadius: 20,
-              paddingHorizontal: 12, paddingVertical: 6,
-              backgroundColor: '#fff',
-            }}>
-              <Text style={[T.caption, { color: '#374151', marginRight: 6 }]}>{tag}</Text>
-              <TouchableOpacity onPress={() => removeTag(tag)}>
-                <Ionicons name="close" size={14} color="#9ca3af" />
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
+				{/* Content & Quiz shortcuts */}
+				<View style={{
+					backgroundColor: '#fff', borderRadius: 14, overflow: 'hidden',
+					borderWidth: 1, borderColor: '#e5e7eb', marginTop: 20,
+				}}>
+					<TouchableOpacity
+						onPress={() => navigation.navigate('ContentBuild', { moduleId })}
+						style={{
+							flexDirection: 'row', alignItems: 'center',
+							paddingHorizontal: 16, paddingVertical: 16,
+							borderBottomWidth: 1, borderBottomColor: '#f3f4f6',
+						}}
+					>
+						<View style={{
+							width: 36, height: 36, borderRadius: 10,
+							backgroundColor: '#fff7ed',
+							alignItems: 'center', justifyContent: 'center', marginRight: 14,
+						}}>
+							<Ionicons name="document-text" size={18} color="#ea580c" />
+						</View>
+						<Text style={[T.label, { flex: 1, color: '#111827', fontSize: 15 }]}>
+							Manage Content Items ({module._count?.contentItems ?? 0})
+						</Text>
+						<Ionicons name="arrow-forward" size={18} color="#9ca3af" />
+					</TouchableOpacity>
 
-        {addingTag ? (
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <TextInput
-              value={newTag}
-              onChangeText={setNewTag}
-              placeholder="Tag name"
-              placeholderTextColor="#9ca3af"
-              autoFocus
-              returnKeyType="done"
-              onSubmitEditing={confirmTag}
-              style={[T.label, {
-                flex: 1, borderWidth: 1, borderColor: '#15803d',
-                borderRadius: 20, paddingHorizontal: 14, paddingVertical: 7,
-                color: '#111827',
-              }]}
-            />
-            <TouchableOpacity onPress={confirmTag}>
-              <Ionicons name="checkmark-circle" size={28} color="#15803d" />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <TouchableOpacity
-            onPress={() => setAddingTag(true)}
-            style={{
-              alignSelf: 'flex-start',
-              flexDirection: 'row', alignItems: 'center', gap: 6,
-              borderWidth: 1.5, borderColor: '#15803d', borderRadius: 20,
-              paddingHorizontal: 14, paddingVertical: 7,
-            }}
-          >
-            <Ionicons name="add" size={16} color="#15803d" />
-            <Text style={[T.caption, { color: '#15803d', fontWeight: '700' }]}>Add Tag</Text>
-          </TouchableOpacity>
-        )}
+					<TouchableOpacity
+						onPress={() => navigation.navigate('QuizEdit', { moduleId })}
+						style={{
+							flexDirection: 'row', alignItems: 'center',
+							paddingHorizontal: 16, paddingVertical: 16,
+						}}
+					>
+						<View style={{
+							width: 36, height: 36, borderRadius: 10,
+							backgroundColor: '#fef9c3',
+							alignItems: 'center', justifyContent: 'center', marginRight: 14,
+						}}>
+							<Ionicons name="clipboard" size={18} color="#ca8a04" />
+						</View>
+						<Text style={[T.label, { flex: 1, color: '#111827', fontSize: 15 }]}>
+							Manage Quiz ({module._count?.quizzes ?? 0})
+						</Text>
+						<Ionicons name="arrow-forward" size={18} color="#9ca3af" />
+					</TouchableOpacity>
+				</View>
 
-        {/* ── DUE DATE ── */}
-        <FieldLabel text="DUE DATE" />
-        <View style={{
-          flexDirection: 'row', alignItems: 'center',
-          borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10,
-          paddingHorizontal: 14, paddingVertical: 13,
-          backgroundColor: '#fff',
-        }}>
-          <Ionicons name="calendar" size={18} color="#6366f1" style={{ marginRight: 12 }} />
-          <TextInput
-            value={dueDate}
-            onChangeText={setDueDate}
-            placeholder="DD MMM YYYY"
-            placeholderTextColor="#9ca3af"
-            style={[T.bodyDef, { flex: 1, color: '#111827' }]}
-          />
-        </View>
+				{/* Save buttons */}
+				<TouchableOpacity
+					onPress={() => handleSave(status === 'DRAFT' ? 'PUBLISHED' : status)}
+					disabled={saving || deleting}
+					style={{
+						backgroundColor: '#15803d', borderRadius: 14,
+						paddingVertical: 16, alignItems: 'center',
+						marginTop: 24, marginBottom: 12,
+					}}
+				>
+					{saving
+						? <ActivityIndicator color="#fff" />
+						: <Text style={[T.h4, { color: '#fff' }]}>
+							{status === 'DRAFT' ? 'Save & Publish' : 'Save Changes'}
+						</Text>
+					}
+				</TouchableOpacity>
 
-        {/* ── STATUS ── */}
-        <FieldLabel text="STATUS" />
-        <View style={{
-          flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-          borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10,
-          paddingHorizontal: 14, paddingVertical: 14,
-          backgroundColor: '#fff',
-        }}>
-          <Text style={[T.bodyDef, { color: '#111827' }]}>
-            {published ? 'Published' : 'Draft'}
-          </Text>
-          <Switch
-            value={published}
-            onValueChange={setPublished}
-            trackColor={{ false: '#d1d5db', true: '#15803d' }}
-            thumbColor="#fff"
-          />
-        </View>
+				{status !== 'DRAFT' && (
+					<TouchableOpacity
+						onPress={() => handleSave('DRAFT')}
+						disabled={saving || deleting}
+						style={{
+							borderWidth: 1.5, borderColor: '#15803d', borderRadius: 14,
+							paddingVertical: 16, alignItems: 'center', marginBottom: 12,
+						}}
+					>
+						<Text style={[T.h4, { color: '#15803d' }]}>Save as Draft</Text>
+					</TouchableOpacity>
+				)}
 
-        {/* ── Content Items + Quiz rows ── */}
-        <View style={{
-          backgroundColor: '#fff', borderRadius: 14, overflow: 'hidden',
-          borderWidth: 1, borderColor: '#e5e7eb', marginTop: 18,
-        }}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ContentBuild', { module: mod })}
-            style={{
-              flexDirection: 'row', alignItems: 'center',
-              paddingHorizontal: 16, paddingVertical: 16,
-              borderBottomWidth: 1, borderBottomColor: '#f3f4f6',
-            }}
-          >
-            <View style={{
-              width: 36, height: 36, borderRadius: 10,
-              backgroundColor: '#fff7ed',
-              alignItems: 'center', justifyContent: 'center', marginRight: 14,
-            }}>
-              <Ionicons name="document-text" size={18} color="#ea580c" />
-            </View>
-            <Text style={[T.label, { flex: 1, color: '#111827', fontSize: 15 }]}>
-              Content Items ({mod.contentItems ?? 8})
-            </Text>
-            <Ionicons name="arrow-forward" size={18} color="#9ca3af" />
-          </TouchableOpacity>
+				<TouchableOpacity
+					onPress={handleDelete}
+					disabled={saving || deleting}
+					style={{ alignItems: 'center', paddingVertical: 10 }}
+				>
+					{deleting
+						? <ActivityIndicator color="#dc2626" />
+						: <Text style={[T.label, { color: '#dc2626' }]}>Delete Module</Text>
+					}
+				</TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => navigation.navigate('QuizEdit', { module: mod })}
-            style={{
-              flexDirection: 'row', alignItems: 'center',
-              paddingHorizontal: 16, paddingVertical: 16,
-            }}
-          >
-            <View style={{
-              width: 36, height: 36, borderRadius: 10,
-              backgroundColor: '#fef9c3',
-              alignItems: 'center', justifyContent: 'center', marginRight: 14,
-            }}>
-              <Ionicons name="clipboard" size={18} color="#ca8a04" />
-            </View>
-            <Text style={[T.label, { flex: 1, color: '#111827', fontSize: 15 }]}>
-              Quiz ({mod.quizCount ?? 1})
-            </Text>
-            <Ionicons name="arrow-forward" size={18} color="#9ca3af" />
-          </TouchableOpacity>
-        </View>
-
-        {/* ── Action buttons ── */}
-        <TouchableOpacity
-          activeOpacity={0.85}
-          style={{
-            backgroundColor: '#15803d', borderRadius: 14,
-            paddingVertical: 16, alignItems: 'center',
-            marginTop: 24, marginBottom: 12,
-          }}
-        >
-          <Text style={[T.h4, { color: '#fff' }]}>Save &amp; Publish</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          activeOpacity={0.85}
-          style={{
-            borderWidth: 1.5, borderColor: '#15803d', borderRadius: 14,
-            paddingVertical: 16, alignItems: 'center',
-            marginBottom: 16,
-          }}
-        >
-          <Text style={[T.h4, { color: '#15803d' }]}>Save as Draft</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={{ alignItems: 'center', paddingVertical: 8 }}>
-          <Text style={[T.label, { color: '#dc2626' }]}>Delete Module</Text>
-        </TouchableOpacity>
-
-      </ScrollView>
-    </View>
-  );
+			</ScrollView>
+		</View>
+	);
 }

@@ -1,250 +1,232 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-  View, Text, ScrollView, TouchableOpacity, TextInput, Platform,
+	View, Text, ScrollView, TouchableOpacity, TextInput,
+	ActivityIndicator, RefreshControl, Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { quizzesApi } from '../../api/quizzes';
 import useNetworkStatus from '../../services/connectivityService';
-
-const sans  = Platform.select({ ios: 'System', android: 'sans-serif' });
-const serif = Platform.select({ ios: 'Georgia', android: 'serif' });
+import { FONTS } from '../../theme/fonts';
 
 const T = {
-  display: { fontFamily: sans,  fontSize: 36, fontWeight: '600' },
-  h1:      { fontFamily: sans,  fontSize: 30, fontWeight: '600' },
-  h2:      { fontFamily: sans,  fontSize: 24, fontWeight: '600' },
-  h3:      { fontFamily: sans,  fontSize: 20, fontWeight: '500' },
-  h4:      { fontFamily: sans,  fontSize: 16, fontWeight: '600' },
-  bodyLg:  { fontFamily: serif, fontSize: 18, fontWeight: '400' },
-  bodyDef: { fontFamily: serif, fontSize: 16, fontWeight: '400' },
-  bodySm:  { fontFamily: serif, fontSize: 14, fontWeight: '400' },
-  label:   { fontFamily: sans,  fontSize: 14, fontWeight: '500' },
-  caption: { fontFamily: sans,  fontSize: 12, fontWeight: '500' },
+	h1:      { fontFamily: FONTS.label, fontSize: 30, fontWeight: '600' },
+	h4:      { fontFamily: FONTS.label, fontSize: 16, fontWeight: '600' },
+	label:   { fontFamily: FONTS.label, fontSize: 14, fontWeight: '500' },
+	caption: { fontFamily: FONTS.label, fontSize: 12, fontWeight: '500' },
 };
-
-const QUIZZES = [
-  {
-    id: 1,
-    title: 'Rainforest Ecosystems Quiz',
-    course: 'Rainforest Biodiversity Fundamentals',
-    status: 'PUBLISHED',
-    questions: 4,
-    submissions: 142,
-    updatedAt: '2 days ago',
-  },
-  {
-    id: 2,
-    title: 'Wildlife Conservation Ethics Quiz',
-    course: 'Wildlife Conservation Ethics',
-    status: 'PUBLISHED',
-    questions: 5,
-    submissions: 98,
-    updatedAt: '1 week ago',
-  },
-  {
-    id: 3,
-    title: 'Eco-tourism Best Practices Quiz',
-    course: 'Advanced Eco-tourism Management',
-    status: 'DRAFT',
-    questions: 6,
-    submissions: 0,
-    updatedAt: '3 hours ago',
-  },
-  {
-    id: 4,
-    title: 'Park Safety Procedures Quiz',
-    course: 'Park Safety Protocols',
-    status: 'PUBLISHED',
-    questions: 8,
-    submissions: 187,
-    updatedAt: '5 days ago',
-  },
-];
 
 const STATUS_CFG = {
-  PUBLISHED: { bg: '#dcfce7', color: '#15803d', label: 'Published' },
-  DRAFT:     { bg: '#fef3c7', color: '#d97706', label: 'Draft'     },
+	PUBLISHED: { bg: '#dcfce7', color: '#15803d', label: 'Published' },
+	DRAFT:     { bg: '#fef3c7', color: '#d97706', label: 'Draft'     },
 };
 
-function QuizCard({ quiz }) {
-  const navigation = useNavigation();
-  const status     = STATUS_CFG[quiz.status] ?? STATUS_CFG.DRAFT;
-  const isPublished = quiz.status === 'PUBLISHED';
+function QuizCard({ quiz, onDelete }) {
+	const navigation = useNavigation();
+	const statusCfg  = STATUS_CFG[quiz.status] ?? STATUS_CFG.DRAFT;
 
-  return (
-    <View style={{
-      backgroundColor: '#fff', borderRadius: 16, padding: 18, marginBottom: 12,
-      shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.06, shadowRadius: 6, elevation: 2,
-    }}>
-      {/* Title + status badge */}
-      <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 6 }}>
-        <Text style={[T.h4, { color: '#111827', flex: 1, lineHeight: 24, marginRight: 10 }]}>
-          {quiz.title}
-        </Text>
-        <View style={{
-          backgroundColor: status.bg, borderRadius: 6,
-          paddingHorizontal: 10, paddingVertical: 4,
-          alignSelf: 'flex-start',
-        }}>
-          <Text style={[T.caption, { color: status.color, fontWeight: '700' }]}>
-            {status.label}
-          </Text>
-        </View>
-      </View>
+	return (
+		<View style={{
+			backgroundColor: '#fff', borderRadius: 16, padding: 18, marginBottom: 12,
+			shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
+			shadowOpacity: 0.06, shadowRadius: 6, elevation: 2,
+		}}>
+			{/* Title + status */}
+			<View style={{
+				flexDirection: 'row', alignItems: 'flex-start',
+				justifyContent: 'space-between', marginBottom: 6,
+			}}>
+				<Text style={[T.h4, { color: '#111827', flex: 1, lineHeight: 24, marginRight: 10 }]}>
+					{quiz.title}
+				</Text>
+				<View style={{
+					backgroundColor: statusCfg.bg, borderRadius: 6,
+					paddingHorizontal: 10, paddingVertical: 4, alignSelf: 'flex-start',
+				}}>
+					<Text style={[T.caption, { color: statusCfg.color, fontWeight: '700' }]}>
+						{statusCfg.label}
+					</Text>
+				</View>
+			</View>
 
-      {/* Course name */}
-      <Text style={[T.bodySm, { color: '#6b7280', marginBottom: 12 }]}>
-        {quiz.course}
-      </Text>
+			{/* Module name */}
+			{quiz.module?.title ? (
+				<Text style={{ fontSize: 13, color: '#6b7280', marginBottom: 10 }}>
+					{quiz.module.title}
+				</Text>
+			) : null}
 
-      {/* Meta row */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 16, flexWrap: 'wrap' }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-          <Ionicons name="document-text-outline" size={13} color="#9ca3af" />
-          <Text style={[T.caption, { color: '#6b7280' }]}>{quiz.questions} questions</Text>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-          <Ionicons name="people-outline" size={13} color="#9ca3af" />
-          <Text style={[T.caption, { color: '#6b7280' }]}>{quiz.submissions} submissions</Text>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-          <Ionicons name="time-outline" size={13} color="#9ca3af" />
-          <Text style={[T.caption, { color: '#6b7280' }]}>{quiz.updatedAt}</Text>
-        </View>
-      </View>
+			{/* Meta row */}
+			<View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 14 }}>
+				<View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+					<Ionicons name="document-text-outline" size={13} color="#9ca3af" />
+					<Text style={[T.caption, { color: '#6b7280' }]}>
+						{quiz._count?.questions ?? quiz.questions?.length ?? 0} questions
+					</Text>
+				</View>
+				{quiz.passScorePct != null && (
+					<View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+						<Ionicons name="checkmark-circle-outline" size={13} color="#9ca3af" />
+						<Text style={[T.caption, { color: '#6b7280' }]}>Pass: {quiz.passScorePct}%</Text>
+					</View>
+				)}
+				{quiz.timeLimitMinutes && (
+					<View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+						<Ionicons name="time-outline" size={13} color="#9ca3af" />
+						<Text style={[T.caption, { color: '#6b7280' }]}>{quiz.timeLimitMinutes}m</Text>
+					</View>
+				)}
+			</View>
 
-      {/* Action buttons */}
-      {isPublished ? (
-        <View style={{ flexDirection: 'row', gap: 10 }}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('QuizEdit', { quiz })}
-            style={{
-              flex: 1, backgroundColor: '#15803d', borderRadius: 10,
-              paddingVertical: 12, alignItems: 'center',
-            }}
-          >
-            <Text style={[T.label, { color: '#fff', fontWeight: '700' }]}>Edit Quiz</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <TouchableOpacity
-          onPress={() => navigation.navigate('QuizEdit', { quiz })}
-          style={{
-            backgroundColor: '#15803d', borderRadius: 10,
-            paddingVertical: 12, alignItems: 'center',
-          }}
-        >
-          <Text style={[T.label, { color: '#fff', fontWeight: '700' }]}>Edit Quiz</Text>
-        </TouchableOpacity>
-      )}
-    </View>
-  );
+			{/* Buttons */}
+			<View style={{ flexDirection: 'row', gap: 10 }}>
+				<TouchableOpacity
+					onPress={() => navigation.navigate('QuizEdit', { quizId: quiz.id, moduleId: quiz.moduleId })}
+					style={{
+						flex: 1, backgroundColor: '#15803d', borderRadius: 10,
+						paddingVertical: 11, alignItems: 'center',
+					}}
+				>
+					<Text style={[T.label, { color: '#fff', fontWeight: '700' }]}>Edit</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() => onDelete(quiz)}
+					style={{
+						borderWidth: 1.5, borderColor: '#e5e7eb', borderRadius: 10,
+						paddingVertical: 11, paddingHorizontal: 16, alignItems: 'center',
+					}}
+				>
+					<Ionicons name="trash-outline" size={18} color="#dc2626" />
+				</TouchableOpacity>
+			</View>
+		</View>
+	);
 }
 
 export default function QuizzesScreen() {
-  const navigation = useNavigation();
-  const { isOnline } = useNetworkStatus();
-  const [search, setSearch] = useState('');
+	const navigation             = useNavigation();
+	const { isOnline }           = useNetworkStatus();
+	const [quizzes,    setQuizzes]    = useState([]);
+	const [loading,    setLoading]    = useState(true);
+	const [refreshing, setRefreshing] = useState(false);
+	const [search,     setSearch]     = useState('');
 
-  const filtered = QUIZZES.filter((q) =>
-    !search.trim() ||
-    q.title.toLowerCase().includes(search.toLowerCase()) ||
-    q.course.toLowerCase().includes(search.toLowerCase())
-  );
+	const load = useCallback(async () => {
+		try {
+			const data = await quizzesApi.getAll({ limit: 100 });
+			setQuizzes(Array.isArray(data) ? data : []);
+		} catch {
+			setQuizzes([]);
+		} finally {
+			setLoading(false);
+			setRefreshing(false);
+		}
+	}, []);
 
-  return (
-    <View style={{ flex: 1, backgroundColor: '#f3f4f6' }}>
+	useEffect(() => { load(); }, [load]);
 
-      {/* ── Green header ── */}
-      <View style={{
-        backgroundColor: '#15803d',
-        paddingTop: isOnline === false ? 12 : 52, paddingBottom: 20, paddingHorizontal: 20,
-      }}>
-        {/* Back + title + add button */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="arrow-back" size={22} color="#fff" />
-            </TouchableOpacity>
-            <View>
-              <Text style={[T.h2, { color: '#fff' }]}>Quizzes</Text>
-              <Text style={[T.caption, { color: 'rgba(255,255,255,0.75)', marginTop: 2 }]}>
-                {QUIZZES.length} quizzes total
-              </Text>
-            </View>
-          </View>
+	const onRefresh = () => { setRefreshing(true); load(); };
 
-          <TouchableOpacity
-            onPress={() => navigation.navigate('QuizEdit')}
-            style={{
-              width: 40, height: 40, borderRadius: 20,
-              backgroundColor: '#fff',
-              alignItems: 'center', justifyContent: 'center',
-            }}
-          >
-            <Ionicons name="add" size={24} color="#15803d" />
-          </TouchableOpacity>
-        </View>
-      </View>
+	function handleDelete(quiz) {
+		Alert.alert(
+			'Delete Quiz',
+			`Delete "${quiz.title}"? This cannot be undone.`,
+			[
+				{ text: 'Cancel', style: 'cancel' },
+				{
+					text: 'Delete',
+					style: 'destructive',
+					onPress: async () => {
+						try {
+							await quizzesApi.remove(quiz.id);
+							setQuizzes((prev) => prev.filter((q) => q.id !== quiz.id));
+						} catch (e) {
+							Alert.alert('Error', e?.message ?? 'Could not delete quiz.');
+						}
+					},
+				},
+			]
+		);
+	}
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
-      >
+	const filtered = quizzes.filter((q) => {
+		if (!search.trim()) return true;
+		const s = search.toLowerCase();
+		return q.title.toLowerCase().includes(s) || (q.module?.title ?? '').toLowerCase().includes(s);
+	});
 
-        {/* ── Search bar ── */}
-        <View style={{
-          flexDirection: 'row', alignItems: 'center', gap: 10,
-          backgroundColor: '#fff', borderRadius: 12,
-          paddingHorizontal: 14, paddingVertical: 12,
-          marginBottom: 16,
-          shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
-        }}>
-          <Ionicons name="search-outline" size={18} color="#9ca3af" />
-          <TextInput
-            style={[T.bodySm, { flex: 1, color: '#374151', padding: 0 }]}
-            placeholder="Search quizzes..."
-            placeholderTextColor="#9ca3af"
-            value={search}
-            onChangeText={setSearch}
-          />
-          {search.length > 0 && (
-            <TouchableOpacity onPress={() => setSearch('')}>
-              <Ionicons name="close-circle" size={18} color="#9ca3af" />
-            </TouchableOpacity>
-          )}
-        </View>
+	return (
+		<View style={{ flex: 1, backgroundColor: '#f3f4f6' }}>
 
-        {/* ── Quiz cards ── */}
-        {filtered.map((quiz) => (
-          <QuizCard key={quiz.id} quiz={quiz} />
-        ))}
+			{/* Green header */}
+			<View style={{
+				backgroundColor: '#15803d',
+				paddingTop: isOnline === false ? 12 : 52, paddingBottom: 20, paddingHorizontal: 20,
+			}}>
+				<View style={{
+					flexDirection: 'row', alignItems: 'center',
+					justifyContent: 'space-between', marginBottom: 14,
+				}}>
+					<View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+						<TouchableOpacity onPress={() => navigation.goBack()}>
+							<Ionicons name="arrow-back" size={22} color="#fff" />
+						</TouchableOpacity>
+						<View>
+							<Text style={[T.h1, { color: '#fff', lineHeight: 34 }]}>Quizzes</Text>
+							<Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 }}>
+								{quizzes.length} total
+							</Text>
+						</View>
+					</View>
+				</View>
 
-        {filtered.length === 0 && (
-          <View style={{ alignItems: 'center', marginTop: 40 }}>
-            <Ionicons name="search-outline" size={44} color="#d1d5db" />
-            <Text style={[T.label, { color: '#9ca3af', marginTop: 12 }]}>No quizzes found</Text>
-          </View>
-        )}
+				<View style={{
+					flexDirection: 'row', alignItems: 'center',
+					backgroundColor: '#fff', borderRadius: 12,
+					paddingHorizontal: 12, height: 46,
+				}}>
+					<Ionicons name="search" size={18} color="#15803d" style={{ marginRight: 8 }} />
+					<TextInput
+						value={search}
+						onChangeText={setSearch}
+						placeholder="Search quizzes..."
+						placeholderTextColor="#9ca3af"
+						style={{ flex: 1, fontSize: 14, fontWeight: '500', color: '#111827', padding: 0 }}
+					/>
+					{search.length > 0 && (
+						<TouchableOpacity onPress={() => setSearch('')}>
+							<Ionicons name="close-circle" size={18} color="#9ca3af" />
+						</TouchableOpacity>
+					)}
+				</View>
+			</View>
 
-        {/* ── Create New Quiz (dashed card) ── */}
-        <TouchableOpacity
-          onPress={() => navigation.navigate('QuizEdit')}
-          style={{
-            borderWidth: 1.5, borderColor: '#15803d', borderRadius: 16,
-            borderStyle: 'dashed',
-            paddingVertical: 18,
-            flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
-            marginTop: 4,
-          }}
-        >
-          <Ionicons name="add" size={20} color="#15803d" />
-          <Text style={[T.label, { color: '#15803d', fontWeight: '700' }]}>Create New Quiz</Text>
-        </TouchableOpacity>
-
-      </ScrollView>
-    </View>
-  );
+			{loading && !refreshing ? (
+				<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+					<ActivityIndicator size="large" color="#15803d" />
+				</View>
+			) : (
+				<ScrollView
+					showsVerticalScrollIndicator={false}
+					contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
+					refreshControl={
+						<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#15803d" />
+					}
+				>
+					{filtered.length === 0 ? (
+						<View style={{ alignItems: 'center', marginTop: 48 }}>
+							<Ionicons name="clipboard-outline" size={44} color="#d1d5db" />
+							<Text style={[T.label, { color: '#9ca3af', marginTop: 12 }]}>
+								{search ? 'No results found' : 'No quizzes yet'}
+							</Text>
+						</View>
+					) : (
+						filtered.map((quiz) => (
+							<QuizCard key={quiz.id} quiz={quiz} onDelete={handleDelete} />
+						))
+					)}
+				</ScrollView>
+			)}
+		</View>
+	);
 }

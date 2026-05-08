@@ -159,18 +159,45 @@ pnpm --filter @sfc/api dev
 pnpm --filter @sfc/web dev
 ```
 
-**Mobile:**
-```bash
-cd apps/mobile && npx expo start
-```
-
 Apps are available at:
 
 | App | URL |
 |-----|-----|
 | API | http://localhost:3000 |
 | Web | http://localhost:5173 |
-| Mobile | Expo DevTools — scan QR code with Expo Go |
+
+---
+
+### 8. Run the mobile app
+
+The mobile app connects to the API over your local network. Your phone and your computer must be on the **same Wi-Fi network**.
+
+**Step 1 — Find your machine's LAN IP**
+
+| OS | Command | Look for |
+|----|---------|----------|
+| Windows | `ipconfig` in CMD | IPv4 Address under your active adapter (Wi-Fi or Ethernet) — e.g. `192.168.0.3` |
+| Mac | `ifconfig` or System Settings → Wi-Fi → Details | `inet` address under `en0` |
+| Linux | `ip addr` | `inet` address under your active interface |
+
+**Step 2 — Configure `apps/mobile/.env`**
+
+```
+EXPO_PUBLIC_API_BASE=http://192.168.0.3:3000/api
+```
+
+Replace `192.168.0.3` with your actual LAN IP. The API must be running (step 7 above).
+
+**Step 3 — Start Expo**
+
+```bash
+cd apps/mobile
+npx expo start
+```
+
+Scan the QR code in Expo Go (install from App Store / Play Store). The app opens on your phone connected to your local API.
+
+> **Troubleshooting:** If the app cannot reach the API, check that your firewall allows inbound connections on port 3000, and that both devices are on the same network (not a guest network).
 
 ---
 
