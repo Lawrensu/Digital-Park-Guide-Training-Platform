@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import Navbar from '../../../components/Navbar/Navbar'
 import * as registrationsApi from '../../../api/registrations.js'
+import * as stationsApi from '../../../api/stations.js'
 
 
 const STATUS_BADGE = {
@@ -18,7 +19,8 @@ export default function RegistrationDetails() {
 	const { id } = useParams()
 	const navigate = useNavigate()
 	const queryClient = useQueryClient()
-	const [remarks, setRemarks] = useState('')
+	const [rejectionReason, setRejectionReason] = useState('')
+	const [stationId, setStationId] = useState('')
 
 	const { data: reg, isLoading, error } = useQuery({
 		queryKey: ['registrations', id],
@@ -28,8 +30,19 @@ export default function RegistrationDetails() {
 		},
 	})
 
+	const { data: stations = [] } = useQuery({
+		queryKey: ['stations'],
+		queryFn: async () => {
+			const res = await stationsApi.getAll()
+			return res.data.data
+		},
+	})
+
 	const approveMutation = useMutation({
-		mutationFn: () => registrationsApi.approve(id, { startDate: new Date().toISOString().slice(0, 10), remarks }),
+		mutationFn: () => registrationsApi.approve(id, {
+			stationId,
+			startDate: new Date().toISOString().slice(0, 10),
+		}),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['registrations'] })
 			navigate('/registrations')
@@ -37,7 +50,7 @@ export default function RegistrationDetails() {
 	})
 
 	const rejectMutation = useMutation({
-		mutationFn: () => registrationsApi.reject(id, { remarks }),
+		mutationFn: () => registrationsApi.reject(id, { rejectionReason }),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['registrations'] })
 			navigate('/registrations')
@@ -77,6 +90,7 @@ export default function RegistrationDetails() {
 
 	const isPending = reg.status === 'PENDING'
 	const actionPending = approveMutation.isPending || rejectMutation.isPending
+	const canApprove = isPending && stationId.trim() !== ''
 
 	return (
 		<div className="bg-[#fdfbf7] min-h-screen flex flex-col lg:flex-row">
@@ -119,7 +133,9 @@ export default function RegistrationDetails() {
 								</div>
 								<div className="flex flex-col gap-1">
 									<label className="font-outfit font-medium text-sm text-gray-500">Submitted</label>
-									<p className="font-serif text-base text-[#1a3a2a]">{new Date(reg.createdAt).toLocaleDateString()}</p>
+									<p className="font-serif text-base text-[#1a3a2a]">
+										{reg.submittedAt ? new Date(reg.submittedAt).toLocaleDateString() : '—'}
+									</p>
 								</div>
 								<div className="flex flex-col gap-1 col-span-2">
 									<label className="font-outfit font-medium text-sm text-gray-500">Address</label>
@@ -161,24 +177,50 @@ export default function RegistrationDetails() {
 
 						<div className="bg-white border border-[#f0e9db] rounded-xl p-6">
 							<h3 className="font-outfit font-medium text-[20px] text-[#1a3a2a] mb-4">Decision</h3>
+
+							{isPending && (
+								<div className="mb-4">
+									<label className="font-outfit font-medium text-sm text-gray-600 block mb-2">
+										Assign Station <span className="text-red-500">*</span>
+									</label>
+									<select
+										value={stationId}
+										onChange={e => setStationId(e.target.value)}
+										disabled={actionPending}
+										className="w-full bg-[#f9f5ed] border border-[#f0e9db] rounded-lg px-4 py-3 font-serif text-base text-[#1a3a2a] focus:outline-none focus:border-[#1a3a2a] focus:bg-white transition-[border-color] duration-200 disabled:opacity-50"
+									>
+										<option value="">Select a station…</option>
+										{stations.map(s => (
+											<option key={s.id} value={s.id}>{s.name}</option>
+										))}
+									</select>
+									{stations.length === 0 && (
+										<p className="font-outfit text-xs text-[#b35c2a] mt-1">
+											No stations available. Add one in Settings first.
+										</p>
+									)}
+								</div>
+							)}
+
 							<div className="mb-4">
-								<label className="font-outfit font-medium text-sm text-gray-600 block mb-2">Remarks (optional)</label>
+								<label className="font-outfit font-medium text-sm text-gray-600 block mb-2">Rejection Reason (optional)</label>
 								<textarea
 									className="w-full bg-[#f9f5ed] border border-[#f0e9db] rounded-lg px-4 py-3 font-serif resize-y transition-[border-color] duration-200 focus:outline-none focus:border-[#1a3a2a] focus:bg-white text-base"
 									rows="4"
-									placeholder="Enter decision remarks…"
-									value={remarks}
-									onChange={e => setRemarks(e.target.value)}
+									placeholder="Enter rejection reason if rejecting…"
+									value={rejectionReason}
+									onChange={e => setRejectionReason(e.target.value)}
 									disabled={!isPending || actionPending}
 								/>
 							</div>
+
 							<div className="flex flex-col gap-3">
 								{isPending ? (
 									<>
 										<button
 											onClick={() => approveMutation.mutate()}
-											disabled={actionPending}
-											className="bg-[#1a3a2a] text-white border-none cursor-pointer transition-colors duration-200 hover:bg-[#132d20] disabled:opacity-50 font-outfit font-medium text-sm px-6 py-3 rounded-lg w-full"
+											disabled={!canApprove || actionPending}
+											className="bg-[#1a3a2a] text-white border-none cursor-pointer transition-colors duration-200 hover:bg-[#132d20] disabled:opacity-50 disabled:cursor-not-allowed font-outfit font-medium text-sm px-6 py-3 rounded-lg w-full"
 										>
 											{approveMutation.isPending ? 'Approving…' : 'Approve Application'}
 										</button>
@@ -197,7 +239,9 @@ export default function RegistrationDetails() {
 								)}
 								{(approveMutation.error || rejectMutation.error) && (
 									<p className="font-outfit text-xs text-red-500 text-center">
-										Action failed. Please try again.
+										{approveMutation.error?.response?.data?.error?.message
+											|| rejectMutation.error?.response?.data?.error?.message
+											|| 'Action failed. Please try again.'}
 									</p>
 								)}
 							</div>

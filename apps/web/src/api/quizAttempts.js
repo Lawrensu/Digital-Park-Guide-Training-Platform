@@ -10,5 +10,5 @@ export const getAll = (params) =>
 export const getOne = (attemptId) =>
 	api.get(`/quiz-attempts/${attemptId}`)
 
-export const grade = (attemptId, scores) =>
-	api.post(`/quiz-attempts/${attemptId}/grade`, { scores })
+export const grade = (attemptId, grades) =>
+	api.patch(`/quiz-attempts/${attemptId}/grade`, { grades })

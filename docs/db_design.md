@@ -197,8 +197,25 @@ Records a guide's enrolment in a module. Each guide gets their own deadline.
 | module_id | UUID FK → Module.id | |
 | due_at | TIMESTAMPTZ | Nullable : per-enrolment deadline |
 | enrolled_at | TIMESTAMPTZ | Default: now() |
+| progress_pct | INTEGER | Default: 0 — percentage of content items completed (0–100) |
+| completed_at | TIMESTAMPTZ | Nullable : set automatically when progress_pct reaches 100 |
 
 Unique constraint: `(guide_id, module_id)`
+
+---
+
+### `ContentItemProgress`
+
+Records that a guide has viewed/completed a specific content item within an enrolment. Created automatically by `POST /api/enrolments/me/progress` when a guide opens a content item.
+
+| Column | Type | Notes |
+|--------|------|-------|
+| id | UUID PK | |
+| enrolment_id | UUID FK → Enrolment.id | |
+| content_item_id | UUID FK → ContentItem.id | |
+| completed_at | TIMESTAMPTZ | Default: now() — device-side timestamp when item was viewed |
+
+Unique constraint: `(enrolment_id, content_item_id)` — marking the same item twice is a no-op.
 
 ---
 

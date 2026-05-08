@@ -61,8 +61,7 @@ function Login() {
                             <span className="text-[#6fcf97]">Digital Training.</span>
                         </h1>
                         <p className="mt-4 text-[14px] leading-[1.65] text-white/65 max-w-95">
-                            Structured e-learning, IoT wildlife monitoring, and digital
-                            certification management — purpose-built for Sarawak park guides.
+                            Training modules, IoT activity monitoring, digital certifications. Purpose-built for Sarawak park guides.
                         </p>
                     </div>
 

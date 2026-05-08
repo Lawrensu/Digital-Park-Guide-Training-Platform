@@ -70,11 +70,14 @@ export default function GuideQuizPage() {
 
 	const submitMutation = useMutation({
 		mutationFn: () => {
-			const answersPayload = questions.map(q => ({
-				questionId: q.id,
-				value: String(answers[q.id] ?? ''),
-			}))
-			return quizAttemptsApi.submit({ quizId, answers: answersPayload })
+			const responses = questions.map(q => {
+				const answer = answers[q.id]
+				if (q.type === 'MCQ' || q.type === 'TRUE_FALSE') {
+					return { questionId: q.id, selectedOptionId: answer?.id ?? null, textResponse: null }
+				}
+				return { questionId: q.id, selectedOptionId: null, textResponse: String(answer ?? '') }
+			})
+			return quizAttemptsApi.submit({ quizId, responses })
 		},
 		onSuccess: (res) => {
 			const attemptId = res.data.data?.id
@@ -100,7 +103,6 @@ export default function GuideQuizPage() {
 		)
 	}
 
-	const trueFalseOptions = ['True', 'False']
 
 	return (
 		<div className="flex flex-col lg:flex-row min-h-screen bg-[#f3f4f6] font-['Segoe_UI',Tahoma,Geneva,Verdana,sans-serif]">
@@ -145,7 +147,7 @@ export default function GuideQuizPage() {
 						{questions.map((q, index) => {
 							const answer    = answers[q.id]
 							const answered  = answer !== undefined && answer !== '' && answer !== null
-							const options   = q.type === 'TRUE_FALSE' ? trueFalseOptions : (q.options ?? [])
+							const options   = q.options ?? []
 
 							return (
 								<div
@@ -171,7 +173,7 @@ export default function GuideQuizPage() {
 														key={i}
 														className={`flex items-center gap-3 py-3 px-4 border border-[#d1d5db] rounded-md cursor-pointer transition-all duration-200
 															${q.type === 'TRUE_FALSE' ? 'flex-1 justify-center font-semibold text-[#4b5563]' : ''}
-															${answer === opt
+															${answer?.id === opt.id
 																? (q.type === 'TRUE_FALSE' ? 'bg-[#2E7D32] border-[#2E7D32] text-white' : 'bg-[#ecfdf5] border-[#10b981] text-[#064e3b] font-medium')
 																: 'hover:bg-[#f9fafb] hover:border-[#9ca3af]'}
 														`}
@@ -179,11 +181,11 @@ export default function GuideQuizPage() {
 														<input
 															type="radio"
 															name={`q-${q.id}`}
-															checked={answer === opt}
+															checked={answer?.id === opt.id}
 															onChange={() => setAnswer(q.id, opt)}
 															className="accent-[#2E7D32] w-4.5 h-4.5"
 														/>
-														<span>{opt}</span>
+														<span>{opt.text}</span>
 													</label>
 												))}
 											</div>

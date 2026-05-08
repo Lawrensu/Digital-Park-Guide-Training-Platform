@@ -40,7 +40,7 @@ export default function QuizPage() {
 	}
 
 	const filtered = attempts.filter(a => {
-		const guideName   = `${a.guide?.firstName ?? ''} ${a.guide?.lastName ?? ''}`.toLowerCase()
+		const guideName   = (a.guide?.username ?? a.guide?.email?.split('@')[0] ?? '').toLowerCase()
 		const moduleName  = (a.quiz?.module?.title ?? '').toLowerCase()
 		const quizName    = (a.quiz?.title ?? '').toLowerCase()
 		const query       = searchQuery.toLowerCase()
@@ -122,7 +122,7 @@ export default function QuizPage() {
 										{filtered.length > 0 ? filtered.map((a, idx) => (
 											<tr key={a.id} className={`hover:bg-[#fef7f0] ${idx === filtered.length - 1 ? '[&>td]:border-b-0' : ''}`}>
 												<td className="px-6 py-4 border-b border-[#f5f5f4] align-middle">
-													<p className="font-serif text-[15px] text-[#1a3a2a]">{a.guide?.firstName} {a.guide?.lastName}</p>
+													<p className="font-serif text-[15px] text-[#1a3a2a]">{a.guide?.username ?? a.guide?.email?.split('@')[0] ?? '—'}</p>
 												</td>
 												<td className="px-6 py-4 border-b border-[#f5f5f4] align-middle font-serif text-sm text-[#78716c]">{a.quiz?.module?.title ?? '—'}</td>
 												<td className="px-6 py-4 border-b border-[#f5f5f4] align-middle font-serif text-sm text-[#78716c]">{a.quiz?.title ?? '—'}</td>

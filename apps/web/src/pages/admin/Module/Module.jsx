@@ -99,7 +99,7 @@ export default function ModulesPage() {
 						{TABS.map(tab => (
 							<button
 								key={tab}
-								className={`py-1.75 px-4.5 rounded-full font-outfit text-[13px] font-medium border border-[#d6d3d1] bg-white text-[#44403c] cursor-pointer transition-all duration-150 hover:border-[#1a3a2a] hover:text-[#1a3a2a] ${activeTab === tab ? 'bg-[#1f4d35] border-[#1f4d35] text-white' : ''}`}
+								className={`py-1.5 px-4 rounded-full font-outfit text-[13px] font-medium border cursor-pointer transition-all duration-150 ${activeTab === tab ? 'bg-[#1f4d35] border-[#1f4d35] text-white' : 'bg-white border-[#d6d3d1] text-[#44403c] hover:border-[#1a3a2a] hover:text-[#1a3a2a]'}`}
 								onClick={() => setActiveTab(tab)}
 							>
 								{tab === 'All' ? 'All' : tab.charAt(0) + tab.slice(1).toLowerCase()}

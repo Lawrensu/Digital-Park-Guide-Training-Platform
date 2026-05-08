@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import prisma from '../lib/prisma.js';
+import { getPresignedDownloadUrl } from '../lib/s3.js';
 import { sendActivationEmail, sendRegistrationRejectedEmail } from '../lib/email.js';
 import { notifyAllAdmins } from '../lib/notifications.js';
 
@@ -124,6 +125,25 @@ export const getOne = async (req, res) => {
 
 
 
+export const getCvUrl = async (req, res) => {
+	try {
+		const app = await prisma.registrationApplication.findUnique({ where: { id: req.params.id } });
+		if (!app) {
+			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Application not found' } });
+		}
+		if (!app.cvS3Key) {
+			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'No CV on file for this application' } });
+		}
+
+		const url = await getPresignedDownloadUrl(app.cvS3Key);
+		return res.status(200).json({ success: true, data: { url } });
+	} catch (err) {
+		return res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+	}
+};
+
+
+
 export const approve = async (req, res) => {
 	try {
 		const { stationId, startDate } = req.body;
@@ -174,7 +194,7 @@ export const approve = async (req, res) => {
 			return user;
 		});
 
-		const activationUrl = `${process.env.WEB_URL}/set-password?token=${rawToken}`;
+		const activationUrl = `${process.env.WEB_URL}/activate?token=${rawToken}`;
 		sendActivationEmail(application.email, `${application.firstName} ${application.lastName}`, activationUrl);
 
 		return res.status(200).json({ success: true, data: { userId: result.id, username } });
