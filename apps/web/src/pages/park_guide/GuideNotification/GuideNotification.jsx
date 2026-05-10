@@ -73,7 +73,7 @@ const GuideNotification = () => {
 					].map(tab => (
 						<button
 							key={tab.key}
-							className={`pb-3 text-[1rem] text-[#666666] cursor-pointer relative transition-colors duration-200 bg-transparent border-0 font-medium hover:text-[#2E7D32] ${activeTab === tab.key ? "text-[#2E7D32] font-bold after:content-[''] after:absolute after:-bottom-px after:left-0 after:w-full after:h-0.75 after:bg-[#2E7D32] after:rounded-t-[3px]" : ''}`}
+							className={`pb-3 text-[1rem] cursor-pointer relative transition-colors duration-200 bg-transparent border-0 font-medium ${activeTab === tab.key ? "text-[#2E7D32] font-bold after:content-[''] after:absolute after:-bottom-px after:left-0 after:w-full after:h-0.5 after:bg-[#2E7D32] after:rounded-t-[3px]" : 'text-[#666666] hover:text-[#2E7D32]'}`}
 							onClick={() => setActiveTab(tab.key)}
 						>
 							{tab.label}

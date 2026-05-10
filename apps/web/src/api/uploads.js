@@ -2,10 +2,10 @@ import axios from 'axios'
 import api from './client.js'
 
 
-export const presign = (fileName, fileType, folder) =>
-	api.post('/uploads/presign', { fileName, fileType, folder })
+export const presign = (purpose, contentType, extension) =>
+	api.post('/uploads/presign', { purpose, contentType, extension })
 
-export const uploadToS3 = (uploadUrl, file) =>
-	axios.put(uploadUrl, file, {
+export const uploadToS3 = (url, file) =>
+	axios.put(url, file, {
 		headers: { 'Content-Type': file.type },
 	})

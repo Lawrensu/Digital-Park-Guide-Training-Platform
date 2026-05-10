@@ -11,10 +11,10 @@ export default function QuizGradingPage() {
 	const navigate      = useNavigate()
 	const { user }      = useAuth()
 
-	const [scores, setScores]           = useState({})
-	const [submitError, setSubmitError] = useState('')
+	const [scores, setScores]             = useState({})
+	const [submitError, setSubmitError]   = useState('')
 	const [isSubmitting, setIsSubmitting] = useState(false)
-	const [failToast, setFailToast]     = useState(false)
+	const [failToast, setFailToast]       = useState(false)
 
 	const displayName = user?.email?.split('@')[0] ?? 'admin'
 	const initials    = displayName.slice(0, 2).toUpperCase()
@@ -28,17 +28,29 @@ export default function QuizGradingPage() {
 	})
 
 	useEffect(() => {
-		if (!attempt?.answers) return
+		if (!attempt?.questionAttempts) return
 		const initial = {}
-		attempt.answers.forEach(a => { initial[a.questionId] = a.awardedScore ?? 0 })
+		attempt.questionAttempts.forEach(qa => { initial[qa.id] = qa.scoreAwarded ?? 0 })
 		setScores(initial)
 	}, [attempt])
+
+	const questionAttempts = attempt?.questionAttempts ?? []
+	const totalScore       = Object.values(scores).reduce((sum, v) => sum + (Number(v) || 0), 0)
+	const maxTotal         = questionAttempts.reduce((sum, qa) => sum + (qa.question?.maxScore ?? 0), 0)
+	const passMark         = Math.round(maxTotal * ((attempt?.quiz?.passScorePct ?? 70) / 100))
+	const isPass           = totalScore >= passMark
+
+	const guideName = attempt?.guide?.username ?? attempt?.guide?.email?.split('@')[0] ?? '—'
 
 	const handleSubmitGrades = async () => {
 		setSubmitError('')
 		setIsSubmitting(true)
 		try {
-			await quizAttemptsApi.grade(attemptId, scores)
+			const grades = Object.entries(scores).map(([questionAttemptId, scoreAwarded]) => ({
+				questionAttemptId,
+				scoreAwarded: Number(scoreAwarded) || 0,
+			}))
+			await quizAttemptsApi.grade(attemptId, grades)
 			if (isPass) {
 				navigate(`/certifications/issue/${attemptId}`)
 			} else {
@@ -76,14 +88,6 @@ export default function QuizGradingPage() {
 			</div>
 		)
 	}
-
-	const answers     = attempt.answers ?? []
-	const totalScore  = Object.values(scores).reduce((sum, v) => sum + (Number(v) || 0), 0)
-	const maxTotal    = answers.reduce((sum, a) => sum + (a.question?.points ?? 0), 0)
-	const passMark    = attempt.quiz?.passMark ?? Math.round(maxTotal * 0.7)
-	const isPass      = totalScore >= passMark
-
-	const guideName   = `${attempt.guide?.firstName ?? ''} ${attempt.guide?.lastName ?? ''}`
 
 	return (
 		<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
@@ -144,18 +148,20 @@ export default function QuizGradingPage() {
 							</div>
 
 							<div className="flex flex-col gap-4">
-								{answers.length > 0 ? answers.map((answer, index) => (
-									<div key={answer.questionId} className="bg-white border border-[#e7e5e4] rounded-xl p-6">
+								{questionAttempts.length > 0 ? questionAttempts.map((qa, index) => (
+									<div key={qa.id} className="bg-white border border-[#e7e5e4] rounded-xl p-6">
 										<div className="flex justify-between mb-4 pb-2 border-b border-[#f5f5f4]">
 											<span className="font-outfit font-semibold text-[#1c1917]">Question {index + 1}</span>
-											<span className="font-outfit bg-[#f5f5f4] text-[#44403c] py-0.5 px-2 rounded text-xs font-medium">{answer.question?.type ?? '—'}</span>
+											<span className="font-outfit bg-[#f5f5f4] text-[#44403c] py-0.5 px-2 rounded text-xs font-medium">{qa.question?.type ?? '—'}</span>
 										</div>
 
-										<h4 className="font-serif m-0 mb-4 text-base text-[#1a3a2a] leading-[1.5]">{answer.question?.text ?? '—'}</h4>
+										<h4 className="font-serif m-0 mb-4 text-base text-[#1a3a2a] leading-[1.5]">{qa.question?.text ?? '—'}</h4>
 
 										<div className="bg-[#fafaf9] border border-[#f0e9db] p-4 rounded-lg mb-5">
 											<label className="font-outfit block text-xs font-semibold text-[#78716c] mb-2 uppercase tracking-[0.3px]">Guide Answer:</label>
-											<p className="font-serif m-0 text-[15px] text-[#1a3a2a] leading-[1.6]">{Array.isArray(answer.value) ? answer.value.join(', ') : (answer.value ?? '—')}</p>
+											<p className="font-serif m-0 text-[15px] text-[#1a3a2a] leading-[1.6]">
+												{qa.textResponse ?? qa.selectedOption?.text ?? '—'}
+											</p>
 										</div>
 
 										<div className="flex items-center justify-end gap-3">
@@ -163,12 +169,12 @@ export default function QuizGradingPage() {
 											<input
 												type="number"
 												className="w-20 py-1.5 px-2 border border-[#d6d3d1] rounded text-base font-semibold text-center text-[#1c1917] focus:outline-none focus:border-[#1a3a2a]"
-												value={scores[answer.questionId] ?? 0}
-												onChange={e => setScores(prev => ({ ...prev, [answer.questionId]: parseInt(e.target.value) || 0 }))}
+												value={scores[qa.id] ?? 0}
+												onChange={e => setScores(prev => ({ ...prev, [qa.id]: parseInt(e.target.value) || 0 }))}
 												min="0"
-												max={answer.question?.points ?? 100}
+												max={qa.question?.maxScore ?? 100}
 											/>
-											<span className="font-outfit text-sm text-[#78716c]">/ {answer.question?.points ?? '?'} pts</span>
+											<span className="font-outfit text-sm text-[#78716c]">/ {qa.question?.maxScore ?? '?'} pts</span>
 										</div>
 									</div>
 								)) : (
@@ -181,7 +187,7 @@ export default function QuizGradingPage() {
 							<div className="flex justify-end gap-3">
 								<button
 									onClick={handleSubmitGrades}
-									disabled={isSubmitting || answers.length === 0}
+									disabled={isSubmitting || questionAttempts.length === 0}
 									className="py-2.5 px-8 bg-[#1a3a2a] text-white border-none rounded-lg font-outfit font-medium text-sm cursor-pointer transition-colors duration-200 hover:bg-[#132d20] disabled:opacity-50"
 								>
 									{isSubmitting ? 'Submitting…' : 'Submit Grades'}

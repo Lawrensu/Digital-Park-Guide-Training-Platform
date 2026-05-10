@@ -30,5 +30,6 @@ android/
 *.pem
 *.key
 
-# Claude Code
+# Claude Code/Codex
 .claude/
+AGENTS.md*

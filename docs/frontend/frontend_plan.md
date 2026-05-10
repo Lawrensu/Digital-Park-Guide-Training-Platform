@@ -1,4 +1,9 @@
-# Frontend Implementation Plan (PERHAPS NEED AN UPDATE)
+# Frontend Implementation Plan
+
+> **This document is archived.** Both the web and mobile frontend plans are
+> complete as of Sprint 2. The specs below reflect the original intended behaviour
+> and remain useful as a reference, but some API call examples are outdated —
+> the actual implemented endpoints may differ.
 
 **SFC Digital Park Guide Training Platform**
 

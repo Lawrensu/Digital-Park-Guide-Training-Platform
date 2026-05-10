@@ -71,12 +71,13 @@ export default function GuideQuizResult() {
 		)
 	}
 
-	const isPendingReview = attempt.status === 'PENDING_REVIEW'
-	const isGraded        = attempt.status === 'GRADED'
-	const answers         = attempt.answers ?? []
-	const totalScore      = attempt.totalScore ?? 0
-	const passMark        = attempt.quiz?.passMark
-	const isPassed        = passMark != null ? totalScore >= passMark : null
+	const isPendingReview   = attempt.status === 'PENDING_REVIEW'
+	const isGraded          = attempt.status === 'GRADED'
+	const questionAttempts  = attempt.questionAttempts ?? []
+	const totalScore        = attempt.totalScore ?? 0
+	const maxTotal          = questionAttempts.reduce((sum, qa) => sum + (qa.question?.maxScore ?? 0), 0)
+	const passMark          = Math.round(maxTotal * ((attempt.quiz?.passScorePct ?? 70) / 100))
+	const isPassed          = maxTotal > 0 ? totalScore >= passMark : null
 
 	return (
 		<div className="flex flex-col lg:flex-row h-screen bg-[#f0f4f1] overflow-hidden">
@@ -117,7 +118,7 @@ export default function GuideQuizResult() {
 								<div className="text-center">
 									<div className="font-outfit text-4xl font-bold text-[#1a3a2a]">
 										{totalScore}
-										{passMark != null && <span className="text-xl text-[#78716c] font-normal"> / {passMark} pass</span>}
+										<span className="text-xl text-[#78716c] font-normal"> / {passMark} pass</span>
 									</div>
 									<div className="font-outfit text-sm text-[#78716c] mt-1">Your Score</div>
 								</div>
@@ -155,26 +156,26 @@ export default function GuideQuizResult() {
 						</div>
 					</div>
 
-					{isGraded && answers.length > 0 && (
+					{isGraded && questionAttempts.length > 0 && (
 						<div className="flex flex-col gap-3">
 							<h2 className="font-outfit text-base font-semibold text-[#1a3a2a] m-0">Answer Review</h2>
-							{answers.map((answer, i) => (
-								<div key={answer.questionId ?? i} className="bg-white rounded-xl border border-[#d4e4da] p-5">
+							{questionAttempts.map((qa, i) => (
+								<div key={qa.id} className="bg-white rounded-xl border border-[#d4e4da] p-5">
 									<div className="flex justify-between items-start mb-3">
 										<span className="font-outfit text-xs font-semibold text-[#78716c] uppercase">Q{i + 1}</span>
-										{answer.awardedScore != null && (
+										{qa.scoreAwarded != null && (
 											<span className="font-outfit text-xs bg-[#e8f5ee] text-[#266841] py-0.5 px-2 rounded-full font-semibold">
-												{answer.awardedScore} / {answer.question?.points ?? '?'} pts
+												{qa.scoreAwarded} / {qa.question?.maxScore ?? '?'} pts
 											</span>
 										)}
 									</div>
 									<p className="font-outfit text-sm font-medium text-[#1a3a2a] mb-2 m-0">
-										{answer.question?.text ?? '—'}
+										{qa.question?.text ?? '—'}
 									</p>
 									<div className="bg-[#f5f5f4] rounded-lg p-3">
 										<p className="font-outfit text-xs text-[#78716c] mb-1 m-0 uppercase font-semibold">Your answer</p>
 										<p className="font-outfit text-sm text-[#44403c] m-0">
-											{Array.isArray(answer.value) ? answer.value.join(', ') : (answer.value ?? '—')}
+											{qa.textResponse ?? qa.selectedOption?.text ?? '—'}
 										</p>
 									</div>
 								</div>

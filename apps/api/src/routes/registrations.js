@@ -17,6 +17,7 @@ router.post('/', validate(submitRegistrationSchema), controller.submit);
 // admin only
 router.get('/', requireAuth, requireRole('ADMIN'), controller.listAll);
 router.get('/:id', requireAuth, requireRole('ADMIN'), controller.getOne);
+router.get('/:id/cv-url', requireAuth, requireRole('ADMIN'), controller.getCvUrl);
 router.patch('/:id/approve', requireAuth, requireRole('ADMIN'), validate(approveRegistrationSchema), controller.approve);
 router.patch('/:id/reject', requireAuth, requireRole('ADMIN'), validate(rejectRegistrationSchema), controller.reject);
 

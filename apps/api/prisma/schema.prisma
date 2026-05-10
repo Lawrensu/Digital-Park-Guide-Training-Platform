@@ -208,8 +208,9 @@ model ContentItem {
     createdAt             DateTime            @default(now()) @db.Timestamptz(6) @map("created_at")
     updatedAt             DateTime            @updatedAt @db.Timestamptz(6) @map("updated_at")
 
-    module                Module              @relation(fields: [moduleId], references: [id])
-    quiz                  Quiz?               @relation(fields: [quizId], references: [id])
+    module                Module                 @relation(fields: [moduleId], references: [id])
+    quiz                  Quiz?                  @relation(fields: [quizId], references: [id])
+    contentItemProgresses ContentItemProgress[]
 
     @@map("content_item")
 }
@@ -264,17 +265,34 @@ model QuestionOption {
 }
 
 model Enrolment {
-    id          String    @id @default(uuid()) @map("id")
-    guideId     String    @map("guide_id")
-    moduleId    String    @map("module_id")
-    dueAt       DateTime? @db.Timestamptz(6) @map("due_at")
-    enrolledAt  DateTime  @default(now()) @db.Timestamptz(6) @map("enrolled_at")
+    id            String    @id @default(uuid()) @map("id")
+    guideId       String    @map("guide_id")
+    moduleId      String    @map("module_id")
+    dueAt         DateTime? @db.Timestamptz(6) @map("due_at")
+    enrolledAt    DateTime  @default(now()) @db.Timestamptz(6) @map("enrolled_at")
+    progressPct   Int       @default(0) @map("progress_pct")
+    completedAt   DateTime? @db.Timestamptz(6) @map("completed_at")
 
-    guide       User      @relation(fields: [guideId], references: [id])
-    module      Module    @relation(fields: [moduleId], references: [id])
+    guide                 User                   @relation(fields: [guideId], references: [id])
+    module                Module                 @relation(fields: [moduleId], references: [id])
+    contentItemProgresses ContentItemProgress[]
 
     @@unique([guideId, moduleId])
     @@map("enrolment")
+}
+
+
+model ContentItemProgress {
+    id            String      @id @default(uuid()) @map("id")
+    enrolmentId   String      @map("enrolment_id")
+    contentItemId String      @map("content_item_id")
+    completedAt   DateTime    @default(now()) @db.Timestamptz(6) @map("completed_at")
+
+    enrolment     Enrolment   @relation(fields: [enrolmentId], references: [id])
+    contentItem   ContentItem @relation(fields: [contentItemId], references: [id])
+
+    @@unique([enrolmentId, contentItemId])
+    @@map("content_item_progress")
 }
 
 model QuizAttempt {

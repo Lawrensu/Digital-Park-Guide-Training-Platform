@@ -6,6 +6,7 @@ import {
 	createEnrolmentSchema,
 	selfEnrolmentSchema,
 	updateEnrolmentSchema,
+	markProgressSchema,
 } from '../schemas/enrolments.js';
 import * as controller from '../controllers/enrolments.js';
 
@@ -14,6 +15,7 @@ const router = Router();
 router.get('/', requireAuth, controller.list);
 router.post('/', requireAuth, requireRole('ADMIN'), validate(createEnrolmentSchema), controller.create);
 router.post('/me', requireAuth, requireRole('GUIDE'), validate(selfEnrolmentSchema), controller.selfEnrol);
+router.post('/me/progress', requireAuth, requireRole('GUIDE'), validate(markProgressSchema), controller.markProgress);
 router.patch('/:id', requireAuth, requireRole('ADMIN'), validate(updateEnrolmentSchema), controller.update);
 router.delete('/:id', requireAuth, requireRole('ADMIN'), controller.remove);
 

@@ -16,5 +16,5 @@ export const update = (id, data) =>
 export const remove = (id) =>
 	api.delete(`/badges/${id}`)
 
-export const getMyBadges = () =>
-	api.get('/badges/me')
+export const getEarned = (userId) =>
+	api.get(`/badges/users/${userId}`)

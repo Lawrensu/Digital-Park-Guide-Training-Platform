@@ -162,7 +162,7 @@ export const createAdmin = async (req, res) => {
 			return u;
 		});
 
-		const activationUrl = `${process.env.WEB_URL}/set-password?token=${rawToken}`;
+		const activationUrl = `${process.env.WEB_URL}/activate?token=${rawToken}`;
 		sendActivationEmail(email, `${firstName} ${lastName}`, activationUrl);
 
 		return res.status(201).json({ success: true, data: { userId: user.id, username } });

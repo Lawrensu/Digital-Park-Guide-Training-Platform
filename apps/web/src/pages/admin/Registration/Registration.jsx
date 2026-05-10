@@ -141,7 +141,7 @@ export default function RegistrationPage() {
 												</td>
 												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle font-serif text-sm text-[#78716c]">{r.email}</td>
 												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle font-outfit text-[13px] text-[#44403c] tracking-[0.2px]">{r.icPassportNumber}</td>
-												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle font-serif text-sm text-[#78716c]">{new Date(r.createdAt).toLocaleDateString()}</td>
+												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle font-serif text-sm text-[#78716c]">{r.submittedAt ? new Date(r.submittedAt).toLocaleDateString() : '—'}</td>
 												<td className="px-6 py-4.5 border-b border-[#f5f5f4] align-middle">
 													<span className={`inline-flex items-center py-1 px-3 rounded-full font-outfit text-xs font-medium ${STATUS_BADGE[r.status] ?? ''}`}>
 														{STATUS_LABEL[r.status] ?? r.status}
