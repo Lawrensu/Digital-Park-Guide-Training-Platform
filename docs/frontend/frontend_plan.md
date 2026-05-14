@@ -1,9 +1,13 @@
 # Frontend Implementation Plan
 
-> **This document is archived.** Both the web and mobile frontend plans are
-> complete as of Sprint 2. The specs below reflect the original intended behaviour
-> and remain useful as a reference, but some API call examples are outdated —
-> the actual implemented endpoints may differ.
+> **This document is the canonical screen spec.** Both web and mobile are fully implemented.
+> The specs below reflect the intended and actual behaviour.
+>
+> **Key corrections vs. original plan:**
+> - Registration (`/register`) exists on **both web and mobile** — not mobile-only
+> - **Both Admin/Trainer and Park Guide use both the web app and the mobile app**
+> - The two "Backend Additions Required" endpoints (`GET /api/payments/me?quizId=:id` and `GET /api/modules/:moduleId/content-items/:id/image-url`) are **already implemented** in the backend
+> - SQLite offline sync is implemented **after** full mobile-API integration is complete
 
 **SFC Digital Park Guide Training Platform**
 
@@ -13,15 +17,15 @@
 
 This is the most important section to read first. The proposal backlog assigns the web dashboard to Sprint 1 and the mobile app implementation to Sprint 2. Building out of this order wastes time and will not satisfy the sprint report requirements.
 
-| Deliverable | Owner | Sprint |
-|---|---|---|
-| Web dashboard — Figma wireframes (all pages) | Cherylynn | Sprint 1 |
-| Mobile app — Figma wireframes (all screens) | Xavier | Sprint 1 |
-| Web dashboard — clickable Figma prototype | Cherylynn | Sprint 1 |
-| Mobile app — clickable Figma prototype | Xavier | Sprint 1 |
-| Web dashboard — implemented React screens | Cherylynn | Sprint 1 |
-| Mobile app — implemented screens | Xavier | Sprint 2 |
-| Mobile offline sync engine | Xavier | Sprint 2 |
+| Deliverable | Owner | Sprint | Status |
+|---|---|---|---|
+| Web dashboard — Figma wireframes (all pages) | Cherylynn | Sprint 1 | ✅ Done |
+| Mobile app — Figma wireframes (all screens) | Xavier | Sprint 1 | ✅ Done |
+| Web dashboard — clickable Figma prototype | Cherylynn | Sprint 1 | ✅ Done |
+| Mobile app — clickable Figma prototype | Xavier | Sprint 1 | ✅ Done |
+| Web dashboard — implemented React screens | Cherylynn | Sprint 1 | ✅ Done |
+| Mobile app — implemented screens | Lawrence | Sprint 2 | ✅ Done |
+| Mobile offline sync engine | Lawrence | After integration | ⏳ Implemented after full mobile-API integration is verified |
 
 ### Cherylynn — Sprint 1 Web Implementation Priority
 
@@ -499,7 +503,7 @@ These are not pages but must be built and shared across all pages:
 
 **Tech:** React Native + Expo, NativeWind, Expo Push Notifications, Expo SecureStore, Socket.io client, `@react-native-community/netinfo`
 
-> **Note on offline sync:** The Expo SQLite offline-first sync engine is deferred to a later sprint. Phase 1 connects all screens to the live API. The SQLite layer (offline caching + `POST /api/sync` batch) is added on top after all screens are fully working online.
+> **Note on offline sync:** The Expo SQLite offline-first sync engine is implemented **after** all screens are verified against the live API. The scaffold (`src/database/db.js` using AsyncStorage) exists and will be wired to `POST /api/sync` in that phase. An `OfflineBanner` component is shown when network is unavailable via `@react-native-community/netinfo`.
 
 Both roles — Admin/Trainer and Park Guide — use the mobile app. Role-based access control (the `role` field in the JWT payload: `ADMIN` or `GUIDE`) determines which navigator is shown after login.
 
@@ -508,8 +512,9 @@ Both roles — Admin/Trainer and Park Guide — use the mobile app. Role-based a
 ### Screen Structure
 
 ```
-(Auth)
+(Auth — no login required)
   LoginScreen
+  RegistrationScreen   ← park guides register here (same flow as web /register)
 
 (Park Guide — Tab Navigation)
   HomeScreen (tab)
@@ -550,6 +555,21 @@ Both roles — Admin/Trainer and Park Guide — use the mobile app. Role-based a
 - `POST /api/auth/login`
 - On success: store refresh token in Expo SecureStore, store access token in memory, navigate based on role — `ADMIN` → AdminDashboard, `GUIDE` → HomeScreen
 - "Resend activation link" option calls `POST /api/auth/resend-activation`
+- Link to `RegistrationScreen` for guides who do not yet have an account
+
+---
+
+#### `RegistrationScreen`
+
+**What it is:** Public registration form for park guides. No auth required. Accessible from the login screen.
+
+**What it does:**
+- Collects: first name, last name, email, IC/passport number, address, reason for applying, CV upload (PDF)
+- CV upload flow: call `POST /api/uploads/presign` to get a pre-signed S3 URL, upload directly to S3, then send the returned S3 key as `cvS3Key` in the registration payload
+- `POST /api/registrations` on submit
+- On success: show confirmation message ("Your application has been submitted. You will receive an email once reviewed.") then navigate back to `LoginScreen`
+
+**Note:** Admin accounts are never created via this form. The same data shape as the web `/register` page.
 
 ---
 
@@ -778,16 +798,14 @@ Nested stack:
 
 ---
 
-### Backend Additions Required Before Mobile Can Complete
+### Backend Endpoints for Mobile — Already Implemented
 
-Two small endpoints that do not yet exist. Both are trivial to add to existing controllers.
+Both endpoints that were originally listed as "required before mobile can complete" are now live in the backend.
 
-| Endpoint | Why needed |
-|---|---|
-| `GET /api/payments/me?quizId=:id` | Mobile polls this after returning from BillPlz browser to check if payment succeeded (PAID/FAILED/PENDING) |
-| `GET /api/content-items/:id/image-url` | Returns a 15-min presigned GET URL for `imageS3Key`. Required for IMAGE and INFOGRAPHIC content items. AWS is now active. Auth required; guide must be enrolled or role is ADMIN. |
-
-Both should be added to the API before those mobile screens are implemented.
+| Endpoint | Status | Notes |
+|---|---|---|
+| `GET /api/payments/me?quizId=:id` | ✅ Implemented | Returns `{ status }` — PENDING, PAID, FAILED, or null. Mobile polls on return from BillPlz. |
+| `GET /api/modules/:moduleId/content-items/:id/image-url` | ✅ Implemented | Returns `{ url }` — 15-min presigned GET URL for IMAGE/INFOGRAPHIC items. Guide must be enrolled or role is ADMIN. |
 
 ---
 

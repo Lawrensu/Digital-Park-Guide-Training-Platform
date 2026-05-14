@@ -3,6 +3,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../services/AuthContext';
 import LoginScreen from '../screens/LoginScreen';
+import RegistrationScreen from '../screens/RegistrationScreen';
 import UserNavigator from './UserNavigator';
 import AdminNavigator from './AdminNavigator';
 
@@ -22,7 +23,8 @@ export default function RootNavigator() {
 	if (!user) {
 		return (
 			<Stack.Navigator screenOptions={{ headerShown: false }}>
-				<Stack.Screen name="Login" component={LoginScreen} />
+				<Stack.Screen name="Login"    component={LoginScreen} />
+				<Stack.Screen name="Register" component={RegistrationScreen} />
 			</Stack.Navigator>
 		);
 	}

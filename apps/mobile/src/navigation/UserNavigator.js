@@ -3,16 +3,16 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import UserDashboard      from '../screens/parkguide/UserDashboard';
-import CourseListScreen   from '../screens/parkguide/CourseListScreen';
-import LessonScreen       from '../screens/parkguide/LessonScreen';
+import CourseListScreen    from '../screens/parkguide/CourseListScreen';
+import LessonScreen        from '../screens/parkguide/LessonScreen';
 import QuizScreen          from '../screens/parkguide/QuizScreen';
-import QuizResultScreen    from '../screens/parkguide/quizresult';
+import QuizResultScreen    from '../screens/parkguide/QuizResultScreen';
 import CertificationScreen from '../screens/parkguide/CertificationScreen';
-import ContentScreen       from '../screens/parkguide/content';
-import GuideNotification   from '../screens/parkguide/guidenotification';
-import GuideProfile       from '../screens/parkguide/guideprofile';
-import BadgeScreen        from '../screens/parkguide/badge';
-import GuideViewCert      from '../screens/parkguide/guideviewcert';
+import ContentScreen       from '../screens/parkguide/ContentScreen';
+import GuideNotification   from '../screens/parkguide/GuideNotificationScreen';
+import GuideProfile        from '../screens/parkguide/GuideProfileScreen';
+import BadgeScreen         from '../screens/parkguide/BadgeScreen';
+import GuideViewCert       from '../screens/parkguide/GuideViewCertScreen';
 import GuideNavigationBar from '../components/guidenavigationbar';
 
 const Tab   = createBottomTabNavigator();
