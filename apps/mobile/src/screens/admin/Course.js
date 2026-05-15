@@ -19,14 +19,6 @@ const T = {
 
 const MENU_ITEMS = [
   {
-    label: 'Content Build',
-    description: 'Create and manage course content',
-    icon: 'document-text',
-    iconColor: '#0891b2',
-    iconBg: '#e0f2fe',
-    screen: 'ContentBuild',
-  },
-  {
     label: 'Modules',
     description: 'View all course modules',
     icon: 'albums',

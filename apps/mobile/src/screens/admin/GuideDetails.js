@@ -233,39 +233,24 @@ export default function GuideDetails() {
 						<Text style={{ fontSize: 16, fontWeight: '800', color: '#111827', marginBottom: 16 }}>
 							Quiz Results
 						</Text>
-						{gradedAttempts.slice(0, 5).map((a, i) => {
-							const passScorePct = a.quiz?.passScorePct ?? 70;
-							const passed = a.totalScore != null && a.totalScore >= passScorePct;
-							return (
-								<View key={a.id} style={{
-									flexDirection: 'row', alignItems: 'center', paddingVertical: 10,
-									borderTopWidth: i === 0 ? 0 : 1, borderTopColor: '#f3f4f6',
-								}}>
-									<View style={{ flex: 1 }}>
-										<Text style={{ fontSize: 13, fontWeight: '600', color: '#111827' }}>
-											{a.quiz?.title ?? 'Quiz'}
-										</Text>
-										<Text style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>
-											{formatDate(a.submittedAt)}
-										</Text>
-									</View>
-									<View style={{
-										paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, marginRight: 10,
-										backgroundColor: passed ? '#dcfce7' : '#fee2e2',
-									}}>
-										<Text style={{
-											fontSize: 11, fontWeight: '700',
-											color: passed ? '#16a34a' : '#dc2626',
-										}}>
-											{passed ? 'PASSED' : 'FAILED'}
-										</Text>
-									</View>
-									<Text style={{ fontSize: 13, fontWeight: '700', color: '#111827', width: 36, textAlign: 'right' }}>
-										{a.totalScore != null ? `${a.totalScore}` : '—'}
+						{gradedAttempts.slice(0, 5).map((a, i) => (
+							<View key={a.id} style={{
+								flexDirection: 'row', alignItems: 'center', paddingVertical: 10,
+								borderTopWidth: i === 0 ? 0 : 1, borderTopColor: '#f3f4f6',
+							}}>
+								<View style={{ flex: 1 }}>
+									<Text style={{ fontSize: 13, fontWeight: '600', color: '#111827' }}>
+										{a.quiz?.title ?? 'Quiz'}
+									</Text>
+									<Text style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>
+										{formatDate(a.submittedAt)}
 									</Text>
 								</View>
-							);
-						})}
+								<Text style={{ fontSize: 13, fontWeight: '700', color: '#111827', minWidth: 36, textAlign: 'right' }}>
+									{a.totalScore != null ? `${a.totalScore} pts` : '—'}
+								</Text>
+							</View>
+						))}
 					</View>
 				)}
 

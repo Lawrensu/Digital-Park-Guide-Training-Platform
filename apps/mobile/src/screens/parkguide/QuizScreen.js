@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
-	View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Alert, Linking,
+	View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Alert, Linking, AppState,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -143,6 +143,7 @@ export default function QuizScreen() {
 	const [submitting,  setSubmitting]  = useState(false);
 	const [payStatus,   setPayStatus]   = useState(null);
 	const [payLoading,  setPayLoading]  = useState(false);
+	const appStateRef = useRef(AppState.currentState);
 
 	const load = useCallback(async () => {
 		if (!quizId) return;
@@ -177,6 +178,19 @@ export default function QuizScreen() {
 		try {
 			const bill = await paymentsApi.initiate(quizId);
 			if (bill?.url) {
+				// Listen for when the user returns from the BillPlz browser
+				const sub = AppState.addEventListener('change', async (nextState) => {
+					if (appStateRef.current.match(/inactive|background/) && nextState === 'active') {
+						sub.remove();
+						try {
+							const result = await paymentsApi.getMyStatus(quizId);
+							setPayStatus(result?.status ?? null);
+						} catch {
+							// keep existing status
+						}
+					}
+					appStateRef.current = nextState;
+				});
 				await Linking.openURL(bill.url);
 			}
 		} catch (err) {

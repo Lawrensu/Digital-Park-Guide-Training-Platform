@@ -6,6 +6,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { modulesApi } from '../../api/modules';
+import { quizzesApi } from '../../api/quizzes';
 import useNetworkStatus from '../../services/connectivityService';
 import { FONTS } from '../../theme/fonts';
 
@@ -236,7 +237,18 @@ export default function ModuleEdit() {
 					</TouchableOpacity>
 
 					<TouchableOpacity
-						onPress={() => navigation.navigate('QuizEdit', { moduleId })}
+						onPress={async () => {
+							try {
+								const quizzes = await quizzesApi.getAll({ moduleId });
+								const existing = Array.isArray(quizzes) ? quizzes[0] : null;
+								navigation.navigate('QuizEdit', {
+									moduleId,
+									quizId: existing?.id ?? undefined,
+								});
+							} catch {
+								navigation.navigate('QuizEdit', { moduleId });
+							}
+						}}
 						style={{
 							flexDirection: 'row', alignItems: 'center',
 							paddingHorizontal: 16, paddingVertical: 16,

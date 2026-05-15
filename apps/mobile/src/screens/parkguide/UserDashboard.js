@@ -7,6 +7,7 @@ import useNetworkStatus from '../../services/connectivityService';
 import { FONTS } from '../../theme/fonts';
 import { enrolmentsApi } from '../../api/enrolments';
 import { notificationsApi } from '../../api/notifications';
+import { certificationsApi } from '../../api/certifications';
 
 const NOTIF_ICON = { book: '#15803d', ribbon: '#15803d', alarm: '#d97706', megaphone: '#7c3aed' };
 
@@ -90,6 +91,7 @@ export default function UserDashboard() {
 
 	const [enrolments,     setEnrolments]     = useState([]);
 	const [notifications,  setNotifications]  = useState([]);
+	const [certCount,      setCertCount]      = useState(0);
 	const [loading,        setLoading]        = useState(true);
 
 	const displayName = user?.email?.split('@')[0] ?? 'Guide';
@@ -97,12 +99,14 @@ export default function UserDashboard() {
 
 	const load = useCallback(async () => {
 		try {
-			const [enrolData, notifData] = await Promise.all([
+			const [enrolData, notifData, certData] = await Promise.all([
 				enrolmentsApi.getMyEnrolments({ limit: 20 }),
 				notificationsApi.getMine({ limit: 10 }),
+				certificationsApi.getMine(),
 			]);
 			setEnrolments(Array.isArray(enrolData) ? enrolData : []);
 			setNotifications(Array.isArray(notifData) ? notifData : []);
+			setCertCount(Array.isArray(certData) ? certData.length : 0);
 		} catch {
 			// keep empty state on error
 		} finally {
@@ -124,7 +128,7 @@ export default function UserDashboard() {
 	const STATS = [
 		{ icon: 'book',             iconBg: '#dcfce7', iconColor: '#15803d', value: totalModules,   label: 'Enrolled'  },
 		{ icon: 'checkmark-circle', iconBg: '#dbeafe', iconColor: '#0891b2', value: completedCount, label: 'Completed' },
-		{ icon: 'ribbon',           iconBg: '#fef3c7', iconColor: '#d97706', value: 0,              label: 'Certs'     },
+		{ icon: 'ribbon',           iconBg: '#fef3c7', iconColor: '#d97706', value: certCount,      label: 'Certs'     },
 	];
 
 	return (

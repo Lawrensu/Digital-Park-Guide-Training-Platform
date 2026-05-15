@@ -43,6 +43,7 @@ export default function IoTDetails() {
 
 	const [alert,          setAlert]          = useState(null);
 	const [evidenceUrl,    setEvidenceUrl]    = useState(null);
+	const [evidenceError,  setEvidenceError]  = useState(false);
 	const [loading,        setLoading]        = useState(true);
 	const [flagLoading,    setFlagLoading]    = useState(false);
 	const [decision,       setDecision]       = useState(null);
@@ -58,7 +59,7 @@ export default function IoTDetails() {
 						const result = await iotAlertsApi.getEvidenceUrl(alertId);
 						setEvidenceUrl(result?.url ?? null);
 					} catch {
-						// evidence URL not available
+						setEvidenceError(true);
 					}
 				}
 			} catch {
@@ -189,7 +190,7 @@ export default function IoTDetails() {
 					<>
 						<Ionicons name="camera" size={56} color="#4b5563" />
 						<Text style={{ fontSize: 12, color: '#6b7280', marginTop: 8 }}>
-							{alert.evidenceS3Key ? 'Loading evidence...' : 'No evidence image'}
+							{alert.evidenceS3Key && !evidenceError ? 'Loading evidence...' : evidenceError ? 'Evidence unavailable' : 'No evidence image'}
 						</Text>
 					</>
 				)}

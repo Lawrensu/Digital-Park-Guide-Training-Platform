@@ -427,8 +427,28 @@ export default function QuizEdit() {
 			setQuestions((prev) => prev.filter((q) => q.id !== question.id));
 			return;
 		}
-		await quizzesApi.removeQuestion(quizId, question.id);
-		setQuestions((prev) => prev.filter((q) => q.id !== question.id));
+		return new Promise((resolve, reject) => {
+			Alert.alert(
+				'Delete Question',
+				'Remove this question from the quiz? This cannot be undone.',
+				[
+					{ text: 'Cancel', style: 'cancel', onPress: () => resolve() },
+					{
+						text: 'Delete',
+						style: 'destructive',
+						onPress: async () => {
+							try {
+								await quizzesApi.removeQuestion(quizId, question.id);
+								setQuestions((prev) => prev.filter((q) => q.id !== question.id));
+								resolve();
+							} catch (e) {
+								reject(e);
+							}
+						},
+					},
+				]
+			);
+		});
 	}
 
 	function handleQuestionAdded(question) {
