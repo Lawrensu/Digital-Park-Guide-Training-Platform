@@ -30,6 +30,7 @@ export default function AdminLayout({ children }) {
 
   const menuItems = [
     { label: 'Dashboard', icon: LayoutDashboard, path: '/admin-dashboard' },
+    { label: 'Analytics', icon: LayoutDashboard, path: '/analytics' },
     { label: 'Registrations', icon: UserPlus, path: '/registrations' },
     { label: 'Modules', icon: BookOpen, path: '/modules' },
     { label: 'Guides', icon: Users, path: '/guides' },
