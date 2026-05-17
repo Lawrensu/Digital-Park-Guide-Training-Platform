@@ -31,16 +31,16 @@
 
 ## Station Management
 
-Stations are named SFC park locations (e.g., Semenggoh Nature Reserve, Gunung Mulu National Park). Admins manage the station list from the dashboard — no code deployment or schema migration needed to add new locations.
+Stations are named SFC park locations (e.g., Semenggoh Nature Reserve, Gunung Mulu National Park). Admins manage the station list from the dashboard with no code deployment or schema migration needed to add new locations.
 
 - `Station` table: `id` (UUID PK), `name` (VARCHAR UNIQUE), `created_at`
 - `User.station_id` is a nullable FK → `Station.id`
-  - Guides only — admin accounts are never assigned a station
+  - Guides only; admin accounts are never assigned a station
   - Set by admin on approval or updated later via the guide management page
 - Admin can filter the guide list by station: `GET /api/users?role=GUIDE&stationId=:id`
 - Station is displayed on the guide's profile on both web and mobile
-- Delete guard: a station cannot be deleted while guides are assigned to it — enforced at application layer
-- Station name must be unique — prevents duplicate entries for the same location
+- Delete guard: a station cannot be deleted while guides are assigned to it; enforced at application layer
+- Station name must be unique; prevents duplicate entries for the same location
 
 ---
 
@@ -92,7 +92,7 @@ Stations are named SFC park locations (e.g., Semenggoh Nature Reserve, Gunung Mu
 
 - No retake limit
 - Each retake (attempt_number > 1) requires a successful BillPlz payment
-- Retake price configurable per quiz by admin via `retake_price_myr` (nullable — null means price not yet set)
+- Retake price configurable per quiz by admin via `retake_price_myr` (nullable; null means price not yet set)
 - Payment gateway: **BillPlz** (FPX, Malaysia)
   - Sandbox: `https://www.billplz-sandbox.com/api/v3`
   - Production: `https://www.billplz.com/api/v3`
@@ -101,12 +101,12 @@ Stations are named SFC park locations (e.g., Semenggoh Nature Reserve, Gunung Mu
 1. Guide initiates retake → `POST /api/payments/initiate { quizId }`
 2. Server checks: quiz has price, guide has at least one prior attempt, no existing PENDING payment
 3. Server creates BillPlz bill, stores `Payment` row (status `PENDING`)
-4. Returns `{ url }` — frontend redirects guide to BillPlz
+4. Returns `{ url }`; frontend redirects guide to BillPlz
 5. Guide completes FPX payment on BillPlz
 6. BillPlz calls `POST /api/payments/callback` (webhook)
 7. Server verifies X-Signature: `HMAC-SHA256(key=BILLPLZ_X_SIGNATURE, data="<billId>|<paid>")`
 8. Payment status updated to `PAID` or `FAILED`
-9. Guide returns to frontend — retake is now unlocked
+9. Guide returns to frontend; retake is now unlocked
 10. `POST /api/quiz-attempts` checks for a `PAID` payment with `quiz_attempt_id = null` before creating attempt; on success links the payment to the new attempt
 
 ---
@@ -134,13 +134,13 @@ Triggered after admin approves a graded quiz attempt.
 
 ## Badges
 
-Count-based achievement markers shown on guide profile. **For Park Guides only — admin accounts do not earn or display badges. Admin authorisation is assumed by role.**
+Count-based achievement markers shown on guide profile. **For Park Guides only. Admin accounts do not earn or display badges. Admin authorisation is assumed by role.**
 
 - Badge fields: image, description (e.g. "Finished 3 modules in a row")
 - Awarded server-side automatically when a module is approved/certified
 - Threshold configurable per badge (e.g. complete 3 modules = badge)
 - Not client-triggered
-- `UserBadge` must only be created for users with `role = GUIDE` — enforced at application layer before insert
+- `UserBadge` must only be created for users with `role = GUIDE`; enforced at application layer before insert
 
 ---
 
@@ -150,8 +150,8 @@ Count-based achievement markers shown on guide profile. **For Park Guides only �
 - On reconnect: `POST /api/sync` sends batched progress + quiz attempts
 - Each item includes device-side `completedAt` timestamp
 - **Conflict policy: last-write-wins.** Archived modules still accept offline submissions.
-- **Sprint 2 update:** `ContentItemProgress` table is now implemented. `Enrolment` carries `progressPct` (0–100) and `completedAt`. The web app writes a progress record via `POST /api/enrolments/me/progress` each time a guide opens a content item. The offline sync endpoint still only persists quiz attempts on reconnect — wiring sync to write `ContentItemProgress` rows from the mobile SQLite queue remains a Sprint 2 mobile task.
-- **Retake payment gate is skipped for offline sync** — the guide presumably completed payment before going offline, and no re-check is possible.
+- **Sprint 2 update:** `ContentItemProgress` table is now implemented. `Enrolment` carries `progressPct` (0–100) and `completedAt`. The web app writes a progress record via `POST /api/enrolments/me/progress` each time a guide opens a content item. The offline sync endpoint still only persists quiz attempts on reconnect; wiring sync to write `ContentItemProgress` rows from the mobile SQLite queue remains a Sprint 2 mobile task.
+- **Retake payment gate is skipped for offline sync**: the guide presumably completed payment before going offline, and no re-check is possible.
 
 ---
 
@@ -186,7 +186,7 @@ ESP32 detects violation
 → [After 30 days] AWS S3 Lifecycle Policy automatically transitions frame to S3 Glacier
 ```
 
-**Evidence archival:** Age-based. AWS S3 Lifecycle Policy transitions evidence frames from S3 Standard to S3 Glacier after **30 days**. No application code required — configured once on the S3 bucket. Retrieval from Glacier takes minutes to hours and incurs additional cost, so the 30-day window ensures all active alert reviews are resolved before frames become cold-storage only.
+**Evidence archival:** Age-based. AWS S3 Lifecycle Policy transitions evidence frames from S3 Standard to S3 Glacier after **30 days**. No application code required; configured once on the S3 bucket. Retrieval from Glacier takes minutes to hours and incurs additional cost, so the 30-day window ensures all active alert reviews are resolved before frames become cold-storage only.
 
 **Socket.io event payload (`iot:alert`):**
 ```json
@@ -219,7 +219,7 @@ Every route falls into one of:
 ## Admin Account Creation
 
 - **Bootstrap:** `prisma db seed` creates initial admin accounts. Credentials read from `.env`. Idempotent (upsert).
-- **Ongoing:** any admin can create new admin accounts via `POST /api/users/admins` (admin-only route). New admins are created with `status = INACTIVE` and no password — the same activation flow as guide approval is triggered (generate `PasswordResetToken`, send activation email, 24hr expiry). All admins have equal privileges once activated.
+- **Ongoing:** any admin can create new admin accounts via `POST /api/users/admins` (admin-only route). New admins are created with `status = INACTIVE` and no password; the same activation flow as guide approval is triggered (generate `PasswordResetToken`, send activation email, 24hr expiry). All admins have equal privileges once activated.
 
 ---
 
@@ -301,16 +301,16 @@ Deleting a badge definition does not remove earned UserBadge rows from existing 
 
 ---
 
-## Pending Backend Work (Sprint 2 — required for mobile and web completeness)
+## Pending Backend Work (Sprint 2: required for mobile and web completeness)
 
 Four endpoints are missing from the backend and must be added. The web app already calls two of them and currently gets 404 responses. All four follow the existing three-file pattern (route + controller + schema where needed).
 
 | Endpoint | Status | Who needs it |
 |----------|--------|-------------|
-| `GET /api/iot-alerts/:id/evidence-url` | Missing — web is already broken | Web `IoTAlertDetail`, mobile `IoTAlertDetail` |
-| `GET /api/certifications/:id` | Missing — web `GuideViewCert` is already broken | Web `GuideViewCert`, mobile `CertificationDetailScreen` |
-| `GET /api/payments/me?quizId=:id` | Missing — needed for mobile retake poll | Mobile `PaymentScreen` |
-| `GET /api/modules/:moduleId/content-items/:id/image-url` | Missing — web shows placeholder, mobile cannot render images | Web `GuideContentViewer`, mobile `ContentViewerScreen` |
+| `GET /api/iot-alerts/:id/evidence-url` | Missing: web is already broken | Web `IoTAlertDetail`, mobile `IoTAlertDetail` |
+| `GET /api/certifications/:id` | Missing: web `GuideViewCert` is already broken | Web `GuideViewCert`, mobile `CertificationDetailScreen` |
+| `GET /api/payments/me?quizId=:id` | Missing: needed for mobile retake poll | Mobile `PaymentScreen` |
+| `GET /api/modules/:moduleId/content-items/:id/image-url` | Missing: web shows placeholder, mobile cannot render images | Web `GuideContentViewer`, mobile `ContentViewerScreen` |
 
 **Implementation notes for each:**
 

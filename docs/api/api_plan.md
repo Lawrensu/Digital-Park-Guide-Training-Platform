@@ -10,13 +10,13 @@
 You own the **API layer**: routes, controllers, and Zod schemas. You consume the Prisma models that Law defines and expose clean endpoints to the frontend.
 
 You do **not** own:
-- `prisma/schema.prisma` — Law
-- `src/middleware/` — already done, just use them
-- `src/lib/` — already done, just import from there
-- Docker, CI/CD — Ariq
-- AWS IoT Core rules — Faisal
+- `prisma/schema.prisma` (Law)
+- `src/middleware/` (already done, just use them)
+- `src/lib/` (already done, just import from there)
+- Docker, CI/CD (Ariq)
+- AWS IoT Core rules (Faisal)
 
-If you need a DB field that doesn't exist yet, tell Law — don't add it yourself.
+If you need a DB field that doesn't exist yet, tell Law. Do not add it yourself.
 
 ---
 
@@ -50,7 +50,7 @@ For every new domain you build, add three files: `routes/<domain>.js`, `controll
 
 ---
 
-## Conventions — Non-Negotiable
+## Conventions (Non-Negotiable)
 
 **URLs:** plural nouns, kebab-case, no verbs.
 ```
@@ -59,7 +59,7 @@ For every new domain you build, add three files: `routes/<domain>.js`, `controll
 ❌ POST /api/createModule
 ```
 
-**Every response** follows this shape — success or error, no exceptions:
+**Every response** follows this shape, success or error, no exceptions:
 ```json
 { "success": true, "data": {} }
 { "success": true, "data": [], "pagination": { "page": 1, "limit": 20, "total": 84, "totalPages": 5 } }
@@ -93,7 +93,7 @@ After `requireAuth` runs, you have `req.user.id` and `req.user.role` in the cont
 
 ---
 
-## RBAC — Three Categories
+## RBAC: Three Categories
 
 Every route is one of:
 
@@ -104,7 +104,7 @@ Every route is one of:
 
 ---
 
-## Worked Example — Full Domain Pattern
+## Worked Example: Full Domain Pattern
 
 This is the complete pattern. Every domain you build follows the same three-file structure.
 
@@ -165,7 +165,7 @@ import registrationsRouter from './routes/registrations.js';
 app.use('/api/registrations', registrationsRouter);
 ```
 
-Notice the controller doesn't validate — `validate()` already did that before the controller ran. The controller only queries the DB and shapes the response.
+Notice the controller doesn't validate; `validate()` already did that before the controller ran. The controller only queries the DB and shapes the response.
 
 ---
 
@@ -179,22 +179,22 @@ The presign endpoint is `POST /api/uploads/presign`. It receives `{ purpose, con
 
 ## Domains to Build (in order)
 
-1. **auth** — already scaffolded, start here
-2. **registrations** — submit, list, get, approve, reject
-3. **users** — list, get, update, create-admin, update-status. List endpoint accepts `?stationId=` and `?role=` as query filters. Station filter is admin-only.
-4. **stations** — create, list, get, update, delete. Admin-only on all operations. Used to populate station dropdowns on the guide list filter and on the registration approval form. Endpoints: `GET /api/stations`, `POST /api/stations`, `GET /api/stations/:id`, `PATCH /api/stations/:id`, `DELETE /api/stations/:id`.
-5. **modules** — CRUD, publish, archive
-6. **content-items** — add, update, reorder, delete within a module
-7. **enrolments** — enrol, list, set due date
-8. **quizzes** — create, update, manage questions and options
-9. **quiz-attempts** — submit, list, get, grade (admin). For attempt_number > 1, check for a PAID payment row before creating.
-10. **payments** — initiate retake (BillPlz bill), BillPlz callback webhook (X-Signature verified)
-11. **certifications** — issue, list, download (pre-signed URL), public verify
-12. **badges** — list definitions, get guide's earned badges
-13. **notifications** — get own inbox, mark read, send custom (admin)
-14. **iot-alerts** — list, get, flag; internal ingest (separate router, not under `/api/`)
-15. **uploads** — presign S3 upload URL
-16. **sync** — offline batch sync endpoint
+1. **auth**: already scaffolded, start here
+2. **registrations**: submit, list, get, approve, reject
+3. **users**: list, get, update, create-admin, update-status. List endpoint accepts `?stationId=` and `?role=` as query filters. Station filter is admin-only.
+4. **stations**: create, list, get, update, delete. Admin-only on all operations. Used to populate station dropdowns on the guide list filter and on the registration approval form. Endpoints: `GET /api/stations`, `POST /api/stations`, `GET /api/stations/:id`, `PATCH /api/stations/:id`, `DELETE /api/stations/:id`.
+5. **modules**: CRUD, publish, archive
+6. **content-items**: add, update, reorder, delete within a module
+7. **enrolments**: enrol, list, set due date
+8. **quizzes**: create, update, manage questions and options
+9. **quiz-attempts**: submit, list, get, grade (admin). For attempt_number > 1, check for a PAID payment row before creating.
+10. **payments**: initiate retake (BillPlz bill), BillPlz callback webhook (X-Signature verified)
+11. **certifications**: issue, list, download (pre-signed URL), public verify
+12. **badges**: list definitions, get guide's earned badges
+13. **notifications**: get own inbox, mark read, send custom (admin)
+14. **iot-alerts**: list, get, flag; internal ingest (separate router, not under `/api/`)
+15. **uploads**: presign S3 upload URL
+16. **sync**: offline batch sync endpoint
 
 ---
 
@@ -209,21 +209,21 @@ The presign endpoint is `POST /api/uploads/presign`. It receives `{ purpose, con
 
 **IoT alert ingest** is not a client-facing endpoint. It's protected by `x-internal-secret` header (compared against `process.env.INTERNAL_SECRET`), not JWT. Keep it on a separate router outside `/api/` mounted at `/internal`. After saving the alert, emit a Socket.io `iot:alert` event via `req.app.get('io')` and fan-out `IOT_ALERT` notifications to all admins. Always return a 2xx status so AWS IoT Core does not retry.
 
-**Cert downloads** — never return the raw S3 key to the client. Always generate a pre-signed URL on the fly (15min expiry). Ask Law for the utility.
+**Cert downloads**: never return the raw S3 key to the client. Always generate a pre-signed URL on the fly (15min expiry). Ask Law for the utility.
 
-**Offline sync** — mobile batches offline data into one POST on reconnect. Accept an array, use the device-side `completedAt` timestamp (not server time). Never reject an offline submission even if the module is archived.
+**Offline sync**: mobile batches offline data into one POST on reconnect. Accept an array, use the device-side `completedAt` timestamp (not server time). Never reject an offline submission even if the module is archived.
 
-**Retake payment gate** — for `attempt_number > 1`, the quiz-attempts controller must check that a `PAID` Payment row exists for `(guideId, quizId)` with `quizAttemptId = null` before creating the attempt. On success, set `payment.quizAttemptId = newAttempt.id`. Return 402 `PAYMENT_REQUIRED` if not.
+**Retake payment gate**: for `attempt_number > 1`, the quiz-attempts controller must check that a `PAID` Payment row exists for `(guideId, quizId)` with `quizAttemptId = null` before creating the attempt. On success, set `payment.quizAttemptId = newAttempt.id`. Return 402 `PAYMENT_REQUIRED` if not.
 
-**BillPlz callback** — `POST /api/payments/callback` is a webhook from BillPlz, not a client request. No JWT auth. Verify the `X-Signature` header (HMAC-SHA256) before trusting the payload. Always return 200 — BillPlz retries if it receives anything else.
+**BillPlz callback**: `POST /api/payments/callback` is a webhook from BillPlz, not a client request. No JWT auth. Verify the `X-Signature` header (HMAC-SHA256) before trusting the payload. Always return 200; BillPlz retries if it receives anything else.
 
-**Badge award** — badges are for park guides only. When the certification count for a guide meets a badge threshold, create a `UserBadge` row. Never create a `UserBadge` for a user with `role = ADMIN`. Enforce this check before the insert, not after.
+**Badge award**: badges are for park guides only. When the certification count for a guide meets a badge threshold, create a `UserBadge` row. Never create a `UserBadge` for a user with `role = ADMIN`. Enforce this check before the insert, not after.
 
-**Content image presign** — `GET /api/modules/:moduleId/content-items/:id/image-url` uses `getPresignedDownloadUrl(item.imageS3Key, 900)` from `lib/s3.js`. Only applies to items of type `IMAGE` or `INFOGRAPHIC` (which have an `imageS3Key`). Items of type `VIDEO` with `videoSource: S3` use `videoUrl` directly (not an S3 key). Return 400 with `NO_IMAGE` error code if the item has no `imageS3Key`. Enrolment check: `req.user.role === 'ADMIN'` OR a matching `Enrolment` row with `guideId = req.user.id` and `moduleId = :moduleId`. Return 403 if enrolled check fails.
+**Content image presign**: `GET /api/modules/:moduleId/content-items/:id/image-url` uses `getPresignedDownloadUrl(item.imageS3Key, 900)` from `lib/s3.js`. Only applies to items of type `IMAGE` or `INFOGRAPHIC` (which have an `imageS3Key`). Items of type `VIDEO` with `videoSource: S3` use `videoUrl` directly (not an S3 key). Return 400 with `NO_IMAGE` error code if the item has no `imageS3Key`. Enrolment check: `req.user.role === 'ADMIN'` OR a matching `Enrolment` row with `guideId = req.user.id` and `moduleId = :moduleId`. Return 403 if enrolled check fails.
 
-**Payment status poll** — `GET /api/payments/me?quizId=:id` returns the most recent `Payment` row for `(guideId = req.user.id, quizId)` ordered by `createdAt desc`. If none exists, return `{ success: true, data: { status: null } }` (200, not 404) so the mobile client can distinguish "no payment" from "network error". Return the full payment shape when a row exists: `{ id, status, amount, billplzBillId, createdAt }`.
+**Payment status poll**: `GET /api/payments/me?quizId=:id` returns the most recent `Payment` row for `(guideId = req.user.id, quizId)` ordered by `createdAt desc`. If none exists, return `{ success: true, data: { status: null } }` (200, not 404) so the mobile client can distinguish "no payment" from "network error". Return the full payment shape when a row exists: `{ id, status, amount, billplzBillId, createdAt }`.
 
-**Certification getOne** — `GET /api/certifications/:id` returns the cert with `module: { id, title }` and `guide: { id, username }` includes. Ownership check: if `req.user.role === 'GUIDE'` and `cert.guideId !== req.user.id`, return 403. Admins may view any cert.
+**Certification getOne**: `GET /api/certifications/:id` returns the cert with `module: { id, title }` and `guide: { id, username }` includes. Ownership check: if `req.user.role === 'GUIDE'` and `cert.guideId !== req.user.id`, return 403. Admins may view any cert.
 
 ---
 

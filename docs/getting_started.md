@@ -11,14 +11,17 @@ Install the following before proceeding:
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| [Node.js](https://nodejs.org/) | v20 LTS | JavaScript runtime |
+| [Node.js](https://nodejs.org/) | v20 LTS (v22 works, see note below) | JavaScript runtime |
 | [pnpm](https://pnpm.io/) | v9+ | Package manager (`npm install -g pnpm`) |
 | [Docker Desktop](https://www.docker.com/products/docker-desktop/) | Latest | Runs Postgres locally |
 | [Git](https://git-scm.com/) | Latest | Version control |
 
 **Mobile development only:**
-- Android Studio (for Android emulator)
-- iOS requires macOS — use Expo Go on a physical device if on Windows/Linux
+- Expo Go app on your phone (Android or iOS) as it is our primary testing method
+- Android Studio (optional, for Android emulator only (I tried it and it was such a hurrendous experience))
+- iOS requires macOS for emulation, use Expo Go on a physical device if on Windows/Linux
+
+> **Node.js v22 note:** v22 enforces strict `package.json` exports which conflicts with Metro 0.83.x. The repo includes a custom resolver in `apps/mobile/metro.config.js` and a preload script `apps/mobile/_fix-node22.js` that handle this automatically. If Metro fails to start after running `pnpm install --force`, the patches in `node_modules/.pnpm/` will have been wiped and must be re-applied. See `CLAUDE.md` for details.
 
 **Recommended VS Code extensions:**
 - ESLint
@@ -88,13 +91,13 @@ SEED_ADMIN_USERNAME=YourAdminUsername
 SEED_ADMIN_PASSWORD=YourSecurePassword
 ```
 
-**Optional — leave blank to skip those features:**
-- `AWS_*` / `SES_*` — uploads and email will not work, but the rest of the API runs fine
-- `BILLPLZ_*` — payment flow will not work
+**Optional: leave blank to skip those features:**
+- `AWS_*` / `SES_*`: uploads and email will not work, but the rest of the API runs fine
+- `BILLPLZ_*`: payment flow will not work
 
 The `DATABASE_URL` is already pre-filled in `.env.example` to match the Docker setup (`localhost:5433`). Leave it as-is.
 
-**Also create `apps/api/.env`** — Prisma reads its database URL from here, not the root `.env`:
+**Also create `apps/api/.env`**: Prisma reads its database URL from here, not the root `.env`:
 
 **Windows:**
 ```powershell
@@ -111,6 +114,14 @@ You only need one line in `apps/api/.env`. Delete everything else and keep:
 ```
 DATABASE_URL=postgresql://user:password@localhost:5433/sfcpark
 ```
+
+**Also create `apps/mobile/.env`**: the mobile app reads the API base URL from here:
+
+```
+EXPO_PUBLIC_API_BASE=http://<YOUR_LAN_IP>:3000/api
+```
+
+Replace `<YOUR_LAN_IP>` with your machine's local network IP (see Step 8 for how to find it). If using an Android emulator instead of a physical device, use `http://10.0.2.2:3000/api`.
 
 ### 4. Start the local database
 
@@ -172,15 +183,15 @@ Apps are available at:
 
 The mobile app connects to the API over your local network. Your phone and your computer must be on the **same Wi-Fi network**.
 
-**Step 1 — Find your machine's LAN IP**
+**Step 1: Find your machine's LAN IP**
 
 | OS | Command | Look for |
 |----|---------|----------|
-| Windows | `ipconfig` in CMD | IPv4 Address under your active adapter (Wi-Fi or Ethernet) — e.g. `192.168.0.3` |
+| Windows | `ipconfig` in CMD | IPv4 Address under your active adapter (Wi-Fi or Ethernet), e.g. `192.168.0.3` |
 | Mac | `ifconfig` or System Settings → Wi-Fi → Details | `inet` address under `en0` |
 | Linux | `ip addr` | `inet` address under your active interface |
 
-**Step 2 — Configure `apps/mobile/.env`**
+**Step 2: Configure `apps/mobile/.env`**
 
 ```
 EXPO_PUBLIC_API_BASE=http://192.168.0.3:3000/api
@@ -188,7 +199,7 @@ EXPO_PUBLIC_API_BASE=http://192.168.0.3:3000/api
 
 Replace `192.168.0.3` with your actual LAN IP. The API must be running (step 7 above).
 
-**Step 3 — Start Expo**
+**Step 3: Start Expo**
 
 ```bash
 cd apps/mobile

@@ -4,7 +4,7 @@
 > The specs below reflect the intended and actual behaviour.
 >
 > **Key corrections vs. original plan:**
-> - Registration (`/register`) exists on **both web and mobile** — not mobile-only
+> - Registration (`/register`) exists on **both web and mobile**, not mobile-only
 > - **Both Admin/Trainer and Park Guide use both the web app and the mobile app**
 > - The two "Backend Additions Required" endpoints (`GET /api/payments/me?quizId=:id` and `GET /api/modules/:moduleId/content-items/:id/image-url`) are **already implemented** in the backend
 > - SQLite offline sync is implemented **after** full mobile-API integration is complete
@@ -13,30 +13,30 @@
 
 ---
 
-## Sprint Scope — What Gets Built When
+## Sprint Scope: What Gets Built When
 
 This is the most important section to read first. The proposal backlog assigns the web dashboard to Sprint 1 and the mobile app implementation to Sprint 2. Building out of this order wastes time and will not satisfy the sprint report requirements.
 
 | Deliverable | Owner | Sprint | Status |
 |---|---|---|---|
-| Web dashboard — Figma wireframes (all pages) | Cherylynn | Sprint 1 | ✅ Done |
-| Mobile app — Figma wireframes (all screens) | Xavier | Sprint 1 | ✅ Done |
-| Web dashboard — clickable Figma prototype | Cherylynn | Sprint 1 | ✅ Done |
-| Mobile app — clickable Figma prototype | Xavier | Sprint 1 | ✅ Done |
-| Web dashboard — implemented React screens | Cherylynn | Sprint 1 | ✅ Done |
-| Mobile app — implemented screens | Lawrence | Sprint 2 | ✅ Done |
-| Mobile offline sync engine | Lawrence | After integration | ⏳ Implemented after full mobile-API integration is verified |
+| Web dashboard: Figma wireframes (all pages) | Cherylynn | Sprint 1 | Done |
+| Mobile app: Figma wireframes (all screens) | Xavier | Sprint 1 | Done |
+| Web dashboard: clickable Figma prototype | Cherylynn | Sprint 1 | Done |
+| Mobile app: clickable Figma prototype | Xavier | Sprint 1 | Done |
+| Web dashboard: implemented React screens | Cherylynn | Sprint 1 | Done |
+| Mobile app: implemented screens | Lawrence | Sprint 2 | Done |
+| Mobile offline sync engine | Lawrence | After integration | Done |
 
-### Cherylynn — Sprint 1 Web Implementation Priority
+### Cherylynn: Sprint 1 Web Implementation Priority
 
 Build in this exact sequence. Each item depends on the one above it.
 
-1. API client + auth guard + layout shell (sidebar, topbar, toast system) — nothing else renders correctly without this
+1. API client + auth guard + layout shell (sidebar, topbar, toast system): nothing else renders correctly without this
 2. `/login`
 3. `/dashboard`
 4. `/registrations` + `/registrations/:id`
 5. `/modules` + `/modules/new` + `/modules/:id/edit`
-6. `/modules/:id/content` — the content and quiz builder; this is the most complex page, allocate the most time here
+6. `/modules/:id/content`: the content and quiz builder; this is the most complex page, allocate the most time here
 7. `/guides` + `/guides/:id`
 8. `/quiz-reviews` + `/quiz-reviews/:attemptId`
 9. `/certifications` + `/certifications/issue/:attemptId`
@@ -47,7 +47,7 @@ Build in this exact sequence. Each item depends on the one above it.
 
 If time runs short within Sprint 1, items 10–12 are the lowest risk to defer to Sprint 2 since they depend on IoT and notification APIs which may not be ready from the backend anyway.
 
-### Xavier — Sprint 1 Mobile Priority
+### Xavier: Sprint 1 Mobile Priority
 
 Sprint 1 is **Figma only** for mobile. No React Native implementation yet.
 
@@ -65,15 +65,15 @@ The clickable prototype must link these screens in a coherent user flow so it ca
 
 ---
 
-## Before You Start — Read This First
+## Before You Start: Read This First
 
 ### How the frontend connects to the backend
 
 - All data comes from the REST API at `/api/`. You never touch the database directly.
 - Use **TanStack Query** for all API calls on web. It handles caching, loading states, and refetching. Do not use `useEffect` + `fetch` manually.
-- Auth is JWT-based. The access token lives **in memory** (not localStorage). The refresh token lives in an HttpOnly cookie (web) or Expo SecureStore (mobile). You do not manage this manually — the auth module handles it.
-- When a request returns `401`, the client silently calls `POST /api/auth/refresh` and retries. If refresh also fails, redirect to login. This is handled at the API client layer — not in individual components.
-- File downloads (certificates, CVs) are **pre-signed URLs** returned by the API. They expire in 15 minutes. Never store them — always request fresh on demand.
+- Auth is JWT-based. The access token lives **in memory** (not localStorage). The refresh token lives in an HttpOnly cookie (web) or Expo SecureStore (mobile). You do not manage this manually; the auth module handles it.
+- When a request returns `401`, the client silently calls `POST /api/auth/refresh` and retries. If refresh also fails, redirect to login. This is handled at the API client layer, not in individual components.
+- File downloads (certificates, CVs) are **pre-signed URLs** returned by the API. They expire in 15 minutes. Never store them; always request fresh on demand.
 - Real-time IoT alerts come via **Socket.io**. The admin dashboard must maintain a persistent socket connection when logged in.
 
 ### Two separate applications
@@ -91,7 +91,7 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 
 ---
 
-## Web App — Admin/Trainer and Park Guide
+## Web App: Admin/Trainer and Park Guide
 
 **Tech:** React + Vite, TailwindCSS, shadcn/ui, TanStack Query, Socket.io client
 
@@ -148,7 +148,7 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 
 **What it does:**
 - `POST /api/auth/login` with credentials
-- On success: store access token in memory, redirect based on role claim in JWT — Admin → `/dashboard`, Guide → `/home`
+- On success: store access token in memory, redirect based on role claim in JWT. Admin → `/dashboard`, Guide → `/home`
 - On failure: show error message inline (do not clear the form)
 
 **Key UI notes:**
@@ -180,16 +180,16 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 - Quick actions: shortcut buttons to Registrations, New Module, Certifications, IoT Alerts
 
 **API calls:**
-- `GET /api/registrations?limit=1` — total count
-- `GET /api/users?role=GUIDE&status=ACTIVE&limit=1` — active guide count
-- `GET /api/quiz-attempts?status=PENDING_REVIEW&limit=1` — pending review count
-- `GET /api/certifications?limit=1` — certs issued count
-- `GET /api/modules?status=PUBLISHED&limit=1` — live modules count
-- `GET /api/notifications?limit=4` — recent activity feed
+- `GET /api/registrations?limit=1` (total count)
+- `GET /api/users?role=GUIDE&status=ACTIVE&limit=1` (active guide count)
+- `GET /api/quiz-attempts?status=PENDING_REVIEW&limit=1` (pending review count)
+- `GET /api/certifications?limit=1` (certs issued count)
+- `GET /api/modules?status=PUBLISHED&limit=1` (live modules count)
+- `GET /api/notifications?limit=4` (recent activity feed)
 
 > **Note:** Charts (Recharts) were originally planned here but removed. The required `GET /api/dashboard/stats` aggregate endpoint was not implemented in the backend. The stat cards cover the dashboard's informational needs with real live data.
 
-**Socket.io:** Connect here on mount. Listen for `iot:alert` event — when received, show a toast notification and increment the alert badge count. Do not navigate away automatically.
+**Socket.io:** Connect here on mount. Listen for `iot:alert` event. When received, show a toast notification and increment the alert badge count. Do not navigate away automatically.
 
 ---
 
@@ -212,13 +212,13 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 
 **What it shows:**
 - Applicant details: full name, IC/passport number, address, reason for applying
-- CV download button — calls `GET /api/registrations/:id/cv-url`, opens pre-signed URL in new tab
+- CV download button: calls `GET /api/registrations/:id/cv-url`, opens pre-signed URL in new tab
 - Approve button → opens a modal asking admin to set `start_date`, then `POST /api/registrations/:id/approve`
 - Reject button → opens a modal with optional rejection reason text field, then `POST /api/registrations/:id/reject`
 
 **After approval or rejection:**
 - Show success state, redirect back to `/registrations`
-- The API handles sending the email — you just trigger the action
+- The API handles sending the email. You just trigger the action.
 
 ---
 
@@ -242,14 +242,14 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 
 **Fields:**
 - Title (text input)
-- Description (rich text editor — use a simple one like `react-quill` or plain textarea for MVP)
+- Description (rich text editor; use a simple one like `react-quill` or plain textarea for MVP)
 - Status selector: DRAFT / PUBLISHED / ARCHIVED
 
 **API calls:**
 - POST: `POST /api/modules`
 - Edit: `PATCH /api/modules/:id`
 
-**Important:** Changing status to PUBLISHED sends a push notification to all guides. The backend handles this — you just PATCH the status.
+**Important:** Changing status to PUBLISHED sends a push notification to all guides. The backend handles this. You just PATCH the status.
 
 ---
 
@@ -258,7 +258,7 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 **What it is:** The most complex admin page. This is where the module's content items are built and ordered.
 
 **What it shows:**
-- Ordered list of content items (drag to reorder — use `@dnd-kit/core` or similar)
+- Ordered list of content items (drag to reorder; use `@dnd-kit/core` or similar)
 - Each item shows its type icon, title, and actions (edit, delete, move up/down)
 - "Add content item" button → opens a type selector modal
 
@@ -267,7 +267,7 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 | Type | What admin fills in |
 |------|-------------------|
 | `TEXT` | Rich text editor |
-| `IMAGE` | File upload (PNG/JPEG/WebP accepted — backend converts to WebP) |
+| `IMAGE` | File upload (PNG/JPEG/WebP accepted; backend converts to WebP) |
 | `VIDEO` | Choose S3 upload or YouTube URL; toggle `allow_offline` if S3 |
 | `INFOGRAPHIC` | Choose subtype (HOTSPOT / SCENARIO / STEPPER), then type-specific builder (see below) |
 | `QUIZ` | Title, pass score %, time limit, `show_score_to_guide` toggle; then add questions |
@@ -285,14 +285,14 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 - Drag to reorder questions
 
 **API calls:**
-- `GET /api/modules/:id/content` — fetch ordered content items
-- `POST /api/modules/:id/content` — add a content item
-- `PATCH /api/content/:itemId` — edit
-- `DELETE /api/content/:itemId` — delete
-- `PATCH /api/modules/:id/content/reorder` — send new order array
-- `POST /api/quizzes` — create quiz (linked to module)
-- `POST /api/quizzes/:quizId/questions` — add question
-- `POST /api/uploads/image` / `POST /api/uploads/video` — file upload endpoints
+- `GET /api/modules/:id/content` (fetch ordered content items)
+- `POST /api/modules/:id/content` (add a content item)
+- `PATCH /api/content/:itemId` (edit)
+- `DELETE /api/content/:itemId` (delete)
+- `PATCH /api/modules/:id/content/reorder` (send new order array)
+- `POST /api/quizzes` (create quiz linked to module)
+- `POST /api/quizzes/:quizId/questions` (add question)
+- `POST /api/uploads/image` / `POST /api/uploads/video` (file upload endpoints)
 
 ---
 
@@ -304,12 +304,12 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 - Table: name, username, email, status (ACTIVE / INACTIVE / SUSPENDED), station, start date, enrolment count, certification count
 - Click row → goes to `/guides/:id`
 - Filter by status
-- Filter by station — dropdown populated from `GET /api/stations`
+- Filter by station (dropdown populated from `GET /api/stations`)
 
 **API calls:**
 - `GET /api/users?role=GUIDE`
-- `GET /api/users?role=GUIDE&stationId=:id` — when station filter applied
-- `GET /api/stations` — to populate filter dropdown
+- `GET /api/users?role=GUIDE&stationId=:id` (when station filter applied)
+- `GET /api/stations` (to populate filter dropdown)
 
 ---
 
@@ -333,7 +333,7 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 - `GET /api/users/:id/certifications`
 - `GET /api/users/:id/badges`
 - `PATCH /api/users/:id/status`
-- `POST /api/notifications` — custom notification
+- `POST /api/notifications` (custom notification)
 
 ---
 
@@ -366,8 +366,8 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 - "Submit Grades" button → marks attempt as GRADED, guide is notified
 
 **API calls:**
-- `GET /api/quiz-attempts/:attemptId` — full attempt with all question attempts
-- `POST /api/quiz-attempts/:attemptId/grade` — submit all manual scores
+- `GET /api/quiz-attempts/:attemptId` (full attempt with all question attempts)
+- `POST /api/quiz-attempts/:attemptId/grade` (submit all manual scores)
 
 **After submitting:**
 - If pass score met → redirect to `/certifications/issue/:attemptId`
@@ -432,7 +432,7 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 
 **What it shows:**
 - Alert metadata: device ID, guide name, detection type, confidence, detected at
-- Evidence frame image — load via `GET /api/iot-alerts/:alertId/evidence-url` (pre-signed, opens in page)
+- Evidence frame image: load via `GET /api/iot-alerts/:alertId/evidence-url` (pre-signed, opens in page)
 - Two action buttons: "Confirm Violation" and "Mark as False Detection"
 - `PATCH /api/iot-alerts/:alertId/flag` with `status: CONFIRMED | FALSE_DETECTION`
 
@@ -470,7 +470,7 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 
 #### `/settings/stations`
 
-**What it is:** Station management — admin creates and manages the list of SFC park locations that guides are assigned to.
+**What it is:** Station management. Admin creates and manages the list of SFC park locations that guides are assigned to.
 
 **What it shows:**
 - List of all stations: name, number of guides assigned, created date
@@ -486,26 +486,26 @@ Shared Zod schemas and TypeScript-equivalent JS type definitions live in `packag
 
 ---
 
-### Web App — Global Components
+### Web App: Global Components
 
 These are not pages but must be built and shared across all pages:
 
-- **Sidebar navigation** — links to all main sections, notification badge count, logged-in admin name
-- **Top bar** — page title, notification bell icon, logout button
-- **Auth guard** — wraps all protected routes; redirects to `/login` if no valid token
-- **Toast system** — for success/error feedback on actions (use shadcn/ui Toast)
-- **Socket provider** — wraps the app, initialises Socket.io connection on login, tears down on logout
-- **API client** — centralised Axios or fetch wrapper that attaches the access token and handles 401 silent refresh
+- **Sidebar navigation**: links to all main sections, notification badge count, logged-in admin name
+- **Top bar**: page title, notification bell icon, logout button
+- **Auth guard**: wraps all protected routes; redirects to `/login` if no valid token
+- **Toast system**: for success/error feedback on actions (use shadcn/ui Toast)
+- **Socket provider**: wraps the app, initialises Socket.io connection on login, tears down on logout
+- **API client**: centralised Axios or fetch wrapper that attaches the access token and handles 401 silent refresh
 
 ---
 
-## Mobile App — Admin/Trainer and Park Guide
+## Mobile App: Admin/Trainer and Park Guide
 
 **Tech:** React Native + Expo, NativeWind, Expo Push Notifications, Expo SecureStore, Socket.io client, `@react-native-community/netinfo`
 
 > **Note on offline sync:** The Expo SQLite offline-first sync engine is implemented **after** all screens are verified against the live API. The scaffold (`src/database/db.js` using AsyncStorage) exists and will be wired to `POST /api/sync` in that phase. An `OfflineBanner` component is shown when network is unavailable via `@react-native-community/netinfo`.
 
-Both roles — Admin/Trainer and Park Guide — use the mobile app. Role-based access control (the `role` field in the JWT payload: `ADMIN` or `GUIDE`) determines which navigator is shown after login.
+Both roles (Admin/Trainer and Park Guide) use the mobile app. Role-based access control (the `role` field in the JWT payload: `ADMIN` or `GUIDE`) determines which navigator is shown after login.
 
 ---
 
@@ -553,7 +553,7 @@ Both roles — Admin/Trainer and Park Guide — use the mobile app. Role-based a
 **What it does:**
 - Email + password input
 - `POST /api/auth/login`
-- On success: store refresh token in Expo SecureStore, store access token in memory, navigate based on role — `ADMIN` → AdminDashboard, `GUIDE` → HomeScreen
+- On success: store refresh token in Expo SecureStore, store access token in memory, navigate based on role. `ADMIN` → AdminDashboard, `GUIDE` → HomeScreen
 - "Resend activation link" option calls `POST /api/auth/resend-activation`
 - Link to `RegistrationScreen` for guides who do not yet have an account
 
@@ -577,14 +577,14 @@ Both roles — Admin/Trainer and Park Guide — use the mobile app. Role-based a
 
 **What it shows:**
 - Welcome message with guide's name (from `GET /api/users/me`)
-- "Continue Learning" card — most recently active enrolment with progress bar
-- Upcoming deadlines — enrolments with `due_at` within the next 7 days
-- Recent notifications — last 3 unread
+- "Continue Learning" card: most recently active enrolment with progress bar
+- Upcoming deadlines: enrolments with `due_at` within the next 7 days
+- Recent notifications: last 3 unread
 
 **API calls:**
 - `GET /api/users/me`
-- `GET /api/enrolments/me` — sorted by last activity, take first for "Continue Learning"
-- `GET /api/enrolments/me` — filtered for due soon
+- `GET /api/enrolments/me` (sorted by last activity, take first for "Continue Learning")
+- `GET /api/enrolments/me` (filtered for due soon)
 - `GET /api/notifications/me?limit=3`
 
 ---
@@ -599,7 +599,7 @@ Both roles — Admin/Trainer and Park Guide — use the mobile app. Role-based a
 
 **API calls:**
 - `GET /api/modules?status=PUBLISHED`
-- `GET /api/enrolments/me` — to cross-reference enrolment status per module
+- `GET /api/enrolments/me` (to cross-reference enrolment status per module)
 
 ---
 
@@ -615,7 +615,7 @@ Both roles — Admin/Trainer and Park Guide — use the mobile app. Role-based a
 **API calls:**
 - `GET /api/modules/:id`
 - `GET /api/modules/:id/content`
-- `GET /api/enrolments/me` filtered by `moduleId` — returns enrolment with `contentItemProgresses`
+- `GET /api/enrolments/me` filtered by `moduleId` (returns enrolment with `contentItemProgresses`)
 
 ---
 
@@ -627,7 +627,7 @@ Both roles — Admin/Trainer and Park Guide — use the mobile app. Role-based a
 
 | Type | How to render |
 |------|--------------|
-| `TEXT` | `react-native-render-html` — parses the `textContent` HTML string into native RN components |
+| `TEXT` | `react-native-render-html`: parses the `textContent` HTML string into native RN components |
 | `IMAGE` | Full-width WebP image loaded from presigned URL via `GET /api/content-items/:id/image-url` |
 | `INFOGRAPHIC` | Same as IMAGE for the base image; HOTSPOT/SCENARIO/STEPPER interactivity rendered from the JSON data in `textContent` |
 | `VIDEO` (S3) | `expo-av` Video component with the presigned URL from `GET /api/content-items/:id/image-url` (or a dedicated video-url endpoint) |
@@ -675,12 +675,12 @@ Both roles — Admin/Trainer and Park Guide — use the mobile app. Role-based a
 **What it does:**
 - Shows quiz name and retake price
 - "Pay to Retake" button → `POST /api/payments/initiate` with `{ quizId }`
-- Opens returned `bill.url` with `Linking.openURL()` — launches device browser, BillPlz payment page
+- Opens returned `bill.url` with `Linking.openURL()`, which launches the device browser and the BillPlz payment page
 - On return to app: `GET /api/payments/me?quizId=:id` polls until status is `PAID` or `FAILED`
 - On `PAID`: navigate to `QuizScreen` for the retake
 - On `FAILED`: show error message, allow retry
 
-> **Backend addition required:** `GET /api/payments/me?quizId=:id` — returns the latest payment record for the logged-in guide for a given quiz. Does not exist yet; add to the payments router before implementing PaymentScreen.
+> **Backend addition required:** `GET /api/payments/me?quizId=:id` returns the latest payment record for the logged-in guide for a given quiz. Does not exist yet; add to the payments router before implementing PaymentScreen.
 
 ---
 
@@ -706,7 +706,7 @@ Both roles — Admin/Trainer and Park Guide — use the mobile app. Role-based a
 #### `CertificationsScreen`
 
 **What it shows:**
-- `GET /api/certifications/me` — list of earned certs
+- `GET /api/certifications/me` (list of earned certs)
 - Download button: `GET /api/certifications/:id/download-url` → open presigned URL
 
 ---
@@ -724,7 +724,7 @@ Both roles — Admin/Trainer and Park Guide — use the mobile app. Role-based a
 
 **What it shows:**
 - Earned badges: `GET /api/badges/users/:userId`
-- All badge definitions: `GET /api/badges` — show unearned greyed out
+- All badge definitions: `GET /api/badges` (show unearned greyed out)
 - Each badge: image, name, description, date earned
 
 ---
@@ -743,28 +743,28 @@ Both roles — Admin/Trainer and Park Guide — use the mobile app. Role-based a
   - `GET /api/certifications?limit=1` → `pagination.total`
 - Recent activity: `GET /api/notifications/me?limit=4`
 
-**Socket.io:** Connect on mount. Listen for `iot:alert` event — show toast, increment IoT alert badge. Disconnect on unmount. Same `socket.io-client` setup as web.
+**Socket.io:** Connect on mount. Listen for `iot:alert` event. Show toast, increment IoT alert badge. Disconnect on unmount. Same `socket.io-client` setup as web.
 
 ---
 
 #### `CoursesScreen` (module management tab)
 
 Nested stack:
-- **ModuleList** — `GET /api/modules`, filter by status, tap → ModuleView
-- **ModuleEdit** — create: `POST /api/modules`; edit: `PATCH /api/modules/:id`
-- **ModuleView** — module detail with enrolment count
-- **ContentBuild** — `GET/POST /api/modules/:id/content`, `PATCH/DELETE /api/content-items/:id`, reorder `PATCH /api/modules/:id/content/reorder`; quiz builder `POST /api/quizzes`, `POST /api/quizzes/:id/questions`; image/video upload via `POST /api/uploads/presign`
-- **QuizGrading** — list: `GET /api/quiz-attempts?status=PENDING_REVIEW`; grade: `GET /api/quiz-attempts/:id`, `PATCH /api/quiz-attempts/:id/grade`; on pass → CertIssue
-- **CertIssue** — `POST /api/certifications` with all required fields (guideId, quizAttemptId, moduleId, companyName, issuerName, issuerTitle, issueDate, expiryDate)
-- **Certification** (admin list) — `GET /api/certifications`, download URL per cert
+- **ModuleList**: `GET /api/modules`, filter by status, tap → ModuleView
+- **ModuleEdit**: create: `POST /api/modules`; edit: `PATCH /api/modules/:id`
+- **ModuleView**: module detail with enrolment count
+- **ContentBuild**: `GET/POST /api/modules/:id/content`, `PATCH/DELETE /api/content-items/:id`, reorder `PATCH /api/modules/:id/content/reorder`; quiz builder `POST /api/quizzes`, `POST /api/quizzes/:id/questions`; image/video upload via `POST /api/uploads/presign`
+- **QuizGrading**: list: `GET /api/quiz-attempts?status=PENDING_REVIEW`; grade: `GET /api/quiz-attempts/:id`, `PATCH /api/quiz-attempts/:id/grade`; on pass → CertIssue
+- **CertIssue**: `POST /api/certifications` with all required fields (guideId, quizAttemptId, moduleId, companyName, issuerName, issuerTitle, issueDate, expiryDate)
+- **Certification** (admin list): `GET /api/certifications`, download URL per cert
 
 ---
 
 #### `RegistrationsScreen`
 
 Nested stack:
-- **RegistrationList** — `GET /api/registrations?status=...`, filter tabs
-- **RegistrationDetails** — `GET /api/registrations/:id`; CV download via `GET /api/registrations/:id/cv-url`; approve `POST /api/registrations/:id/approve`; reject `POST /api/registrations/:id/reject`
+- **RegistrationList**: `GET /api/registrations?status=...`, filter tabs
+- **RegistrationDetails**: `GET /api/registrations/:id`; CV download via `GET /api/registrations/:id/cv-url`; approve `POST /api/registrations/:id/approve`; reject `POST /api/registrations/:id/reject`
 
 ---
 
@@ -779,16 +779,16 @@ Nested stack:
 #### `SettingsScreen`
 
 Nested stack:
-- **StationManagement** — `GET/POST/PATCH/DELETE /api/stations`
-- **AdminList** — `GET /api/users?role=ADMIN`; create: `POST /api/users/admins`
-- **GuideList** — `GET /api/users?role=GUIDE` + station filter from `GET /api/stations`
-- **GuideDetails** — full profile: users, enrolments, quiz attempts, certifications, badges; suspend/reactivate `PATCH /api/users/:id/status`; send custom notification
-- **IoTAlertList** — `GET /api/iot-alerts`, filter by status; new alerts via Socket.io
-- **IoTAlertDetail** — `GET /api/iot-alerts/:id`; evidence image via `GET /api/iot-alerts/:id/evidence-url`; flag: `PATCH /api/iot-alerts/:id/flag`
+- **StationManagement**: `GET/POST/PATCH/DELETE /api/stations`
+- **AdminList**: `GET /api/users?role=ADMIN`; create: `POST /api/users/admins`
+- **GuideList**: `GET /api/users?role=GUIDE` + station filter from `GET /api/stations`
+- **GuideDetails**: full profile: users, enrolments, quiz attempts, certifications, badges; suspend/reactivate `PATCH /api/users/:id/status`; send custom notification
+- **IoTAlertList**: `GET /api/iot-alerts`, filter by status; new alerts via Socket.io
+- **IoTAlertDetail**: `GET /api/iot-alerts/:id`; evidence image via `GET /api/iot-alerts/:id/evidence-url`; flag: `PATCH /api/iot-alerts/:id/flag`
 
 ---
 
-### Mobile App — Global Concerns
+### Mobile App: Global Concerns
 
 - **Auth persistence:** On app launch, read refresh token from Expo SecureStore. Silently call `POST /api/auth/refresh`. On success: hydrate auth state, show app. On failure or offline: show login.
 - **401 handling:** API client intercepts 401, calls `POST /api/auth/refresh`, retries original request. On second 401: force logout.
@@ -798,24 +798,24 @@ Nested stack:
 
 ---
 
-### Backend Endpoints for Mobile — Already Implemented
+### Backend Endpoints for Mobile: Already Implemented
 
 Both endpoints that were originally listed as "required before mobile can complete" are now live in the backend.
 
 | Endpoint | Status | Notes |
 |---|---|---|
-| `GET /api/payments/me?quizId=:id` | ✅ Implemented | Returns `{ status }` — PENDING, PAID, FAILED, or null. Mobile polls on return from BillPlz. |
-| `GET /api/modules/:moduleId/content-items/:id/image-url` | ✅ Implemented | Returns `{ url }` — 15-min presigned GET URL for IMAGE/INFOGRAPHIC items. Guide must be enrolled or role is ADMIN. |
+| `GET /api/payments/me?quizId=:id` | Implemented | Returns `{ status }`: PENDING, PAID, FAILED, or null. Mobile polls on return from BillPlz. |
+| `GET /api/modules/:moduleId/content-items/:id/image-url` | Implemented | Returns `{ url }`: 15-min presigned GET URL for IMAGE/INFOGRAPHIC items. Guide must be enrolled or role is ADMIN. |
 
 ---
 
 ## What You Do NOT Build
 
-To avoid confusion — these are explicitly out of scope for the frontend:
+To avoid confusion, these are explicitly out of scope for the frontend:
 
-- PDF certificate generation — this happens server-side, you only display/download the result
-- Push notification delivery — Expo handles this, you only handle receiving and displaying them
-- BillPlz webhook verification — handled server-side; mobile only opens the URL and polls for status
+- PDF certificate generation: this happens server-side, you only display/download the result
+- Push notification delivery: Expo handles this, you only handle receiving and displaying them
+- BillPlz webhook verification: handled server-side; mobile only opens the URL and polls for status
 
 ---
 
@@ -835,4 +835,4 @@ You will need to coordinate with the backend team (Law, Joey, Cyndia, Faisal) on
 10. IoT Alerts
 11. Sync endpoint
 
-Build screens in that priority order. Use mock data (hardcoded JS objects) for screens whose API is not yet ready — do not block on the backend.
+Build screens in that priority order. Use mock data (hardcoded JS objects) for screens whose API is not yet ready. Do not block on the backend.
