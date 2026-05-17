@@ -4,9 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import useNetworkStatus from '../../services/connectivityService';
 import { FONTS } from '../../theme/fonts';
-import { modulesApi } from '../../api/modules';
-import { contentItemsApi } from '../../api/contentItems';
 import { enrolmentsApi } from '../../api/enrolments';
+import { syncService } from '../../services/syncService';
 
 const TYPE_CFG = {
 	VIDEO:       { icon: 'play',          color: '#15803d', bg: '#dcfce7' },
@@ -76,10 +75,9 @@ export default function LessonScreen() {
 	const load = useCallback(async () => {
 		if (!moduleId) return;
 		try {
-			const [modData, itemsData, enrolData] = await Promise.all([
-				modulesApi.getOne(moduleId),
-				contentItemsApi.getAll(moduleId),
-				enrolmentsApi.getMyEnrolmentForModule(moduleId),
+			const [{ module: modData, enrolment: enrolData }, itemsData] = await Promise.all([
+				syncService.loadModuleDetail(moduleId),
+				syncService.loadContentItems(moduleId),
 			]);
 			setModule(modData);
 			setItems(Array.isArray(itemsData) ? itemsData : []);
@@ -163,7 +161,16 @@ export default function LessonScreen() {
 						Course Content
 					</Text>
 
-					{items.length > 0 ? (
+					{!module && isOnline === false && (
+							<View style={{ alignItems: 'center', marginTop: 40, paddingHorizontal: 24 }}>
+								<Ionicons name="cloud-offline-outline" size={44} color="#d1d5db" />
+								<Text style={{ fontFamily: FONTS.label, fontSize: 14, color: '#9ca3af', marginTop: 12, textAlign: 'center', lineHeight: 20 }}>
+									This module hasn't been loaded yet. Open it while connected first.
+								</Text>
+							</View>
+						)}
+
+						{items.length > 0 ? (
 						<View style={{
 							backgroundColor: '#fff', borderRadius: 16, overflow: 'hidden',
 							shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 6, elevation: 2,

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Modal, ActivityIndicator, Alert } from 'react-native';
+import { getQuizOutbox } from '../../database/db';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../services/AuthContext';
@@ -96,6 +97,25 @@ export default function GuideProfile() {
 		{ icon: 'medal',            iconColor: '#d97706', iconBg: '#fef3c7', value: badgeCount,  label: 'Badges'    },
 	];
 
+	// Intercept Sign Out tap: warn the guide if they have unsynced quiz attempts.
+	// If the outbox is empty, proceed to the existing confirmation modal.
+	const handleSignOutTap = async () => {
+		const outbox = await getQuizOutbox();
+		if (outbox.length > 0) {
+			Alert.alert(
+				'Unsynced Quiz Attempts',
+				`You have ${outbox.length} quiz attempt${outbox.length !== 1 ? 's' : ''} that haven't been submitted yet. Connect to the internet and wait for sync before logging out, or your answers will be lost.`,
+				[
+					{ text: 'Stay Logged In', style: 'cancel' },
+					{ text: 'Log Out Anyway', style: 'destructive', onPress: () => logout() },
+				]
+			);
+			return;
+		}
+		setShowSignOut(true);
+	};
+
+
 	return (
 		<View style={{ flex: 1, backgroundColor: '#f3f4f6' }}>
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
@@ -181,7 +201,7 @@ export default function GuideProfile() {
 				)}
 
 				<TouchableOpacity
-					onPress={() => setShowSignOut(true)}
+					onPress={handleSignOutTap}
 					style={{
 						flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
 						marginHorizontal: 16, borderWidth: 2, borderColor: '#dc2626', borderRadius: 14,

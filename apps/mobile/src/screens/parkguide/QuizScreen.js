@@ -6,9 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import useNetworkStatus from '../../services/connectivityService';
 import { FONTS } from '../../theme/fonts';
-import { quizzesApi } from '../../api/quizzes';
-import { quizAttemptsApi } from '../../api/quizAttempts';
 import { paymentsApi } from '../../api/payments';
+import { syncService } from '../../services/syncService';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 
@@ -135,7 +134,7 @@ export default function QuizScreen() {
 	const navigation   = useNavigation();
 	const { isOnline } = useNetworkStatus();
 	const route        = useRoute();
-	const { quizId, moduleTitle } = route.params ?? {};
+	const { quizId, moduleTitle, moduleId } = route.params ?? {};
 
 	const [quiz,        setQuiz]        = useState(null);
 	const [loading,     setLoading]     = useState(true);
@@ -149,7 +148,7 @@ export default function QuizScreen() {
 		if (!quizId) return;
 		try {
 			const [quizData, payData] = await Promise.allSettled([
-				quizzesApi.getOne(quizId),
+				syncService.loadQuiz(quizId),
 				paymentsApi.getMyStatus(quizId),
 			]);
 			if (quizData.status === 'fulfilled') setQuiz(quizData.value);
@@ -216,8 +215,14 @@ export default function QuizScreen() {
 
 		setSubmitting(true);
 		try {
-			const attempt = await quizAttemptsApi.submit(quizId, responses);
-			navigation.navigate('QuizResult', { attemptId: attempt.id, moduleTitle });
+			const result = await syncService.submitQuizAttempt({
+				quizId, moduleId, moduleTitle, quizTitle: quiz.title, responses,
+			});
+			if (result.offline) {
+				navigation.navigate('QuizResult', { offline: true, clientId: result.clientId, moduleTitle });
+			} else {
+				navigation.navigate('QuizResult', { attemptId: result.id, moduleTitle });
+			}
 		} catch (err) {
 			Alert.alert('Submission Failed', err.message || 'Unable to submit quiz. Please try again.');
 		} finally {

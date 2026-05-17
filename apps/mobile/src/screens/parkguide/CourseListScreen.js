@@ -4,8 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import useNetworkStatus from '../../services/connectivityService';
 import { FONTS } from '../../theme/fonts';
-import { modulesApi } from '../../api/modules';
-import { enrolmentsApi } from '../../api/enrolments';
+import { syncService } from '../../services/syncService';
 
 function CourseCard({ module, enrolment, onPress }) {
 	const progress   = enrolment?.progressPct ?? 0;
@@ -87,12 +86,9 @@ export default function CourseListScreen() {
 
 	const load = useCallback(async () => {
 		try {
-			const [modData, enrolData] = await Promise.all([
-				modulesApi.getAll({ status: 'PUBLISHED', limit: 100 }),
-				enrolmentsApi.getMyEnrolments({ limit: 100 }),
-			]);
-			setModules(Array.isArray(modData) ? modData : []);
-			setEnrolments(Array.isArray(enrolData) ? enrolData : []);
+			const { modules: modData, enrolments: enrolData } = await syncService.loadEnrolments();
+			setModules(modData);
+			setEnrolments(enrolData);
 		} catch {
 			// keep empty
 		} finally {
@@ -162,7 +158,15 @@ export default function CourseListScreen() {
 							/>
 						))}
 
-						{filtered.length === 0 && (
+						{filtered.length === 0 && isOnline === false && (
+							<View style={{ alignItems: 'center', marginTop: 48 }}>
+								<Ionicons name="cloud-offline-outline" size={44} color="#d1d5db" />
+								<Text style={{ fontFamily: FONTS.label, fontSize: 14, color: '#9ca3af', marginTop: 12, textAlign: 'center', paddingHorizontal: 16 }}>
+									Connect to the internet to load your modules.
+								</Text>
+							</View>
+						)}
+						{filtered.length === 0 && isOnline !== false && (
 							<View style={{ alignItems: 'center', marginTop: 48 }}>
 								<Ionicons name="search-outline" size={44} color="#d1d5db" />
 								<Text style={{ fontFamily: FONTS.label, fontSize: 14, color: '#9ca3af', marginTop: 12 }}>

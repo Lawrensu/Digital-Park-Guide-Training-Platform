@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { api, setAccessToken, clearAccessToken, setLogoutCallback, tokenStorage } from './api';
 import { API_BASE } from '../config';
 import { registerForPushNotifications } from './notificationService';
+import { clearAllCache } from '../database/db';
 
 const AuthContext = createContext(null);
 
@@ -11,6 +12,7 @@ export const AuthProvider = ({ children }) => {
 
 	const logout = useCallback(async () => {
 		try { await api.post('/auth/logout', {}); } catch {}
+		try { await clearAllCache(); } catch {} // wipe SQLite: own try/catch so logout always completes
 		clearAccessToken();
 		await tokenStorage.clearRefresh();
 		await tokenStorage.clearUser();

@@ -10,8 +10,8 @@ import RenderHtml from 'react-native-render-html';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import useNetworkStatus from '../../services/connectivityService';
 import { FONTS } from '../../theme/fonts';
-import { enrolmentsApi } from '../../api/enrolments';
 import { contentItemsApi } from '../../api/contentItems';
+import { syncService } from '../../services/syncService';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -168,7 +168,7 @@ export default function ContentScreen() {
 
 	useEffect(() => {
 		if (!item?.id) return;
-		enrolmentsApi.markProgress(item.id).catch(() => {});
+		syncService.markProgress(item.id, moduleId).catch(() => {});
 	}, [item?.id]);
 
 	const goBack = () => {
@@ -232,7 +232,7 @@ export default function ContentScreen() {
 				{item.type === 'QUIZ' && (
 					<QuizContent
 						item={item}
-						onTakeQuiz={() => navigation.navigate('Quiz', { quizId: item.quizId, moduleTitle })}
+						onTakeQuiz={() => navigation.navigate('Quiz', { quizId: item.quizId, moduleTitle, moduleId })}
 					/>
 				)}
 			</ScrollView>
@@ -256,7 +256,7 @@ export default function ContentScreen() {
 
 				{isQuiz ? (
 					<TouchableOpacity
-						onPress={() => navigation.navigate('Quiz', { quizId: item.quizId, moduleTitle })}
+						onPress={() => navigation.navigate('Quiz', { quizId: item.quizId, moduleTitle, moduleId })}
 						style={{ flex: 3, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 14, borderRadius: 14, backgroundColor: '#15803d' }}
 					>
 						<Ionicons name="help-circle-outline" size={16} color="#fff" />

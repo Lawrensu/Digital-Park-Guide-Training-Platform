@@ -1,6 +1,7 @@
 import './global.css';
 import './src/services/notificationService'; // side effect: registers foreground notification handler
 import React, { useEffect } from 'react';
+import { AppState } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
@@ -10,6 +11,7 @@ import { AuthProvider } from './src/services/AuthContext';
 import { DatabaseProvider } from './src/database/DatabaseContext';
 import OfflineBanner from './src/components/OfflineBanner';
 import useNetworkStatus from './src/services/connectivityService';
+import { syncService } from './src/services/syncService';
 
 const navigationRef = createNavigationContainerRef();
 
@@ -53,6 +55,25 @@ function AppInner() {
 			navigateForNotification(response.notification.request.content.data);
 		});
 
+		return () => sub.remove();
+	}, []);
+
+	// Keep syncService connectivity flag in sync with the network hook.
+	// syncService cannot use hooks directly, so App.js bridges the gap.
+	useEffect(() => {
+		if (isOnline !== null) {
+			syncService.setOnlineStatus(isOnline);
+		}
+	}, [isOnline]);
+
+	// Drain both outboxes whenever the app comes back to the foreground.
+	// This is the primary sync trigger: guide reconnects, backgrounds app, foregrounds it.
+	useEffect(() => {
+		const sub = AppState.addEventListener('change', (nextState) => {
+			if (nextState === 'active') {
+				syncService.flush();
+			}
+		});
 		return () => sub.remove();
 	}, []);
 

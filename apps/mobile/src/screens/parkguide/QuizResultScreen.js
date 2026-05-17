@@ -10,18 +10,44 @@ export default function QuizResultScreen() {
 	const navigation   = useNavigation();
 	const { isOnline } = useNetworkStatus();
 	const route        = useRoute();
-	const { attemptId, moduleTitle } = route.params ?? {};
+	const { attemptId, moduleTitle, offline, clientId } = route.params ?? {};
 
 	const [attempt, setAttempt] = useState(null);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		if (!attemptId) { setLoading(false); return; }
+		if (offline || !attemptId) { setLoading(false); return; }
 		quizAttemptsApi.getOne(attemptId)
 			.then(setAttempt)
 			.catch(() => {})
 			.finally(() => setLoading(false));
-	}, [attemptId]);
+	}, [attemptId, offline]);
+
+	// Offline submission: show "Quiz Saved" screen — no score available until server processes it
+	if (offline) {
+		return (
+			<View style={{ flex: 1, backgroundColor: '#f0fdf4', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
+				<View style={{
+					width: 96, height: 96, borderRadius: 48,
+					backgroundColor: '#dcfce7', alignItems: 'center', justifyContent: 'center', marginBottom: 28,
+				}}>
+					<Ionicons name="cloud-upload-outline" size={48} color="#15803d" />
+				</View>
+				<Text style={{ fontFamily: FONTS.title, fontSize: 24, fontWeight: '600', color: '#111827', textAlign: 'center', marginBottom: 12 }}>
+					Quiz Saved
+				</Text>
+				<Text style={{ fontFamily: FONTS.body, fontSize: 15, color: '#6b7280', textAlign: 'center', lineHeight: 23, marginBottom: 32 }}>
+					You're offline. Your answers have been saved and will be submitted automatically when you reconnect.
+				</Text>
+				<TouchableOpacity
+					onPress={() => navigation.navigate('CourseList')}
+					style={{ width: '100%', paddingVertical: 16, borderRadius: 16, backgroundColor: '#15803d', alignItems: 'center' }}
+				>
+					<Text style={{ fontFamily: FONTS.button, fontSize: 15, color: '#fff', fontWeight: '700' }}>Back to Modules</Text>
+				</TouchableOpacity>
+			</View>
+		);
+	}
 
 	if (loading) {
 		return (

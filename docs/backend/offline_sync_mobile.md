@@ -45,11 +45,13 @@ Video and image content still require a network connection. The engine does not 
 
 ## 3. Storage Decision — expo-sqlite
 
-**Storage: `expo-sqlite` v14 (not AsyncStorage)**
+**Storage: `expo-sqlite` v15 (not AsyncStorage)**
 
-`expo-sqlite` v14 ships with Expo SDK 52 and works in managed workflow — no `expo prebuild` or native build required. It works in Expo Go, Android emulator, and physical devices identically.
+**Correction from implementation:** `npx expo install expo-sqlite` on SDK 52 installs `expo-sqlite@~15.1.4`, not v14. The spec was written for v14. The API methods are identical (`openDatabaseAsync`, `execAsync`, `runAsync`, `getFirstAsync`, `getAllAsync`, `withTransactionAsync`), so all implementation code is correct with v15.
 
-The comment in the existing `src/database/db.js` scaffold saying "SQLite disabled for Expo Go" was written for SDK 48 and is **outdated**. SDK 52 with expo-sqlite v14 has no such restriction.
+`expo-sqlite` v15 works in managed workflow — no `expo prebuild` or native build required. It works in Expo Go, Android emulator, and physical devices identically.
+
+The comment in the old `src/database/db.js` scaffold saying "SQLite disabled for Expo Go" was written for SDK 48 and is **outdated**. SDK 52 with expo-sqlite v15 has no such restriction.
 
 **Why SQLite over AsyncStorage for this app:**
 
@@ -308,36 +310,79 @@ submitQuizAttempt({ quizId, moduleId, moduleTitle, quizTitle, responses })
 
 ### Key design rules
 
-- `syncService` does not import or use `connectivityService.js` (that's a React hook — hooks cannot be called outside components). Instead, connectivity is checked by attempting an API call and catching network errors, OR by reading a module-level `isOnline` flag that App.js keeps updated via NetInfo.
+- `syncService` cannot use `connectivityService.js` (React hooks cannot be called outside components). Connectivity is tracked via a module-level `let _isOnline = true` flag inside `syncService.js`. Export a `setOnlineStatus(bool)` setter. In `App.js` inside `AppInner` (which already calls `useNetworkStatus()`), add a `useEffect` that calls `syncService.setOnlineStatus(isOnline)` whenever `isOnline` changes. This keeps `_isOnline` current without any React dependency inside syncService.
 - `syncService` uses `api.js` for all network calls — JWT refresh is handled transparently.
 - `flush()` is safe to call multiple times concurrently — use a module-level `_flushing` boolean flag to prevent overlapping flushes.
+- **`api.js` error shape (confirmed from source):** the custom fetch wrapper sets `err.status = res.status` on the thrown `Error` object directly. Use `err?.status === 400` not `err?.response?.status`. This applies to the 400/404 discard logic in `flushProgressOutbox`.
+- **No `sync.js` in `src/api/`** — `flushQuizOutbox` calls `api.post('/sync', { attempts: payload })` directly from syncService. Do not create a separate api module for this.
+- **`POST /api/sync` response shape (CRITICAL):** The sync controller returns `{ success: true, data: { results } }`. After `api.js` strips the `data` wrapper, syncService receives `{ results: [...] }` — NOT a flat array. Access via `response.results` in `flushQuizOutbox`. The spec previously stated the response was a flat array — this was wrong.
+
+### syncService return shapes
+
+`loadEnrolments()` returns `{ modules: [], enrolments: [] }` — always, never throws.
+- **Online path:** fetch `modulesApi.getAll({ status: 'PUBLISHED', limit: 100 })` and `enrolmentsApi.getMyEnrolments({ limit: 100 })` in parallel. Cache the enrolments array. Return `{ modules, enrolments }`.
+- **Offline path:** read `getCachedEnrolments()`. Derive modules from `cachedEnrolments.map(e => e.module).filter(Boolean)`. Return `{ modules: derived, enrolments: cachedEnrolments }`. Only enrolled modules are visible offline — correct behaviour since unenrolled modules cannot be accessed offline anyway.
+
+`loadModuleDetail(moduleId)` returns `{ module, enrolment }` — either field can be null.
+- **Online path:** fetch `modulesApi.getOne(moduleId)`, cache it. Look up the enrolment for this module by reading the cached enrolments list and filtering by `moduleId`. Return `{ module, enrolment }`.
+- **Offline path:** read cached module. Read cached enrolments, find by `moduleId`. Return `{ module, enrolment }`.
+- Enrolment is required in `LessonScreen` for `contentItemProgresses`, `progressPct`, and `isEnrolled`. The enrolments list must already be cached (guide visits course list before module detail in normal flow).
 
 ---
 
 ## 8. Screen Integration
 
-### App.js changes
+### DatabaseContext.js changes (Step 1)
 
-Add AppState listener for flush triggering (alongside the existing notification listener):
+`src/database/DatabaseContext.js` already exists and wraps the entire app (including `AuthProvider`) via `App.js`. It is currently a stub that calls `setDbReady(true)` immediately. This is the correct place to call `initDatabase()` — **not App.js**.
+
+Update the existing `useEffect` inside `DatabaseProvider`:
 
 ```js
-import { AppState } from 'react-native';
-import { syncService } from './src/services/syncService';
-import { initDatabase } from './src/database/db';
+import { initDatabase } from './db';
 
-// In the root component, on mount:
+// Replace the stub useEffect with:
 useEffect(() => {
-  // Initialise SQLite on app start
-  initDatabase();
+  initDatabase()
+    .then(() => setDbReady(true))
+    .catch(() => setDbReady(true)); // degrade gracefully — app works online without offline support
+}, []);
+```
 
+Both `.then` and `.catch` call `setDbReady(true)` so children always render. SQLite init failure does not crash the app.
+
+### App.js changes
+
+`App.js` already has an `AppInner` component that calls `useNetworkStatus()` and renders `<OfflineBanner>`. Add two new `useEffect` hooks inside `AppInner` — one per step:
+
+**Step 3 — wire setOnlineStatus:**
+```js
+import { syncService } from './src/services/syncService';
+
+// Inside AppInner, after the existing notification useEffect:
+useEffect(() => {
+  if (isOnline !== null) {
+    syncService.setOnlineStatus(isOnline);
+  }
+}, [isOnline]);
+```
+
+**Step 6 — AppState flush trigger:**
+```js
+import { AppState } from 'react-native';
+
+// Inside AppInner, alongside the above:
+useEffect(() => {
   const sub = AppState.addEventListener('change', (nextState) => {
     if (nextState === 'active') {
-      syncService.flush();  // fire-and-forget, errors are caught inside flush()
+      syncService.flush(); // fire-and-forget, errors caught inside flush()
     }
   });
   return () => sub.remove();
 }, []);
 ```
+
+Do not call `initDatabase()` in App.js — it is handled by `DatabaseContext.js`.
 
 ### CourseListScreen.js
 
@@ -358,30 +403,76 @@ When offline and no cache: show empty state — "Connect to the internet to load
 
 ### LessonScreen.js
 
-Replace `modulesApi.getOne(moduleId)` + `contentItemsApi.getAll(moduleId)` + `enrolmentsApi.getMyEnrolmentForModule(moduleId)` with syncService calls.
+Replace the three-call `Promise.all` (`modulesApi.getOne`, `contentItemsApi.getAll`, `enrolmentsApi.getMyEnrolmentForModule`) with two syncService calls. `loadModuleDetail` returns `{ module, enrolment }` — not just `module`:
 
 ```js
-const [module, items] = await Promise.all([
+// Before:
+const [modData, itemsData, enrolData] = await Promise.all([
+  modulesApi.getOne(moduleId),
+  contentItemsApi.getAll(moduleId),
+  enrolmentsApi.getMyEnrolmentForModule(moduleId),
+]);
+setModule(modData);
+setItems(Array.isArray(itemsData) ? itemsData : []);
+setEnrolment(enrolData);
+
+// After:
+const [{ module: modData, enrolment: enrolData }, itemsData] = await Promise.all([
   syncService.loadModuleDetail(moduleId),
   syncService.loadContentItems(moduleId),
 ]);
+setModule(modData);
+setItems(itemsData);
+setEnrolment(enrolData);
 ```
 
-When offline and not cached: "This module hasn't been loaded yet. Open it while connected first."
+Remove imports of `modulesApi`, `contentItemsApi`, and `enrolmentsApi`. The `handleEnrol` function still calls `enrolmentsApi.enrol(moduleId)` — keep that import only if enrol is needed, otherwise it too can be removed if enrol is out of scope. For this step, keep enrol working online-only.
+
+When offline and `module === null`: show "This module hasn't been loaded yet. Open it while connected first."
 
 ### ContentScreen.js
 
-Replace `enrolmentsApi.markProgress(contentItemId)` with `syncService.markProgress(contentItemId, moduleId)`.
+Replace `enrolmentsApi.markProgress(contentItemId)` with `syncService.markProgress(contentItemId, moduleId)`. `moduleId` is already available from `route.params` in ContentScreen.
 
-No other changes — the content body (textContent, videoUrl, etc.) already comes from the content item object passed as a route param from LessonScreen.
+**Critical — add `moduleId` to both Quiz navigation calls (required for Step 5):**
+
+ContentScreen has two places that navigate to `'Quiz'`. Both currently pass `{ quizId: item.quizId, moduleTitle }`. Add `moduleId` to both:
+
+```js
+// 1. Inside the QuizContent sub-component's onTakeQuiz prop:
+onTakeQuiz={() => navigation.navigate('Quiz', { quizId: item.quizId, moduleTitle, moduleId })}
+
+// 2. The bottom navigation bar "Take Quiz" button onPress:
+onPress={() => navigation.navigate('Quiz', { quizId: item.quizId, moduleTitle, moduleId })}
+```
+
+Remove the `enrolmentsApi` import from ContentScreen after replacing `markProgress`. Keep the `contentItemsApi` import — it is used by the `ImageContent` sub-component to fetch presigned image URLs and is unrelated to this change.
 
 ### QuizScreen.js
 
 Two changes:
 
-**1. Quiz loading:** replace `quizzesApi.getOne(quizId)` with `syncService.loadQuiz(quizId)`.
+**1. Quiz loading (Step 3):** replace `quizzesApi.getOne(quizId)` with `syncService.loadQuiz(quizId)` inside the `load` callback. The `Promise.allSettled` structure stays — only the quiz fetch changes:
 
-**2. Submission:** replace `quizAttemptsApi.submit()` with `syncService.submitQuizAttempt()`.
+```js
+const [quizData, payData] = await Promise.allSettled([
+  syncService.loadQuiz(quizId),   // was: quizzesApi.getOne(quizId)
+  paymentsApi.getMyStatus(quizId),
+]);
+```
+
+Remove `quizzesApi` import after this change.
+
+**2. Submission (Step 5):** replace `quizAttemptsApi.submit()` with `syncService.submitQuizAttempt()`.
+
+`moduleId` is **not** in QuizScreen's current `route.params` — it must be added at the ContentScreen navigation call sites (see ContentScreen.js above) before this step. Then add it to the destructure at the top of QuizScreen:
+
+```js
+// Update route.params destructure:
+const { quizId, moduleTitle, moduleId } = route.params ?? {};
+```
+
+Updated submit handler:
 
 ```js
 // Before:
@@ -399,6 +490,8 @@ if (result.offline) {
 }
 ```
 
+Remove `quizAttemptsApi` import after Step 5 — it is no longer used in QuizScreen.
+
 ### QuizResultScreen.js
 
 Handle the offline route param. If `route.params.offline === true`, show:
@@ -411,37 +504,49 @@ If `route.params.offline` is false/absent, existing logic applies (fetch attempt
 
 ### GuideProfileScreen.js
 
-Before calling `logout()`, check the quiz outbox:
+The current screen uses a Modal for the "Are you sure?" confirmation (triggered by a "Sign Out" button). The outbox check must intercept the Sign Out **button tap** — before `setShowSignOut(true)` is called — not the Modal's confirm button.
+
+Change the Sign Out `TouchableOpacity` `onPress` from `() => setShowSignOut(true)` to an async handler:
 
 ```js
-const outbox = await getQuizOutbox();  // import from db.js
-if (outbox.length > 0) {
-  Alert.alert(
-    'Unsynced Quiz Attempts',
-    `You have ${outbox.length} quiz attempt(s) that haven't been submitted yet. ` +
-    'Connect to the internet and wait for sync before logging out, or your attempts will be lost.',
-    [
-      { text: 'Stay Logged In', style: 'cancel' },
-      { text: 'Log Out Anyway', style: 'destructive', onPress: () => logout() },
-    ]
-  );
-  return;
-}
-logout();
+import { getQuizOutbox } from '../../database/db';
+
+// New async handler replaces () => setShowSignOut(true):
+const handleSignOutTap = async () => {
+  const outbox = await getQuizOutbox();
+  if (outbox.length > 0) {
+    Alert.alert(
+      'Unsynced Quiz Attempts',
+      `You have ${outbox.length} quiz attempt${outbox.length !== 1 ? 's' : ''} that haven't been submitted yet. ` +
+      'Connect to the internet and wait for sync before logging out, or your answers will be lost.',
+      [
+        { text: 'Stay Logged In', style: 'cancel' },
+        { text: 'Log Out Anyway', style: 'destructive', onPress: () => logout() },
+      ]
+    );
+    return;
+  }
+  setShowSignOut(true); // outbox empty — proceed to normal confirmation modal
+};
 ```
+
+The existing Modal and its Cancel/Log Out buttons remain unchanged. `getQuizOutbox` is a direct `db.js` import — this is an intentional exception to the "screens don't call db.js" rule since this is a read-only check with no sync logic.
 
 ### AuthContext.js
 
-In the `logout()` function, call `clearAllCache()` from `db.js` after clearing SecureStore:
+In the `logout` `useCallback`, add `clearAllCache()` after the API call and before `clearAccessToken()`. The actual order in the file is: `api.post('/auth/logout')` → `clearAccessToken()` → `tokenStorage.clearRefresh()` → `tokenStorage.clearUser()` → `setUser(null)`. Insert `clearAllCache()` between the API call and `clearAccessToken()`:
 
 ```js
 import { clearAllCache } from '../database/db';
 
-// Inside logout():
-await clearAllCache();        // wipe SQLite cache and outboxes
-await tokenStorage.clearRefresh();
-await tokenStorage.clearUser();
-clearAccessToken();
+const logout = useCallback(async () => {
+  try { await api.post('/auth/logout', {}); } catch {}
+  try { await clearAllCache(); } catch {} // wipe SQLite — wrapped in own try/catch so logout always completes
+  clearAccessToken();
+  await tokenStorage.clearRefresh();
+  await tokenStorage.clearUser();
+  setUser(null);
+}, []);
 ```
 
 ---
@@ -490,6 +595,16 @@ Guide B logging in after Guide A logs out sees an empty SQLite database — Guid
 ## 12. Implementation Order
 
 Follow this exact sequence. Each step is independently testable before moving to the next.
+
+### Pre-implementation checklist (verify before writing any code)
+
+- [ ] Run `npx expo install expo-sqlite` from `apps/mobile/` — confirm `expo-sqlite ~14.x.x` appears in `package.json`
+- [ ] Read `src/services/api.js` to confirm error shape — errors have `err.status` set directly (not `err.response.status`). Already confirmed: the custom fetch wrapper does `err.status = res.status`.
+- [ ] Check `src/api/` for a `sync.js` file — there is none. Call `api.post('/sync', { attempts: payload })` directly from syncService.
+- [ ] Read `apps/api/src/controllers/sync.js` to confirm the `POST /api/sync` response shape. The `api.js` client strips the `data` wrapper, so syncService receives `[{ clientId, status, serverAttemptId }]` directly.
+- [ ] Confirm expo-sqlite v14 method names: `openDatabaseAsync`, `execAsync`, `getAllAsync`, `getFirstAsync`, `runAsync`, `withTransactionAsync`. Verify against the installed package before writing `db.js`.
+- [ ] Confirm ContentScreen's two navigation calls to `'Quiz'` — both currently pass `{ quizId, moduleTitle }` without `moduleId`. Both must be updated before Step 5. Locations: `QuizContent` component `onTakeQuiz` prop and the bottom bar "Take Quiz" button `onPress`.
+- [ ] Confirm UUID generation approach for `client_id` — check if `expo-crypto` is in `package.json`. If not, use an inline generator (e.g. `Math.random().toString(36).slice(2) + Date.now().toString(36)`) rather than adding a dependency.
 
 ### Step 1 — Install expo-sqlite and rewrite db.js
 ```bash
@@ -594,14 +709,15 @@ All 10 test cases pass with no unhandled errors or crashes.
 | File | Status | Change |
 |---|---|---|
 | `src/database/db.js` | **Full rewrite** | Replace AsyncStorage scaffold with expo-sqlite implementation |
+| `src/database/DatabaseContext.js` | **Modify** | Call `initDatabase()` in useEffect (was a no-op stub) |
 | `src/services/syncService.js` | **New file** | Orchestration layer |
-| `App.js` | **Modify** | `initDatabase()` on mount + AppState flush trigger |
+| `App.js` | **Modify** | `setOnlineStatus` wiring (Step 3) + AppState flush trigger (Step 6) — NOT `initDatabase()` |
 | `src/screens/parkguide/CourseListScreen.js` | **Modify** | Use `syncService.loadEnrolments()` |
 | `src/screens/parkguide/LessonScreen.js` | **Modify** | Use `syncService.loadModuleDetail()` + `loadContentItems()` |
-| `src/screens/parkguide/ContentScreen.js` | **Modify** | Use `syncService.markProgress()` |
-| `src/screens/parkguide/QuizScreen.js` | **Modify** | Use `syncService.loadQuiz()` + `submitQuizAttempt()` |
+| `src/screens/parkguide/ContentScreen.js` | **Modify** | Use `syncService.markProgress()`; add `moduleId` to both Quiz navigation calls |
+| `src/screens/parkguide/QuizScreen.js` | **Modify** | Use `syncService.loadQuiz()` + `submitQuizAttempt()`; destructure `moduleId` from route.params |
 | `src/screens/parkguide/QuizResultScreen.js` | **Modify** | Handle `{ offline: true }` route param |
-| `src/screens/parkguide/GuideProfileScreen.js` | **Modify** | Logout guard — check quiz outbox before logout |
+| `src/screens/parkguide/GuideProfileScreen.js` | **Modify** | Logout guard — intercept Sign Out button tap, check quiz outbox |
 | `src/services/AuthContext.js` | **Modify** | Call `clearAllCache()` on logout |
 
 **Backend: zero changes.** All required endpoints are already implemented.
@@ -629,4 +745,59 @@ All 10 test cases pass with no unhandled errors or crashes.
 
 `src/services/connectivityService.js` exposes `{ isOnline }` via the `useNetworkStatus()` hook. It uses `@react-native-community/netinfo` with an HTTP polling fallback.
 
-`syncService.js` cannot use this hook directly (hooks can only be called from React components). Instead, `flush()` is called from `App.js`'s AppState listener on every foreground event — at which point connectivity is assumed to be available. If the flush fails due to network error, outbox items remain and retry on the next foreground event. This is the correct approach: do not attempt to replicate NetInfo logic inside syncService.
+`syncService.js` cannot use this hook directly (hooks can only be called from React components). Instead, `App.js` (`AppInner`) calls `syncService.setOnlineStatus(isOnline)` via a `useEffect` whenever the `isOnline` value from `useNetworkStatus()` changes. This propagates connectivity state into the module-level `_isOnline` flag in syncService without any hook dependency.
+
+---
+
+## 18. Discovered State from Code Audit
+
+These facts were established by reading the actual source files before implementation planning. Where this section and sections 1–17 differ, this section takes precedence.
+
+### DatabaseContext.js already exists
+`src/database/DatabaseContext.js` wraps the entire app (including `AuthProvider`) in `App.js`. It is a stub: currently calls `setDbReady(true)` immediately in a `useEffect` with no actual DB work. This is the correct place to call `initDatabase()` — the spec (section 8) was written without knowledge of this file and incorrectly assigned `initDatabase()` to `App.js`. `App.js` only handles `setOnlineStatus` wiring (Step 3) and the AppState flush trigger (Step 6).
+
+### moduleId missing from QuizScreen route params
+`ContentScreen` navigates to `'Quiz'` with `{ quizId: item.quizId, moduleTitle }`. `moduleId` is not passed. `syncService.submitQuizAttempt()` requires `moduleId` to write to the quiz outbox. This must be fixed in ContentScreen **before Step 5**. There are exactly two navigation calls to `'Quiz'` in ContentScreen: the `QuizContent` sub-component's `onTakeQuiz` prop and the bottom navigation bar's "Take Quiz" button `onPress`. Both need `moduleId` added. `moduleId` is already in scope from `route.params` in ContentScreen. QuizScreen must also add `moduleId` to its `route.params` destructure.
+
+### GuideProfileScreen logout uses a Modal, not Alert.alert
+The current logout flow: Sign Out `TouchableOpacity` → `setShowSignOut(true)` → `Modal` renders → user presses "Log Out" inside modal → `logout()`. The outbox guard must intercept at the Sign Out button tap (change its `onPress` to `handleSignOutTap`). If the outbox is non-empty, show `Alert.alert` (which preempts the modal entirely). If empty, call `setShowSignOut(true)` as before — the existing Modal remains unchanged.
+
+### AuthContext.js logout function order
+The actual order in `AuthContext.js`: `api.post('/auth/logout')` → `clearAccessToken()` → `tokenStorage.clearRefresh()` → `tokenStorage.clearUser()` → `setUser(null)`. `clearAllCache()` must be inserted after `api.post('/auth/logout')` and before `clearAccessToken()`. Wrap it in its own `try/catch` so SQLite failure never blocks logout from completing.
+
+### api.js error format
+The custom fetch wrapper (`src/services/api.js`) sets `err.status = res.status` directly on the thrown `Error` object. It is not Axios — there is no `err.response`. When checking for 400/404 in `flushProgressOutbox`, use `err?.status === 400`. This has been confirmed from the source.
+
+### No sync.js API module
+There is no `src/api/sync.js`. The `flushQuizOutbox` function in syncService calls `api.post('/sync', { attempts: payload })` directly using the imported `api` singleton. Do not create a separate API module for this.
+
+### ContentScreen keeps contentItemsApi import
+`contentItemsApi` is used by the `ImageContent` sub-component inside ContentScreen to fetch presigned S3 image URLs via `contentItemsApi.getImageUrl()`. This import must stay. Only the `enrolmentsApi` import is removed when switching `markProgress` to syncService.
+
+### UserDashboard is not modified for offline sync
+`UserDashboard.js` calls `enrolmentsApi`, `notificationsApi`, and `certificationsApi` directly. It is not in the list of files to modify. Dashboard cert count shows 0 offline — acceptable. Do not add syncService integration to UserDashboard.
+
+### expo-sqlite v14 API (confirmed method names)
+- Open: `SQLite.openDatabaseAsync('parkguide_offline.db')`
+- DDL: `db.execAsync(sql)` — no params
+- Single row: `db.getFirstAsync(sql, [params])`
+- Multiple rows: `db.getAllAsync(sql, [params])`
+- Write: `db.runAsync(sql, [params])`
+- Transaction: `db.withTransactionAsync(async () => { ... })`
+- Parameters use `?` placeholders
+
+---
+
+## 19. Risk Register
+
+| Risk | Where it surfaces | Mitigation |
+|---|---|---|
+| expo-sqlite v14 method names differ from what was planned | Step 1 — db.js | Read the installed package's index.d.ts or README before writing db.js. Method names listed in section 18 are confirmed. |
+| `POST /api/sync` response shape unknown | Step 5 — flushQuizOutbox | Read `apps/api/src/controllers/sync.js` before implementing. `api.js` strips the `data` wrapper — syncService receives the array directly. Expected shape: `[{ clientId, status, serverAttemptId }]`. |
+| `moduleId` forgotten when updating ContentScreen | Step 3 / Step 5 | There are exactly two navigation calls to `'Quiz'` in ContentScreen. Both must be updated. Do not update only one. |
+| `flushProgressOutbox` 400/404 check uses wrong error shape | Step 4 | Use `err?.status === 400` — confirmed from api.js source. Not `err?.response?.status`. |
+| `DatabaseContext.dbReady` blocks children rendering | Step 1 | Both `.then` and `.catch` of `initDatabase()` call `setDbReady(true)`. Children always render. SQLite init failure degrades gracefully. |
+| Overlapping flush calls on rapid foreground events | Step 6 | The `_flushing` boolean flag in syncService prevents concurrent flushes. Verify it is set to `true` at the start of flush and `false` in the `finally` block. |
+| Quiz outbox rows stuck in `syncing` after crash | Step 8 | `initDatabase()` runs `UPDATE quiz_outbox SET status = 'pending' WHERE status = 'syncing'` after the CREATE TABLE statements. Verify this SQL is present in the final db.js. |
+| Guide B sees Guide A data after logout | Step 7 | `clearAllCache()` deletes all three tables inside a transaction. Verify the `DELETE FROM` statements cover all three: `cache`, `quiz_outbox`, `progress_outbox`. |
+| Corrupt JSON in cache crashes the app | Step 8 | Every `JSON.parse()` in db.js is inside a try/catch that returns the safe default. Verify individually — the outer function try/catch alone is not sufficient if `JSON.parse` is the only thing that throws. |
