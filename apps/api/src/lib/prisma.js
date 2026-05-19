@@ -1,6 +1,7 @@
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '@prisma/client';
+import pkg from '@prisma/client';
+const { PrismaClient } = pkg;
 
 // single instance across the whole app; do not call new PrismaClient() anywhere else
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
