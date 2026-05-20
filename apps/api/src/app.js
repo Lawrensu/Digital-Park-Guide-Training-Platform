@@ -20,6 +20,7 @@ import iotAlertsRouter from './routes/iotAlerts.js';
 import iotAlertsInternalRouter from './routes/iotAlertsInternal.js';
 import uploadsRouter from './routes/uploads.js';
 import syncRouter from './routes/sync.js';
+import analyticsRouter from './routes/analytics.js';
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use('/api/notifications', notificationsRouter);
 app.use('/api/iot-alerts', iotAlertsRouter);
 app.use('/api/uploads', uploadsRouter);
 app.use('/api/sync', syncRouter);
+app.use('/api/analytics', analyticsRouter);
 
 // 404 fallback for /api
 app.use('/api', (_req, res) => res.status(404).json({

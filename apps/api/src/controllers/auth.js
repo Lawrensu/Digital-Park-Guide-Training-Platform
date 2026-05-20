@@ -46,6 +46,7 @@ export const login = async (req, res) => {
 			success: true,
 			data: {
 				accessToken,
+				refreshToken,
 				user: { id: user.id, email: user.email, role: user.role }
 			}
 		});
@@ -57,7 +58,7 @@ export const login = async (req, res) => {
 
 export const refresh = async (req, res) => {
 	try {
-		const refreshToken = req.cookies.refreshToken;
+		const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
 		if (!refreshToken) {
 			return res.status(401).json({ success: false, error: { code: 'MISSING_TOKEN', message: 'No refresh token provided' } });
 		}

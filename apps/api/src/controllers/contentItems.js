@@ -1,4 +1,5 @@
 import prisma from '../lib/prisma.js';
+import { getPresignedDownloadUrl } from '../lib/s3.js';
 
 
 export const listByModule = async (req, res) => {
@@ -78,6 +79,36 @@ export const reorder = async (req, res) => {
 		);
 
 		return res.status(200).json({ success: true, data: { moduleId, count: items.length } });
+	} catch (err) {
+		return res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+	}
+};
+
+
+
+export const getImageUrl = async (req, res) => {
+	try {
+		const { moduleId, id } = req.params;
+
+		const item = await prisma.contentItem.findUnique({ where: { id } });
+		if (!item || item.moduleId !== moduleId) {
+			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Content item not found' } });
+		}
+		if (!item.imageS3Key) {
+			return res.status(400).json({ success: false, error: { code: 'NO_IMAGE', message: 'This content item has no image' } });
+		}
+
+		if (req.user.role !== 'ADMIN') {
+			const enrolment = await prisma.enrolment.findFirst({
+				where: { guideId: req.user.id, moduleId },
+			});
+			if (!enrolment) {
+				return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Not enrolled in this module' } });
+			}
+		}
+
+		const url = await getPresignedDownloadUrl(item.imageS3Key, 900);
+		return res.status(200).json({ success: true, data: { url } });
 	} catch (err) {
 		return res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
 	}

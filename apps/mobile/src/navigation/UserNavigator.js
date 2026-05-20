@@ -1,46 +1,50 @@
-// src/navigation/UserNavigator.js
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Ionicons } from '@expo/vector-icons';
-import { View, Text } from 'react-native';
 
-import UserDashboard from '../screens/UserDashboard';
-import CourseListScreen from '../screens/CourseListScreen';
-import LessonScreen from '../screens/LessonScreen';
-import QuizScreen from '../screens/QuizScreen';
-import CertificationScreen from '../screens/CertificationScreen';
+import UserDashboard      from '../screens/parkguide/UserDashboard';
+import CourseListScreen    from '../screens/parkguide/CourseListScreen';
+import LessonScreen        from '../screens/parkguide/LessonScreen';
+import QuizScreen          from '../screens/parkguide/QuizScreen';
+import QuizResultScreen    from '../screens/parkguide/QuizResultScreen';
+import CertificationScreen from '../screens/parkguide/CertificationScreen';
+import ContentScreen       from '../screens/parkguide/ContentScreen';
+import GuideNotification   from '../screens/parkguide/GuideNotificationScreen';
+import GuideProfile        from '../screens/parkguide/GuideProfileScreen';
+import BadgeScreen         from '../screens/parkguide/BadgeScreen';
+import GuideViewCert       from '../screens/parkguide/GuideViewCertScreen';
+import GuideNavigationBar from '../components/guidenavigationbar';
 
-const Tab = createBottomTabNavigator();
+const Tab   = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// Stack navigator wrapping courses + lessons + quiz
-function CoursesStack() {
+function HomeStack() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: '#15803d' },
-        headerTintColor: '#fff',
-        headerTitleStyle: { fontWeight: '700' },
-      }}
-    >
-      <Stack.Screen name="CourseList" component={CourseListScreen} options={{ title: 'My Courses' }} />
-      <Stack.Screen name="Lesson" component={LessonScreen} options={{ title: 'Lesson' }} />
-      <Stack.Screen name="Quiz" component={QuizScreen} options={{ title: 'Quiz' }} />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Dashboard" component={UserDashboard} />
     </Stack.Navigator>
   );
 }
 
-function DashboardStack() {
+function ModulesStack() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: '#15803d' },
-        headerTintColor: '#fff',
-        headerTitleStyle: { fontWeight: '700' },
-      }}
-    >
-      <Stack.Screen name="Dashboard" component={UserDashboard} options={{ title: 'Park Guide Hub' }} />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="CourseList" component={CourseListScreen} />
+      <Stack.Screen name="Lesson"     component={LessonScreen} />
+      <Stack.Screen name="Content"    component={ContentScreen} />
+      <Stack.Screen name="Quiz"       component={QuizScreen} />
+      <Stack.Screen name="QuizResult" component={QuizResultScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function ProfileStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="ProfileHome"   component={GuideProfile} />
+      <Stack.Screen name="Badges"        component={BadgeScreen} />
+      <Stack.Screen name="Certification" component={CertificationScreen} />
+      <Stack.Screen name="GuideViewCert" component={GuideViewCert} />
     </Stack.Navigator>
   );
 }
@@ -48,38 +52,13 @@ function DashboardStack() {
 export default function UserNavigator() {
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarActiveTintColor: '#15803d',
-        tabBarInactiveTintColor: '#9ca3af',
-        tabBarStyle: {
-          backgroundColor: '#fff',
-          borderTopColor: '#e5e7eb',
-          paddingBottom: 8,
-          paddingTop: 6,
-          height: 64,
-        },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
-        tabBarIcon: ({ focused, color, size }) => {
-          const icons = {
-            Home: focused ? 'home' : 'home-outline',
-            Courses: focused ? 'book' : 'book-outline',
-            Certifications: focused ? 'ribbon' : 'ribbon-outline',
-          };
-          return <Ionicons name={icons[route.name]} size={22} color={color} />;
-        },
-      })}
+      tabBar={(props) => <GuideNavigationBar {...props} />}
+      screenOptions={{ headerShown: false }}
     >
-      <Tab.Screen name="Home" component={DashboardStack} />
-      <Tab.Screen name="Courses" component={CoursesStack} />
-      <Tab.Screen name="Certifications" component={CertificationScreen}
-        options={{
-          headerShown: true,
-          headerStyle: { backgroundColor: '#15803d' },
-          headerTintColor: '#fff',
-          headerTitle: 'My Certifications',
-        }}
-      />
+      <Tab.Screen name="Home"          component={HomeStack} />
+      <Tab.Screen name="Modules"       component={ModulesStack} />
+      <Tab.Screen name="Notifications" component={GuideNotification} />
+      <Tab.Screen name="Profile"       component={ProfileStack} />
     </Tab.Navigator>
   );
 }

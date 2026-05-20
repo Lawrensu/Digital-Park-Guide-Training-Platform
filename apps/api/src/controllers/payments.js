@@ -1,10 +1,32 @@
 import crypto from 'crypto';
 import prisma from '../lib/prisma.js';
+import { getMyPaymentQuerySchema } from '../schemas/payments.js';
 
 const SANDBOX = process.env.BILLPLZ_SANDBOX === 'true';
 const BILLPLZ_BASE = SANDBOX
 	? 'https://www.billplz-sandbox.com/api/v3'
 	: 'https://www.billplz.com/api/v3';
+
+
+export const getMyPayment = async (req, res) => {
+	const parsed = getMyPaymentQuerySchema.safeParse(req.query);
+	if (!parsed.success) {
+		return res.status(400).json({ success: false, error: { code: 'VALIDATION_ERROR', message: 'quizId must be a valid UUID', details: parsed.error.errors } });
+	}
+
+	try {
+		const payment = await prisma.payment.findFirst({
+			where: { userId: req.user.id, quizId: parsed.data.quizId },
+			orderBy: { createdAt: 'desc' },
+			select: { id: true, status: true, amount: true, billplzBillId: true, createdAt: true },
+		});
+
+		return res.status(200).json({ success: true, data: payment ? payment : { status: null } });
+	} catch (err) {
+		return res.status(500).json({ success: false, error: { code: 'SERVER_ERROR', message: err.message } });
+	}
+};
+
 
 
 export const initiate = async (req, res) => {
