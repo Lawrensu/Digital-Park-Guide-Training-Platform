@@ -15,27 +15,19 @@ import {
 	ResponsiveContainer,
 } from 'recharts'
 
-const COLORS = ['#2d7d4e', '#d4920a', '#2b6cb0', '#c53030']
 const PARTICIPATION_COLORS = ['#2d7d4e', '#d4920a']
 const OUTCOMES_COLORS = ['#38945e', '#c53030', '#f59e0b']
 
-const KPICard = ({ label, value, icon = '📊' }) => (
+const KPICard = ({ label, value }) => (
 	<div className="bg-white rounded-lg border border-[#e7e5e4] p-6 shadow-sm hover:shadow-md transition-shadow">
-		<div className="flex items-start justify-between">
-			<div>
-				<p className="text-sm text-gray-600 font-outfit mb-2">{label}</p>
-				<p className="text-3xl font-outfit font-bold text-[#1a3a2a]">{value ?? '—'}</p>
-			</div>
-			<div className="text-3xl">{icon}</div>
-		</div>
+		<p className="text-sm text-gray-600 font-outfit mb-2">{label}</p>
+		<p className="text-3xl font-outfit font-bold text-[#1a3a2a]">{value ?? '—'}</p>
 	</div>
 )
 
 const LoadingState = () => (
 	<div className="flex items-center justify-center py-16">
-		<div className="text-center">
-			<p className="text-gray-500 font-outfit">Loading analytics...</p>
-		</div>
+		<p className="text-gray-500 font-outfit">Loading analytics...</p>
 	</div>
 )
 
@@ -50,9 +42,7 @@ const ErrorState = ({ error }) => (
 
 const EmptyState = () => (
 	<div className="flex items-center justify-center py-16">
-		<div className="text-center">
-			<p className="text-gray-500 font-outfit">No data available yet</p>
-		</div>
+		<p className="text-gray-500 font-outfit">No data available yet</p>
 	</div>
 )
 
@@ -63,7 +53,7 @@ export default function Analytics() {
 			const res = await analyticsApi.getAdminTrainingAnalytics()
 			return res.data?.data || res.data
 		},
-		staleTime: 5 * 60 * 1000, // 5 minutes
+		staleTime: 5 * 60 * 1000,
 	})
 
 	if (isLoading) return <LoadingState />
@@ -81,7 +71,6 @@ export default function Analytics() {
 			<div className="flex-1 flex flex-col min-w-0">
 				<div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
 					<div className="max-w-7xl mx-auto">
-						{/* Header */}
 						<div className="mb-8">
 							<h1 className="text-3xl sm:text-4xl font-outfit font-bold text-[#1a3a2a] mb-2">
 								Training Analytics
@@ -93,33 +82,17 @@ export default function Analytics() {
 
 						{data ? (
 							<>
-								{/* KPI Cards */}
 								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-									<KPICard
-										label="Total Enrolled Guides"
-										value={summary.totalEnrolledGuides}
-										icon="👥"
-									/>
-									<KPICard
-										label="Active Guides"
-										value={summary.activeGuides}
-										icon="✓"
-									/>
-									<KPICard
-										label="Inactive Guides"
-										value={summary.inactiveGuides}
-										icon="◻"
-									/>
+									<KPICard label="Total Enrolled Guides" value={summary.totalEnrolledGuides} />
+									<KPICard label="Active Guides" value={summary.activeGuides} />
+									<KPICard label="Inactive Guides" value={summary.inactiveGuides} />
 									<KPICard
 										label="Certification Completion Rate"
 										value={`${summary.certificationCompletionRate ?? 0}%`}
-										icon="🏆"
 									/>
 								</div>
 
-								{/* Charts Grid */}
 								<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-									{/* Participation Overview */}
 									{participation.length > 0 && (
 										<div className="bg-white rounded-lg border border-[#e7e5e4] p-6 shadow-sm">
 											<h2 className="text-lg font-outfit font-semibold text-[#1a3a2a] mb-4">
@@ -134,7 +107,6 @@ export default function Analytics() {
 														labelLine={false}
 														label={({ name, value }) => `${name}: ${value}`}
 														outerRadius={80}
-														fill="#8884d8"
 														dataKey="value"
 													>
 														{participation.map((entry, index) => (
@@ -151,7 +123,6 @@ export default function Analytics() {
 										</div>
 									)}
 
-									{/* Pass / Fail / In Progress */}
 									{outcomes.length > 0 && (
 										<div className="bg-white rounded-lg border border-[#e7e5e4] p-6 shadow-sm">
 											<h2 className="text-lg font-outfit font-semibold text-[#1a3a2a] mb-4">
@@ -166,7 +137,6 @@ export default function Analytics() {
 														labelLine={false}
 														label={({ name, value }) => `${name}: ${value}`}
 														outerRadius={80}
-														fill="#8884d8"
 														dataKey="value"
 													>
 														{outcomes.map((entry, index) => (
@@ -184,7 +154,6 @@ export default function Analytics() {
 									)}
 								</div>
 
-								{/* Module Pass Rate Analysis */}
 								{modulePassRates.length > 0 && (
 									<div className="bg-white rounded-lg border border-[#e7e5e4] p-6 shadow-sm mb-8">
 										<h2 className="text-lg font-outfit font-semibold text-[#1a3a2a] mb-4">
@@ -211,7 +180,6 @@ export default function Analytics() {
 									</div>
 								)}
 
-								{/* Guide Progress Monitoring */}
 								{guideProgress.length > 0 && (
 									<div className="bg-white rounded-lg border border-[#e7e5e4] p-6 shadow-sm">
 										<h2 className="text-lg font-outfit font-semibold text-[#1a3a2a] mb-4">
@@ -222,13 +190,13 @@ export default function Analytics() {
 												<thead>
 													<tr className="border-b border-[#e7e5e4]">
 														<th className="text-left py-3 px-4 font-outfit font-semibold text-[#1a3a2a]">
-															Guide Name
+															Guide
 														</th>
 														<th className="text-center py-3 px-4 font-outfit font-semibold text-[#1a3a2a]">
-															Modules Assigned
+															Assigned
 														</th>
 														<th className="text-center py-3 px-4 font-outfit font-semibold text-[#1a3a2a]">
-															Modules Completed
+															Completed
 														</th>
 														<th className="text-center py-3 px-4 font-outfit font-semibold text-[#1a3a2a]">
 															Status

@@ -10,6 +10,7 @@ export const list = async (req, res) => {
 		const where = {};
 		if (req.user.role === 'GUIDE') {
 			where.guideId = req.user.id;
+			if (moduleId) where.moduleId = moduleId;
 		} else {
 			if (guideId) where.guideId = guideId;
 			if (moduleId) where.moduleId = moduleId;

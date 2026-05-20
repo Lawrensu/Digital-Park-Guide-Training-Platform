@@ -8,7 +8,7 @@ import * as iotAlertsApi from '../../api/iotAlerts.js'
 
 const BASE_NAV = [
     { icon: '⊞', label: 'Dashboard',      to: '/dashboard'       },
-    { icon: '📊', label: 'Analytics',     to: '/analytics'       },
+    { icon: '◎', label: 'Analytics',      to: '/analytics'       },
     { icon: '📋', label: 'Registrations', to: '/registrations'   },
     { icon: '📚', label: 'Modules',       to: '/modules'         },
     { icon: '👤', label: 'Guides',        to: '/guides'          },

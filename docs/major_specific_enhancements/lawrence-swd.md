@@ -30,7 +30,7 @@ allowing the frontend to handle errors uniformly without per-endpoint special ca
 storing them would mean links break silently. Storing only the key and generating
 URLs on demand keeps the database clean and decouples storage from access policy.
 
-**Append-only `QuizAttempt`.** Each retake creates a new row — attempts are never
+**Append-only `QuizAttempt`.** Each retake creates a new row; attempts are never
 overwritten. This preserves a full audit trail and makes the payment gate
 straightforward: check for a `PAID` row before inserting any attempt beyond the
 first.

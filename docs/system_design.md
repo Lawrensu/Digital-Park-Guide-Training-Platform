@@ -114,14 +114,14 @@ Monorepo managed by pnpm workspaces and Turborepo.
 ## Frontend
 
 ### Web App : React + Vite
-- Accessible to both Admin/Trainer and Park Guide — role-based access control determines visible routes after login
+- Accessible to both Admin/Trainer and Park Guide; role-based access control determines visible routes after login
 - Admin/Trainer features: module management, guide oversight, registration review, quiz grading, certification issuance, IoT alert monitoring, notifications, station management, admin account settings
 - Park Guide features: registration (public, pre-login), browse and enrol in modules, view content, take quizzes, view certifications, view badges, notifications, profile
 - Styled with TailwindCSS + shadcn/ui component library
 - Data fetching and caching managed by TanStack Query
 
 ### Mobile App : React Native + Expo
-- Accessible to both Admin/Trainer and Park Guide — role-based access control determines visible screens after login
+- Accessible to both Admin/Trainer and Park Guide; role-based access control determines visible screens after login
 - Park Guide features: same as web guide features, with the addition of full offline operation
 - Admin/Trainer features: same as web admin features accessible from mobile
 - **Offline-first:** guides work in areas with no connectivity (day trips to multi-day expeditions)
@@ -169,7 +169,7 @@ JWT with refresh token rotation. No session-based auth.
 ### PostgreSQL via Prisma ORM
 - Primary source of truth for all structured data
 - Prisma manages schema, migrations, and query interface
-- Binary assets (videos, images, PDFs, evidence frames) are never stored in the database — only the S3 **key** is stored as a reference (not the full URL, since URLs are generated on-demand as pre-signed URLs with expiry)
+- Binary assets (videos, images, PDFs, evidence frames) are never stored in the database; only the S3 **key** is stored as a reference (not the full URL, since URLs are generated on-demand as pre-signed URLs with expiry)
 - RegistrationApplication records are retained permanently as an audit trail,
   regardless of approval or rejection outcome.
 - IC/Passport number is stored on both RegistrationApplication (original submission)
@@ -195,7 +195,7 @@ JWT with refresh token rotation. No session-based auth.
 - **NodeMCU ESP32:** with camera module that is body-worn by park guide during tours
 - **Arduino Uno R4 Minima:** controls peripheral hardware (buzzer, LEDs, tactile buttons) for on-device alerts
 
-### AI Inference — On-Device (Edge)
+### AI Inference: On-Device (Edge)
 - Model: YOLOv8n trained in PyTorch, exported to ONNX (INT8 quantised) for edge deployment
 - Inference runs directly on the ESP32, no server-side GPU required
 - Detects: plant damage, wildlife disturbance, according to project scope.
@@ -211,7 +211,7 @@ ESP32 detects → captures evidence frame
 → Admin notified via push notification + email (AWS SES)
 ```
 
-> **In progress:** Detection model confirmed as YOLOv8. On-device runtime and export format are pending hardware validation — standard ONNX Runtime is too large for ESP32's SRAM. IoT pipeline integration with the platform is in progress.
+> **In progress:** Detection model confirmed as YOLOv8. On-device runtime and export format are pending hardware validation; standard ONNX Runtime is too large for ESP32's SRAM. IoT pipeline integration with the platform is in progress.
 
 ---
 

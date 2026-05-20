@@ -7,6 +7,7 @@ import * as paymentsController from '../controllers/payments.js';
 
 const router = Router();
 
+router.get('/me', requireAuth, requireRole('GUIDE'), paymentsController.getMyPayment);
 router.post('/initiate', requireAuth, requireRole('GUIDE'), validate(initiatePaymentSchema), paymentsController.initiate);
 
 // BillPlz calls this webhook directly; no JWT auth, payload verified by X Signature

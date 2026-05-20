@@ -15,6 +15,7 @@ const router = Router({ mergeParams: true });
 router.get('/', requireAuth, controller.listByModule);
 router.post('/', requireAuth, requireRole('ADMIN'), validate(createContentItemSchema), controller.create);
 router.patch('/reorder', requireAuth, requireRole('ADMIN'), validate(reorderContentItemsSchema), controller.reorder);
+router.get('/:id/image-url', requireAuth, controller.getImageUrl);
 router.patch('/:id', requireAuth, requireRole('ADMIN'), validate(updateContentItemSchema), controller.update);
 router.delete('/:id', requireAuth, requireRole('ADMIN'), controller.remove);
 

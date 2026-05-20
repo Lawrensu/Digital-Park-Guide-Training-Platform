@@ -1,44 +1,29 @@
 // src/components/OfflineBanner.js
-import React, { useEffect, useState } from 'react';
-import { View, Text, Animated } from 'react-native';
+import React from 'react';
+import { View, Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { FONTS } from '../theme/fonts';
 
-/**
- * Slim banner shown when the app detects it's offline.
- * Slides in from the top and stays until connectivity is restored.
- *
- * Props:
- *   visible – boolean: show/hide the banner
- *   message – override the default message string
- */
 export default function OfflineBanner({ visible = false, message }) {
-  const [slideAnim] = useState(new Animated.Value(-60));
+  const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    Animated.timing(slideAnim, {
-      toValue: visible ? 0 : -60,
-      duration: 280,
-      useNativeDriver: true,
-    }).start();
-  }, [visible]);
+  if (!visible) return null;
 
   return (
-    <Animated.View
-      style={{
-        transform: [{ translateY: slideAnim }],
-        backgroundColor: '#92400e',
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        gap: 10,
-      }}
-    >
+    <View style={{
+      backgroundColor: '#BEBEBE',
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingTop: insets.top + 8,
+      paddingBottom: 8,
+      paddingHorizontal: 16,
+      gap: 8,
+    }}>
       <Ionicons name="cloud-offline-outline" size={16} color="#fef3c7" />
-      <Text style={{ fontSize: 13, color: '#fef3c7', fontWeight: '600', flex: 1 }}>
-        {message || 'You\'re offline — showing cached content. Progress will sync when reconnected.'}
+      <Text style={{ fontSize: 12, color: '#ffffff', fontWeight: '600', flex: 1, fontFamily: FONTS.body }}>
+        {message || "You're offline — progress is saved locally and will sync on reconnect."}
       </Text>
-    </Animated.View>
+    </View>
   );
 }
