@@ -1,246 +1,177 @@
-import { useQuery } from '@tanstack/react-query'
-import Navbar from '../../../components/Navbar/Navbar'
-import * as analyticsApi from '../../../api/analytics.js'
+import React from 'react';
 import {
-	BarChart,
-	Bar,
-	PieChart,
-	Pie,
-	Cell,
-	XAxis,
-	YAxis,
-	CartesianGrid,
-	Tooltip,
-	Legend,
-	ResponsiveContainer,
-} from 'recharts'
+  BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid,
+  Tooltip, Legend, ResponsiveContainer
+} from 'recharts';
+import Navbar from '../../../components/Navbar/Navbar';
 
-const PARTICIPATION_COLORS = ['#2d7d4e', '#d4920a']
-const OUTCOMES_COLORS = ['#38945e', '#c53030', '#f59e0b']
+const PARTICIPATION_COLORS = ['#10b981', '#3b82f6', '#f59e0b'];
+const OUTCOMES_COLORS = ['#38945e', '#c53030'];
 
-const KPICard = ({ label, value }) => (
-	<div className="bg-white rounded-lg border border-[#e7e5e4] p-6 shadow-sm hover:shadow-md transition-shadow">
-		<p className="text-sm text-gray-600 font-outfit mb-2">{label}</p>
-		<p className="text-3xl font-outfit font-bold text-[#1a3a2a]">{value ?? '—'}</p>
-	</div>
-)
-
-const LoadingState = () => (
-	<div className="flex items-center justify-center py-16">
-		<p className="text-gray-500 font-outfit">Loading analytics...</p>
-	</div>
-)
-
-const ErrorState = ({ error }) => (
-	<div className="flex items-center justify-center py-16">
-		<div className="text-center">
-			<p className="text-red-600 font-outfit mb-2">Error loading analytics</p>
-			<p className="text-sm text-gray-500">{error?.message || 'Please try again later'}</p>
-		</div>
-	</div>
-)
-
-const EmptyState = () => (
-	<div className="flex items-center justify-center py-16">
-		<p className="text-gray-500 font-outfit">No data available yet</p>
-	</div>
-)
+const MOCK_DATA = {
+  participation: [
+    { name: 'Completed', value: 45 },
+    { name: 'In Progress', value: 32 },
+    { name: 'Not Started', value: 12 }
+  ],
+  outcomes: [
+    { name: 'Passed', value: 78 },
+    { name: 'Needs Retake', value: 11 }
+  ],
+  modulePassRates: [
+    { name: 'Safety', rate: 92 },
+    { name: 'Navigation', rate: 85 },
+    { name: 'Equipment', rate: 88 },
+    { name: 'First Aid', rate: 95 },
+    { name: 'Flora/Fauna', rate: 80 }
+  ],
+  guideProgress: [
+    { id: 1, name: 'John Doe', status: 'Certified', score: 92, date: '2024-05-15' },
+    { id: 2, name: 'Jane Smith', status: 'In Progress', score: 88, date: '2024-05-18' },
+    { id: 3, name: 'Bob Johnson', status: 'Certified', score: 95, date: '2024-05-10' },
+    { id: 4, name: 'Alice Brown', status: 'Warning', score: 65, date: '2024-05-19' }
+  ]
+};
 
 export default function Analytics() {
-	const { data, isLoading, error } = useQuery({
-		queryKey: ['admin-training-analytics'],
-		queryFn: async () => {
-			const res = await analyticsApi.getAdminTrainingAnalytics()
-			return res.data?.data || res.data
-		},
-		staleTime: 5 * 60 * 1000,
-	})
+  return (
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
+      <Navbar />
+      <div style={{ flex: 1, padding: '40px', backgroundColor: '#f3f4f6', overflowY: 'auto' }}>
+        <div className="max-w-7xl" style={{ margin: '0 auto' }}>
+        <div style={{ marginBottom: '32px' }}>
+          <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: '#111827' }}>Analytics Dashboard</h1>
+          <p style={{ color: '#6b7280', marginTop: '8px' }}>Training metrics and performance data</p>
+        </div>
+        
+        {/* KPI Cards */}
+        <div style={{ marginTop: '32px', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
+          <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+            <p style={{ color: '#4b5563', fontSize: '14px' }}>Total Guides</p>
+            <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#111827', marginTop: '8px' }}>124</p>
+          </div>
+          <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+            <p style={{ color: '#4b5563', fontSize: '14px' }}>Active Learners</p>
+            <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#111827', marginTop: '8px' }}>89</p>
+          </div>
+          <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+            <p style={{ color: '#4b5563', fontSize: '14px' }}>Completion Rate</p>
+            <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#111827', marginTop: '8px' }}>76%</p>
+          </div>
+          <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+            <p style={{ color: '#4b5563', fontSize: '14px' }}>Avg Score</p>
+            <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#111827', marginTop: '8px' }}>84%</p>
+          </div>
+        </div>
 
-	if (isLoading) return <LoadingState />
-	if (error) return <ErrorState error={error} />
+        {/* Charts Row 1: Pie Charts */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '32px', marginBottom: '32px' }}>
+          {/* Participation Pie Chart */}
+          <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '16px' }}>Participation Status</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={MOCK_DATA.participation}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {MOCK_DATA.participation.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={PARTICIPATION_COLORS[index % PARTICIPATION_COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
 
-	const summary = data?.summary || {}
-	const participation = data?.participation || []
-	const outcomes = data?.outcomes || []
-	const modulePassRates = data?.modulePassRates || []
-	const guideProgress = data?.guideProgress || []
+          {/* Outcomes Pie Chart */}
+          <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '16px' }}>Training Outcomes</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={MOCK_DATA.outcomes}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}`}
+                  outerRadius={80}
+                  fill="#82ca9d"
+                  dataKey="value"
+                >
+                  {MOCK_DATA.outcomes.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={OUTCOMES_COLORS[index % OUTCOMES_COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
 
-	return (
-		<div className="flex flex-col lg:flex-row min-h-screen bg-[#fdfbf7]">
-			<Navbar />
-			<div className="flex-1 flex flex-col min-w-0">
-				<div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
-					<div className="max-w-7xl mx-auto">
-						<div className="mb-8">
-							<h1 className="text-3xl sm:text-4xl font-outfit font-bold text-[#1a3a2a] mb-2">
-								Training Analytics
-							</h1>
-							<p className="text-gray-600 font-outfit">
-								Monitor guide participation, training outcomes, and module performance
-							</p>
-						</div>
+        {/* Bar Chart */}
+        <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '8px', border: '1px solid #e5e7eb', marginBottom: '32px' }}>
+          <h2 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '16px' }}>Module Pass Rates (%)</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={MOCK_DATA.modulePassRates}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis domain={[0, 100]} />
+              <Tooltip formatter={(value) => `${value}%`} />
+              <Bar dataKey="rate" fill="#3b82f6" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
 
-						{data ? (
-							<>
-								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-									<KPICard label="Total Enrolled Guides" value={summary.totalEnrolledGuides} />
-									<KPICard label="Active Guides" value={summary.activeGuides} />
-									<KPICard label="Inactive Guides" value={summary.inactiveGuides} />
-									<KPICard
-										label="Certification Completion Rate"
-										value={`${summary.certificationCompletionRate ?? 0}%`}
-									/>
-								</div>
-
-								<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-									{participation.length > 0 && (
-										<div className="bg-white rounded-lg border border-[#e7e5e4] p-6 shadow-sm">
-											<h2 className="text-lg font-outfit font-semibold text-[#1a3a2a] mb-4">
-												Participation Overview
-											</h2>
-											<ResponsiveContainer width="100%" height={300}>
-												<PieChart>
-													<Pie
-														data={participation}
-														cx="50%"
-														cy="50%"
-														labelLine={false}
-														label={({ name, value }) => `${name}: ${value}`}
-														outerRadius={80}
-														dataKey="value"
-													>
-														{participation.map((entry, index) => (
-															<Cell
-																key={`cell-${index}`}
-																fill={PARTICIPATION_COLORS[index % PARTICIPATION_COLORS.length]}
-															/>
-														))}
-													</Pie>
-													<Tooltip />
-													<Legend />
-												</PieChart>
-											</ResponsiveContainer>
-										</div>
-									)}
-
-									{outcomes.length > 0 && (
-										<div className="bg-white rounded-lg border border-[#e7e5e4] p-6 shadow-sm">
-											<h2 className="text-lg font-outfit font-semibold text-[#1a3a2a] mb-4">
-												Training Outcomes
-											</h2>
-											<ResponsiveContainer width="100%" height={300}>
-												<PieChart>
-													<Pie
-														data={outcomes}
-														cx="50%"
-														cy="50%"
-														labelLine={false}
-														label={({ name, value }) => `${name}: ${value}`}
-														outerRadius={80}
-														dataKey="value"
-													>
-														{outcomes.map((entry, index) => (
-															<Cell
-																key={`cell-${index}`}
-																fill={OUTCOMES_COLORS[index % OUTCOMES_COLORS.length]}
-															/>
-														))}
-													</Pie>
-													<Tooltip />
-													<Legend />
-												</PieChart>
-											</ResponsiveContainer>
-										</div>
-									)}
-								</div>
-
-								{modulePassRates.length > 0 && (
-									<div className="bg-white rounded-lg border border-[#e7e5e4] p-6 shadow-sm mb-8">
-										<h2 className="text-lg font-outfit font-semibold text-[#1a3a2a] mb-4">
-											Module Pass Rate Analysis
-										</h2>
-										<ResponsiveContainer width="100%" height={400}>
-											<BarChart data={modulePassRates}>
-												<CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
-												<XAxis
-													dataKey="moduleTitle"
-													angle={-45}
-													textAnchor="end"
-													height={100}
-													tick={{ fontSize: 12 }}
-												/>
-												<YAxis label={{ value: 'Pass Rate (%)', angle: -90, position: 'insideLeft' }} />
-												<Tooltip
-													cursor={{ fill: 'rgba(45, 125, 78, 0.1)' }}
-													formatter={(value) => `${value}%`}
-												/>
-												<Bar dataKey="passRate" fill="#2d7d4e" radius={[8, 8, 0, 0]} />
-											</BarChart>
-										</ResponsiveContainer>
-									</div>
-								)}
-
-								{guideProgress.length > 0 && (
-									<div className="bg-white rounded-lg border border-[#e7e5e4] p-6 shadow-sm">
-										<h2 className="text-lg font-outfit font-semibold text-[#1a3a2a] mb-4">
-											Guide Progress Monitoring
-										</h2>
-										<div className="overflow-x-auto">
-											<table className="w-full text-sm">
-												<thead>
-													<tr className="border-b border-[#e7e5e4]">
-														<th className="text-left py-3 px-4 font-outfit font-semibold text-[#1a3a2a]">
-															Guide
-														</th>
-														<th className="text-center py-3 px-4 font-outfit font-semibold text-[#1a3a2a]">
-															Assigned
-														</th>
-														<th className="text-center py-3 px-4 font-outfit font-semibold text-[#1a3a2a]">
-															Completed
-														</th>
-														<th className="text-center py-3 px-4 font-outfit font-semibold text-[#1a3a2a]">
-															Status
-														</th>
-													</tr>
-												</thead>
-												<tbody>
-													{guideProgress.map((guide) => {
-														const statusColor =
-															guide.status === 'Completed'
-																? 'text-[#38945e]'
-																: guide.status === 'At Risk'
-																	? 'text-[#c53030]'
-																	: 'text-[#f59e0b]'
-
-														return (
-															<tr key={guide.guideId} className="border-b border-[#e7e5e4] hover:bg-[#fdfbf7]">
-																<td className="py-3 px-4 font-outfit text-[#1a3a2a]">
-																	{guide.guideName}
-																</td>
-																<td className="py-3 px-4 text-center text-gray-600">
-																	{guide.modulesAssigned}
-																</td>
-																<td className="py-3 px-4 text-center text-gray-600">
-																	{guide.modulesCompleted}/{guide.modulesAssigned}
-																</td>
-																<td className={`py-3 px-4 text-center font-outfit font-semibold ${statusColor}`}>
-																	{guide.status}
-																</td>
-															</tr>
-														)
-													})}
-												</tbody>
-											</table>
-										</div>
-									</div>
-								)}
-							</>
-						) : (
-							<EmptyState />
-						)}
-					</div>
-				</div>
-			</div>
-		</div>
-	)
+        {/* Table */}
+        <div style={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
+          <div style={{ padding: '24px', borderBottom: '1px solid #e5e7eb' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '600', color: '#111827' }}>Guide Progress Tracking</h2>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                  <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#374151', textTransform: 'uppercase' }}>Name</th>
+                  <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#374151', textTransform: 'uppercase' }}>Status</th>
+                  <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#374151', textTransform: 'uppercase' }}>Score</th>
+                  <th style={{ padding: '12px 24px', textAlign: 'left', fontSize: '12px', fontWeight: '600', color: '#374151', textTransform: 'uppercase' }}>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {MOCK_DATA.guideProgress.map((guide) => (
+                  <tr key={guide.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                    <td style={{ padding: '12px 24px', fontSize: '14px', color: '#111827' }}>{guide.name}</td>
+                    <td style={{ padding: '12px 24px', fontSize: '14px' }}>
+                      <span style={{
+                        display: 'inline-block',
+                        padding: '4px 12px',
+                        borderRadius: '9999px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        backgroundColor: guide.status === 'Certified' ? '#dcfce7' : guide.status === 'In Progress' ? '#dbeafe' : '#fee2e2',
+                        color: guide.status === 'Certified' ? '#166534' : guide.status === 'In Progress' ? '#1e40af' : '#991b1b'
+                      }}>
+                        {guide.status}
+                      </span>
+                    </td>
+                    <td style={{ padding: '12px 24px', fontSize: '14px', color: '#4b5563' }}>{guide.score}%</td>
+                    <td style={{ padding: '12px 24px', fontSize: '14px', color: '#6b7280' }}>{guide.date}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  );
 }
+

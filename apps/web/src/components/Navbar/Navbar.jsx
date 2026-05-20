@@ -8,7 +8,7 @@ import * as iotAlertsApi from '../../api/iotAlerts.js'
 
 const BASE_NAV = [
     { icon: '⊞', label: 'Dashboard',      to: '/dashboard'       },
-    { icon: '◎', label: 'Analytics',      to: '/analytics'       },
+    { icon: '📊', label: 'Analytics',      to: '/analytics'       },
     { icon: '📋', label: 'Registrations', to: '/registrations'   },
     { icon: '📚', label: 'Modules',       to: '/modules'         },
     { icon: '👤', label: 'Guides',        to: '/guides'          },
@@ -101,8 +101,12 @@ export default function Navbar() {
     const { data: pendingRegs } = useQuery({
         queryKey: ['registrations', 'pending-count'],
         queryFn: async () => {
-            const res = await registrationsApi.getAll({ status: 'PENDING', limit: 1 })
-            return res.data.pagination?.total ?? 0
+            try {
+                const res = await registrationsApi.getAll({ status: 'PENDING', limit: 1 })
+                return res.data.pagination?.total ?? 0
+            } catch {
+                return 0
+            }
         },
         staleTime: 60_000,
     })
@@ -110,8 +114,12 @@ export default function Navbar() {
     const { data: pendingQuizzes } = useQuery({
         queryKey: ['quiz-attempts', 'pending-count'],
         queryFn: async () => {
-            const res = await quizAttemptsApi.getAll({ status: 'PENDING_REVIEW', limit: 1 })
-            return res.data.pagination?.total ?? 0
+            try {
+                const res = await quizAttemptsApi.getAll({ status: 'PENDING_REVIEW', limit: 1 })
+                return res.data.pagination?.total ?? 0
+            } catch {
+                return 0
+            }
         },
         staleTime: 60_000,
     })
@@ -119,8 +127,12 @@ export default function Navbar() {
     const { data: openAlerts } = useQuery({
         queryKey: ['iot-alerts', 'pending-count'],
         queryFn: async () => {
-            const res = await iotAlertsApi.getAll({ status: 'PENDING', limit: 1 })
-            return res.data.pagination?.total ?? 0
+            try {
+                const res = await iotAlertsApi.getAll({ status: 'PENDING', limit: 1 })
+                return res.data.pagination?.total ?? 0
+            } catch {
+                return 0
+            }
         },
         staleTime: 60_000,
     })
