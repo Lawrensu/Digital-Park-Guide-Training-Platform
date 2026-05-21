@@ -113,6 +113,10 @@ export const listAll = async (req, res) => {
 
 export const getOne = async (req, res) => {
 	try {
+		if (req.user.role !== 'ADMIN') {
+			return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Insufficient permissions' } });
+		}
+
 		const app = await prisma.registrationApplication.findUnique({ where: { id: req.params.id } });
 		if (!app) {
 			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Application not found' } });
@@ -127,6 +131,10 @@ export const getOne = async (req, res) => {
 
 export const getCvUrl = async (req, res) => {
 	try {
+		if (req.user.role !== 'ADMIN') {
+			return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Insufficient permissions' } });
+		}
+
 		const app = await prisma.registrationApplication.findUnique({ where: { id: req.params.id } });
 		if (!app) {
 			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Application not found' } });

@@ -96,6 +96,12 @@ export const update = async (req, res) => {
 			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'User not found' } });
 		}
 
+		const isSelf = req.user.id === req.params.id;
+		const isAdmin = req.user.role === 'ADMIN';
+		if (!isSelf && !isAdmin) {
+			return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Insufficient permissions' } });
+		}
+
 		const data = {};
 		if (req.body.stationId !== undefined) data.stationId = req.body.stationId;
 		if (req.body.startDate !== undefined) data.startDate = req.body.startDate ? new Date(req.body.startDate) : null;
@@ -115,6 +121,10 @@ export const update = async (req, res) => {
 
 export const updateStatus = async (req, res) => {
 	try {
+		if (req.user.role !== 'ADMIN') {
+			return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Insufficient permissions' } });
+		}
+
 		const target = await prisma.user.findUnique({ where: { id: req.params.id } });
 		if (!target) {
 			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'User not found' } });

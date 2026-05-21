@@ -106,6 +106,12 @@ export const update = async (req, res) => {
 			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Enrolment not found' } });
 		}
 
+		const isAdmin = req.user.role === 'ADMIN';
+		const isOwner = existing.guideId === req.user.id;
+		if (!isAdmin && !isOwner) {
+			return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Insufficient permissions' } });
+		}
+
 		const enrolment = await prisma.enrolment.update({
 			where: { id: req.params.id },
 			data: { dueAt: req.body.dueAt ? new Date(req.body.dueAt) : null },
@@ -120,6 +126,17 @@ export const update = async (req, res) => {
 
 export const remove = async (req, res) => {
 	try {
+		const existing = await prisma.enrolment.findUnique({ where: { id: req.params.id } });
+		if (!existing) {
+			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Enrolment not found' } });
+		}
+
+		const isAdmin = req.user.role === 'ADMIN';
+		const isOwner = existing.guideId === req.user.id;
+		if (!isAdmin && !isOwner) {
+			return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Insufficient permissions' } });
+		}
+
 		await prisma.enrolment.delete({ where: { id: req.params.id } });
 		return res.status(204).send();
 	} catch (err) {

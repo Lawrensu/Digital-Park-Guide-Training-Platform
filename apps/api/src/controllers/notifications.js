@@ -38,8 +38,11 @@ export const listMine = async (req, res) => {
 export const markRead = async (req, res) => {
 	try {
 		const n = await prisma.notification.findUnique({ where: { id: req.params.id } });
-		if (!n || n.userId !== req.user.id) {
+		if (!n) {
 			return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Notification not found' } });
+		}
+		if (n.userId !== req.user.id) {
+			return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Insufficient permissions' } });
 		}
 		const updated = await prisma.notification.update({ where: { id: req.params.id }, data: { isRead: true } });
 		return res.status(200).json({ success: true, data: updated });
